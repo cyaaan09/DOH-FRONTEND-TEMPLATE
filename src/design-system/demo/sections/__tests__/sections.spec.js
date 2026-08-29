@@ -6,6 +6,12 @@ import ButtonsSection from '../ButtonsSection.vue'
 import FieldsSection from '../FieldsSection.vue'
 import ContainersSection from '../ContainersSection.vue'
 import TypeScaleSection from '../TypeScaleSection.vue'
+import TabsSection from '../TabsSection.vue'
+import DropdownsSection from '../DropdownsSection.vue'
+import FilesSection from '../FilesSection.vue'
+import SelectionSection from '../SelectionSection.vue'
+import DialogSection from '../DialogSection.vue'
+import FoundationsSection from '../FoundationsSection.vue'
 
 describe('ChipsSection', () => {
   it('carries the artifact description verbatim', () => {
@@ -87,5 +93,57 @@ describe('ContainersSection', () => {
       expect(text, `missing caption: ${caption}`).toContain(caption)
     }
     expect(text).toContain('Four tints, each with one job. No new greys.')
+  })
+})
+
+describe('skeleton sections show their headings and mark their gaps', () => {
+  it('TabsSection renders the three variant headings', () => {
+    const text = mount(TabsSection).text()
+    for (const label of [
+      'UNDERLINE — PRIMARY, SITS ON A CARD EDGE',
+      'SEGMENTED — INLINE FILTER, 2–4 SHORT OPTIONS',
+      'STAGE TABS — A WORKFLOW WITH VOLUME PER STEP',
+    ]) {
+      expect(text, `missing: ${label}`).toContain(label)
+    }
+    expect(mount(TabsSection).findAll('[data-gap]')).toHaveLength(3)
+  })
+
+  it('SelectionSection renders all six sub-blocks', () => {
+    const text = mount(SelectionSection).text()
+    for (const label of [
+      'CHECKBOX · STATES',
+      'RADIO · LIST',
+      'SWITCH · TAKES EFFECT AT ONCE',
+      'CHECKBOX CARDS · MULTI',
+      'RADIO CARDS · SINGLE',
+      'BULK SELECTION — TABLE HEADER + ACTION BAR',
+    ]) {
+      expect(text, `missing: ${label}`).toContain(label)
+    }
+    expect(mount(SelectionSection).findAll('[data-gap]')).toHaveLength(6)
+  })
+
+  it('FilesSection renders its file-list heading and marks both gaps', () => {
+    expect(mount(FilesSection).text()).toContain('FILE LIST — UPLOADING, DONE, FAILED')
+    expect(mount(FilesSection).findAll('[data-gap]').length).toBeGreaterThan(0)
+  })
+
+  it('DialogSection shows Skeleton for real and marks the other two', () => {
+    const wrapper = mount(DialogSection)
+    const text = wrapper.text()
+    for (const label of ['CONFIRMATION DIALOG', 'EMPTY STATE', 'SKELETON ROWS']) {
+      expect(text, `missing: ${label}`).toContain(label)
+    }
+    // Skeleton is built; Dialog and EmptyState are not.
+    expect(wrapper.findAll('[data-gap]')).toHaveLength(2)
+    expect(wrapper.findAll('[data-row]').length).toBeGreaterThan(0)
+  })
+
+  it.each([
+    ['DropdownsSection', DropdownsSection],
+    ['FoundationsSection', FoundationsSection],
+  ])('%s marks its gaps', (_name, component) => {
+    expect(mount(component).findAll('[data-gap]').length).toBeGreaterThan(0)
   })
 })
