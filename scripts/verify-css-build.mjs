@@ -44,6 +44,16 @@ if (/--font-sans:\s*var\(--font-sans\)/.test(css)) {
   failures.push('--font-sans is self-referential — see spec §4.1')
 }
 
+// Tailwind only emits utilities it sees used in markup — it does not emit
+// every bridged @theme name unconditionally. .bg-canvas and .border-hairline
+// are used by the layout markup (src/layouts/default.vue), so their presence
+// here proves the @theme inline bridge actually compiles, not just that it's
+// well-formed. A broken bridge produces no build error, just unstyled output;
+// this is the only check that would catch that.
+for (const className of ['.bg-canvas', '.border-hairline']) {
+  if (!css.includes(className)) failures.push(`utility ${className} missing from built CSS`)
+}
+
 if (failures.length > 0) {
   console.error('CSS build verification FAILED:')
   for (const f of failures) console.error('  •', f)
