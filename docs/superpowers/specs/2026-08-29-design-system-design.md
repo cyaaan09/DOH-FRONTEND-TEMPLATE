@@ -1000,6 +1000,33 @@ phase needs one that is not in D.1, extract it into D.1 first rather than guessi
 
 ### D.1 — bespoke sub-block markup
 
+#### Chips → the five tone sub-blocks
+
+Data-driven in the artifact (`{{ set.label }}`), so the original extraction captured only the two
+static strips. Labels and notes verbatim:
+
+| Label | Note |
+|---|---|
+| `STATUS` | A dot plus a word. Green for good, amber for waiting, red for blocked, grey for closed. |
+| `APPLICATION TYPE` | Flat tint, no dot — a category, not a state. Purple is reserved for Add / Modify. |
+| `SERVICE` | Outline only — a licence can carry six of these, so tint would drown the row. 12px / 400, white surface, hairline border. |
+| `SOURCE` | Where the record came from. Blue for portal-filed, amber for migrated paper records. |
+| `COUNT & OVERFLOW` | Numeric badges in nav and tables. Red only when the count is work waiting on you. |
+
+#### Foundations → the six scale groups
+
+Also data-driven (`{{ group.label }}`). Three colour groups carry a note; the three geometry
+groups do not:
+
+| Label | Note |
+|---|---|
+| `BRAND GREEN` | actions, active state, anything issued |
+| `NEUTRALS` | text, borders, surfaces |
+| `STATUS TONES` | one meaning each — never decorative |
+| `RADIUS` | *(none)* |
+| `SIZE & SPACING` | *(none)* |
+| `ELEVATION & BORDERS` | *(none)* |
+
 #### Containers & surfaces → INNER SURFACES
 
 A white card (radius 14, 1px hairline, card shadow, padding `16px 20px 18px`) holding four tint

@@ -959,7 +959,7 @@ Every one follows Task 4's Step 3 shape: a `DemoCard` with the Appendix D descri
 
 | File | Description from Appendix D | Sub-blocks → gap component | Rules |
 |---|---|---|---|
-| `FoundationsSection.vue` | `Foundations` | one block per scale: `BRAND GREEN`, `NEUTRALS`, `STATUS TONES`, `GEOMETRY` → `<DemoGap component="SwatchGrid" group="Foundations" />` | none |
+| `FoundationsSection.vue` | `Foundations` | **six** blocks per Appendix D.1: `BRAND GREEN`, `NEUTRALS`, `STATUS TONES` (each with its note) plus `RADIUS`, `SIZE & SPACING`, `ELEVATION & BORDERS` (no notes) → each gets `<DemoGap component="SwatchGrid" group="Foundations" />` | none |
 | `TabsSection.vue` | `Tabs` | the 3 headings above → `Tabs`, `SegmentedTabs`, `StageTabs`, all group `Tabs` | `tabRules` |
 | `DropdownsSection.vue` | `Dropdowns` | `SINGLE SELECT`, `MULTI SELECT`, `INLINE FILTER — TABLE BAR`, `ROW MENU — ACTIONS` → `Select`, `MultiSelect`, `InlineFilter`, `RowMenu`, group `Dropdowns` | none |
 | `FilesSection.vue` | `File inputs` | `PNPKI CERTIFICATE` → `FileInput`; `COMPACT · INSIDE A FORM ROW` → `FileInputCompact`; then a `DemoStrip` labelled `FILE LIST — UPLOADING, DONE, FAILED` → `FileList`, group `File inputs` | none |
