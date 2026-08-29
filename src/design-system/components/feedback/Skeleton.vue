@@ -1,16 +1,23 @@
 <script setup>
-defineProps({
+import { computed } from 'vue'
+
+const props = defineProps({
   rows: { type: Number, default: 3 },
 })
+
+// Redline "Skeleton bar · 3 rows max" — the source warns against a full page
+// of shimmer, so the count is clamped rather than trusted.
+const rowCount = computed(() => Math.max(1, Math.min(3, props.rows)))
 </script>
 
 <template>
   <div class="flex flex-col gap-2.5" aria-hidden="true">
+    <!-- Redline "Skeleton bar · 11px · radius 6px" -->
     <div
-      v-for="row in rows"
+      v-for="row in rowCount"
       :key="row"
       data-row
-      class="skeleton h-4 rounded-tile bg-surface-muted"
+      class="skeleton h-2.75 rounded-bar bg-neutral-100"
     />
   </div>
 </template>

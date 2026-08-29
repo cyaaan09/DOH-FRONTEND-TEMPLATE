@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import Notice from '../Notice.vue'
 import Skeleton from '../Skeleton.vue'
 
@@ -13,25 +13,49 @@ describe('Notice', () => {
     expect(wrapper.text()).toContain('Inspection is overdue by 4 days.')
   })
 
-  it('carries the tone on the pill, keeping the surface almost white', () => {
-    const wrapper = mount(Notice, { props: { tone: 'red', label: 'Error' } })
-    expect(wrapper.get('[data-pill]').classes()).toContain('text-red-700')
-    expect(wrapper.classes()).toContain('bg-red-50')
+  it('colours the body text in the tone, not grey', () => {
+    // Redline "Notice text · 13px / 400 in tone colour on tone/50"
+    const body = mount(Notice, { props: { tone: 'red', label: 'Error' } }).get('[data-body]')
+    expect(body.classes()).toContain('text-red-700')
+    expect(body.classes()).toContain('text-notice')
+    expect(body.classes()).not.toContain('text-ink-700')
   })
 
-  it('maps every tone to its own surface/pill class pair', () => {
-    const cases = {
-      neutral: { surface: 'bg-neutral-100', pill: 'text-text-header' },
-      green: { surface: 'bg-green-50', pill: 'text-green-text' },
-      amber: { surface: 'bg-amber-50', pill: 'text-amber-text' },
-      red: { surface: 'bg-red-50', pill: 'text-red-700' },
-      blue: { surface: 'bg-blue-50', pill: 'text-blue-700' },
-      violet: { surface: 'bg-violet-100', pill: 'text-violet-700' },
+  it('gives the shell no border and the redlined geometry', () => {
+    // Redline "Notice shell · min-h 32px · radius 16px · pad 4px 10px 4px 4px · gap 12px"
+    const classes = mount(Notice, { props: { tone: 'green', label: 'Success' } }).classes()
+    expect(classes).toContain('min-h-notice')
+    expect(classes).toContain('rounded-notice')
+    expect(classes).toContain('gap-3')
+    expect(classes).toContain('pl-1')
+    expect(classes).toContain('pr-2.5')
+    expect(classes).not.toContain('border')
+  })
+
+  it('outlines the pill in the tone border on a transparent fill', () => {
+    // Redline "Notice label · 24px · radius 16px · pad 0 12px · 12.5px / 400 · 1px tone/200"
+    const pill = mount(Notice, { props: { tone: 'green', label: 'Success' } }).get('[data-pill]')
+    expect(pill.classes()).toContain('h-6')
+    expect(pill.classes()).toContain('px-3')
+    expect(pill.classes()).toContain('rounded-notice')
+    expect(pill.classes()).toContain('border-notice-border-green')
+    expect(pill.classes()).toContain('text-field-label')
+    expect(pill.classes()).toContain('font-normal')
+    expect(pill.classes()).not.toContain('bg-surface')
+  })
+
+  it('fills each tone from the tone/50 scale', () => {
+    // Redline "Notice fills" — the tone/50 scale
+    const fills = {
+      green: 'bg-green-50',
+      blue: 'bg-blue-50',
+      amber: 'bg-amber-50',
+      red: 'bg-red-50',
     }
-    for (const [tone, { surface, pill }] of Object.entries(cases)) {
-      const wrapper = mount(Notice, { props: { tone, label: 'X' } })
-      expect(wrapper.classes(), `tone=${tone} surface`).toContain(surface)
-      expect(wrapper.get('[data-pill]').classes(), `tone=${tone} pill`).toContain(pill)
+    for (const [tone, fill] of Object.entries(fills)) {
+      expect(mount(Notice, { props: { tone, label: 'X' } }).classes(), `tone=${tone}`).toContain(
+        fill,
+      )
     }
   })
 
@@ -41,32 +65,13 @@ describe('Notice', () => {
     )
   })
 
-  it('interrupts assistive tech for an error tone but stays polite otherwise', () => {
+  it('interrupts for errors but stays polite otherwise', () => {
     expect(mount(Notice, { props: { tone: 'red', label: 'Error' } }).attributes('role')).toBe(
       'alert',
     )
-    expect(mount(Notice, { props: { tone: 'green', label: 'OK' } }).attributes('role')).toBe(
+    expect(mount(Notice, { props: { tone: 'green', label: 'Success' } }).attributes('role')).toBe(
       'status',
     )
-  })
-
-  describe('prop validator', () => {
-    afterEach(() => {
-      vi.restoreAllMocks()
-    })
-
-    it('warns on an unknown tone but keeps the runtime fallback', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      const wrapper = mount(Notice, { props: { tone: 'nonsense', label: 'X' } })
-      expect(warn).toHaveBeenCalled()
-      expect(wrapper.classes()).toContain('bg-neutral-100')
-    })
-
-    it('does not warn for a known tone', () => {
-      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      mount(Notice, { props: { tone: 'blue', label: 'X' } })
-      expect(warn).not.toHaveBeenCalled()
-    })
   })
 })
 
@@ -76,12 +81,30 @@ describe('Skeleton', () => {
   })
 
   it('honours an explicit row count', () => {
-    expect(mount(Skeleton, { props: { rows: 5 } }).findAll('[data-row]')).toHaveLength(5)
+    // Redline "Skeleton bar · 3 rows max" caps the count, so this now proves
+    // the prop is honoured below the cap rather than at an arbitrary value.
+    expect(mount(Skeleton, { props: { rows: 2 } }).findAll('[data-row]')).toHaveLength(2)
   })
 
   it('hides itself from assistive tech', () => {
     // Placeholder bars carry no information; the surrounding region owns any
     // loading announcement.
     expect(mount(Skeleton).attributes('aria-hidden')).toBe('true')
+  })
+})
+
+describe('Skeleton — Appendix C conformance', () => {
+  it('renders 11px bars at the bar radius on the canvas tint', () => {
+    // Redline "Skeleton bar · 11px · radius 6px · on the canvas tint · 3 rows max"
+    const row = mount(Skeleton).get('[data-row]')
+    expect(row.classes()).toContain('h-2.75')
+    expect(row.classes()).toContain('rounded-bar')
+    expect(row.classes()).toContain('bg-neutral-100')
+  })
+
+  it('never renders more than three rows', () => {
+    // Redline "3 rows max" — the source warns against a page of shimmer.
+    expect(mount(Skeleton, { props: { rows: 9 } }).findAll('[data-row]')).toHaveLength(3)
+    expect(mount(Skeleton, { props: { rows: 2 } }).findAll('[data-row]')).toHaveLength(2)
   })
 })

@@ -11,54 +11,58 @@ const props = defineProps({
   label: { type: String, required: true },
 })
 
-// Surface stays almost white; the outlined pill carries the meaning. Own to
-// Notice — genuinely different from Chip's filled tint — so it stays local
-// rather than moving into tones.js.
-const SURFACES = {
-  neutral: 'bg-neutral-100 border-soft',
-  green: 'bg-green-50 border-soft',
-  amber: 'bg-amber-50 border-soft',
-  red: 'bg-red-50 border-red-border',
-  blue: 'bg-blue-50 border-soft',
-  violet: 'bg-violet-100 border-soft',
+// Redline "Notice fills" — the tone/50 scale. Neutral and violet have no
+// redlined fill; their tint is used.
+const FILLS = {
+  neutral: 'bg-neutral-100',
+  green: 'bg-green-50',
+  amber: 'bg-amber-50',
+  red: 'bg-red-50',
+  blue: 'bg-blue-50',
+  violet: 'bg-violet-100',
 }
 
-// The pill's border per tone; its text colour comes from the shared
-// TONE_TEXT table below, which is identical to Chip's foreground colour.
+// Redline "Notice label · 1px tone/200" — a border scale the source uses but
+// never tokenised; added in spec Appendix A.1. Neutral and violet have no
+// redlined border, so they use the soft hairline.
 const PILL_BORDERS = {
   neutral: 'border-soft',
-  green: 'border-soft',
-  amber: 'border-soft',
-  red: 'border-red-border',
-  blue: 'border-soft',
+  green: 'border-notice-border-green',
+  amber: 'border-notice-border-amber',
+  red: 'border-notice-border-red',
+  blue: 'border-notice-border-blue',
   violet: 'border-soft',
 }
 
-const surfaceClass = computed(() => SURFACES[props.tone] ?? SURFACES[DEFAULT_TONE])
-const pillClass = computed(
-  () =>
-    `${TONE_TEXT[props.tone] ?? TONE_TEXT[DEFAULT_TONE]} ${PILL_BORDERS[props.tone] ?? PILL_BORDERS[DEFAULT_TONE]}`,
-)
+const tone = computed(() => (TONES.includes(props.tone) ? props.tone : DEFAULT_TONE))
+const fillClass = computed(() => FILLS[tone.value])
+const textClass = computed(() => TONE_TEXT[tone.value])
+const pillBorderClass = computed(() => PILL_BORDERS[tone.value])
 
-// role="status" is implicitly aria-live="polite" — assistive tech waits for
-// a pause before announcing it. An error notice must interrupt instead, so
-// it gets role="alert" (implicitly aria-live="assertive"). Every other tone
-// stays polite.
-const role = computed(() => (props.tone === 'red' ? 'alert' : 'status'))
+// role="status" is implicitly aria-live="polite" — assistive tech waits for a
+// pause. An error must interrupt instead, so it gets role="alert".
+const role = computed(() => (tone.value === 'red' ? 'alert' : 'status'))
 </script>
 
 <template>
   <div
-    class="flex items-center gap-2.5 rounded-notice border px-3 py-2 text-body text-ink-700"
-    :class="surfaceClass"
+    class="flex min-h-notice items-center gap-3 rounded-notice py-1 pr-2.5 pl-1"
+    :class="fillClass"
     :role="role"
   >
+    <!-- Redline "Notice shell · min-h 32px · radius 16px · pad 4px 10px 4px 4px
+         · gap 12px". No border: the outlined pill carries the meaning and the
+         surface stays almost white. -->
+    <!-- Redline "Notice label · 24px · radius 16px · pad 0 12px · 12.5px / 400
+         · 1px tone/200" — transparent fill, tone outline. -->
     <span
       data-pill
-      class="shrink-0 rounded-pill border bg-surface px-2 py-0.5 text-chip"
-      :class="pillClass"
+      class="inline-flex h-6 flex-none items-center rounded-notice border px-3 text-field-label font-normal"
+      :class="[textClass, pillBorderClass]"
       >{{ label }}</span
     >
-    <span class="min-w-0"><slot /></span>
+
+    <!-- Redline "Notice text · 13px / 400 in tone colour on tone/50" -->
+    <p data-body class="m-0 min-w-0 text-notice" :class="textClass"><slot /></p>
   </div>
 </template>

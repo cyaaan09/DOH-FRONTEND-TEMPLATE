@@ -16,10 +16,11 @@ a {
   text-decoration: none;
 }
 
-/* Source document specified #166534 for hover, which is not a token.
- * --green-900 (#14532D) is the nearest token and is used deliberately. */
+/* The source's base CSS uses a dedicated hover green, tokenised in spec
+ * Appendix A.1 as --green-link-hover. Phase 1 substituted --green-900
+ * because the value had no token; it does now. */
 a:hover {
-  color: var(--green-900);
+  color: var(--green-link-hover);
   text-decoration: underline;
 }
 
