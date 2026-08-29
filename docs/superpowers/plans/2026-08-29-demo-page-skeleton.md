@@ -248,9 +248,11 @@ defineProps({
 </script>
 
 <template>
-  <!-- Spec §17.1 — section card: radius 14, hairline, card shadow.
-       Header pad 20/24/4, title at section-title scale, description at body. -->
   <section class="mb-section overflow-hidden rounded-card border border-hairline bg-surface shadow-card">
+    <!-- Spec §17.1 — section card: radius 14, hairline, card shadow.
+         Header pad 20/24/4, title at section-title scale, description at body.
+         Comment inside the root: a comment before it compiles a Fragment root
+         and breaks wrapper.classes(). -->
     <div class="px-card-x pt-5 pb-1">
       <h2 class="text-section-title text-ink-900">{{ title }}</h2>
       <p v-if="description" class="text-body text-text-meta mt-0.5 max-w-4xl">{{ description }}</p>
@@ -313,8 +315,9 @@ defineProps({
 </script>
 
 <template>
-  <!-- Spec §17.1 — border-top 1px divider, sunken surface, pad 18/24/22 -->
   <div class="border-t border-divider bg-surface-sunken px-card-x pt-4.5 pb-5.5">
+    <!-- Spec §17.1 — border-top 1px divider, sunken surface, pad 18/24/22.
+         Comment inside the root, per the Fragment-root note above. -->
     <div class="text-column-header text-text-header mb-2.5">{{ label }}</div>
     <slot />
   </div>
