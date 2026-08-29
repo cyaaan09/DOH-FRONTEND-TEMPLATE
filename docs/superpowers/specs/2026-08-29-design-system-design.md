@@ -269,6 +269,55 @@ Backend integration, form validation library, i18n, and any application screen. 
 
 ---
 
+## 17. Demo page architecture
+
+**The `/design-system` page mirrors the source artifact's page structure exactly.** Same sections in
+the same order, same headings, same descriptions, same labelled sub-blocks, same rule-card footers,
+same sample content. The point is comparison: with an identical layout and identical words, any
+visual difference is a real defect rather than something to interpret. This is what made the last
+round of drift expensive to spot — our page and the artifact's shared no structure, so every
+comparison was an act of translation.
+
+Appendix D is the content authority for this page, the way Appendix C is for component values.
+
+### 17.1 Chrome
+
+Six demo-only components under `src/design-system/demo/chrome/`. They are not part of the design
+system and are never exported from the barrel — they are the page's furniture.
+
+| Component | Redlined values |
+|---|---|
+| `DemoCard` | radius 14, 1px hairline, `--sh-card`; header pad `20px 24px 4px`; title 17/700; description 13.5/400 in `--text-meta` |
+| `DemoBlocks` | `repeat(auto-fit, minmax(268px, 1fr))`, gap 24px, pad `18px 24px 6px` |
+| `DemoBlock` | label 10.5/700/0.08em in `--text-header`, `margin-bottom 4px`; note 12.5/1.5 in `--text-meta`, `margin-bottom 10px` |
+| `DemoStrip` | `border-top 1px --divider`, `background --surface-sunken`, pad `18px 24px 22px` |
+| `DemoRules` | `border-top 1px --divider`; grid `repeat(auto-fit, minmax(240px, 1fr))`; each card pad `16px 24px`, `border-right 1px --divider`, `margin-right -1px`; title 13/700; body 12.5/1.5 in `--text-meta` |
+| `DemoGap` | the not-built marker — dashed `--border-dashed` at 1.6px, radius 10-12, naming the missing component and the Appendix C group that governs it |
+
+Two type entries this needs and the scale lacks: `--text-note` (12.5px, line-height 1.5, weight 400)
+for sub-block notes and rule bodies, and the rule-card title at 13/700, which `text-notice font-bold`
+already covers.
+
+### 17.2 Gaps are visible, not implied
+
+Every sub-block the artifact shows exists on our page from the start. Where the component behind it
+is not built, the slot renders a `DemoGap` naming what is missing. The page is therefore a live
+checklist: open it and every remaining gap is visible, in place, at roughly the right size.
+
+A manifest lists which sections are complete. A test asserts that a section marked complete contains
+zero `DemoGap`s, so a section cannot be declared done while a slot is still empty.
+
+### 17.3 Confirmed conformance gaps in built components
+
+Found while extracting the page structure; each is scheduled into the phase that touches its section:
+
+- **Chip row gaps differ by context.** The tone-chip rows use `gap 7px`; the filter-chip row uses
+  `gap 8px`. The conformance pass set `ChipGroup` to 7px globally.
+- **`FilterChip` has no mark.** The artifact's filter chips carry a checkbox-style mark glyph inside
+  the chip; ours renders the label alone.
+- **Two Chip variants are missing** that the artifact shows: count badges (`13`, `8`, `+4 more`) and
+  overflow/expiry pills (`128 days left`, `36 days left`).
+
 ## Appendix A — `tokens.css`
 
 ```css
@@ -934,3 +983,197 @@ _DM Sans 400/500/700 · JetBrains Mono for copyable values_
 | Section gutter | 24px x · 22px between cards |
 | Content max-w | 1320px detail · 1560px tables · gutter 32px |
 | Table row | pad 13px 20px · 1px #F5F7FA · hover #FAFBFD |
+---
+
+## Appendix D — demo page content
+
+Extracted verbatim from the source artifact. This is the content authority for the
+`/design-system` page: section descriptions, sub-block labels, and rule-card footers.
+Sample data inside each sub-block comes from the artifact too — see §17.
+
+#### Foundations
+
+**Description:** Every value used anywhere below comes from these four scales. Nothing in the licensing screens introduces a colour, radius, or size that isn't here.
+
+
+#### Containers & surfaces
+
+**Description:** Three surfaces, and nothing else: the canvas #EEF1F6 that everything sits on, the card #FFF that holds content, and the sunken strip #FAFBFD for headers, footers, and expanded rows inside a card. Cards never nest inside cards — a card divides instead.
+
+**Sub-blocks:**
+
+- `PAGE SHELL — CANVAS, RAIL, STICKY HEADER, CONTENT`
+- `CARD — HEADER, BODY, FOOTER`
+- `DIVIDED CARD — NO NESTING`
+- `INNER SURFACES`
+
+**Rule cards:**
+
+- **{{ rule.title }}** — {{ rule.body }}
+
+
+#### Chips
+
+**Description:** Height auto (20px at 11px type), radius 999, 11px / 700, padding 3px 9px. Tone comes from the meaning, never from decoration.
+
+**Sub-blocks:**
+
+- `INTERACTIVE — FILTER CHIPS`
+- `DISMISSIBLE — APPLIED FILTERS`
+
+**Rule cards:**
+
+- **{{ rule.title }}** — {{ rule.body }}
+
+
+#### Tabs
+
+**Description:** Three variants, one rule: the active item is the only green thing in the row.
+
+**Sub-blocks:**
+
+- `UNDERLINE — PRIMARY, SITS ON A CARD EDGE`
+- `SEGMENTED — INLINE FILTER, 2–4 SHORT OPTIONS`
+- `STAGE TABS — A WORKFLOW WITH VOLUME PER STEP`
+
+**Rule cards:**
+
+- **{{ rule.title }}** — {{ rule.body }}
+
+
+#### Text fields
+
+**Description:** Label 12.5px/500 above, hint or error 12px below. The green ring is the only focus signal.
+
+
+#### Dropdowns
+
+**Description:** Same 38px shell as a text field. The caret is the only affordance; the panel is a 12px-radius card on a soft shadow.
+
+
+#### Buttons
+
+**Description:** 38px default, 34px compact, 44px for the one primary action on a mobile-width form. One filled green button per screen region.
+
+
+#### File inputs
+
+**Description:** Dashed 1.6px border at rest, green on hover. Every uploaded file becomes a row with a type mark, size, and a single destructive action.
+
+**Sub-blocks:**
+
+- `FILE LIST — UPLOADING, DONE, FAILED`
+
+
+#### Toasts & inline notices
+
+**Description:** Toasts confirm something you just did and leave. Notices explain a state that stays — they live in the layout, never float.
+
+**Sub-blocks:**
+
+- `INLINE NOTICES — PERSISTENT, IN-FLOW`
+
+**Rule cards:**
+
+- **{{ rule.title }}** — {{ rule.body }}
+
+
+#### Selection controls
+
+**Description:** Checkbox for many, radio for one, switch for something that takes effect the moment you touch it. 17px targets, 10px gap to the label, whole row clickable.
+
+**Sub-blocks:**
+
+- `CHECKBOX · STATES`
+- `RADIO · LIST`
+- `SWITCH · TAKES EFFECT AT ONCE`
+- `CHECKBOX CARDS · MULTI`
+- `RADIO CARDS · SINGLE`
+- `BULK SELECTION — TABLE HEADER + ACTION BAR`
+
+
+#### Dialog, empty state & loading
+
+**Description:** The three states a table can be in besides full, plus the one modal pattern — confirmation before an irreversible action.
+
+**Sub-blocks:**
+
+- `CONFIRMATION DIALOG`
+- `EMPTY STATE`
+- `SKELETON ROWS`
+
+
+#### Type scale
+
+**Description:** DM Sans at three weights — 400 body, 500 labels, 700 anything that titles something. JetBrains Mono for numbers you might copy.
+
+**Rule cards:**
+
+- **{{ rule.title }}** — {{ rule.body }}
+
+
+#### Component specs
+
+**Description:** Redlines for everything above — geometry, type, and the exact colour per state. Values are literal CSS.
+
+
+#### Dark mode
+
+**Sub-blocks:**
+
+- `CHIPS & TONES`
+- `TABS & STAGE CARDS`
+- `FIELDS & DROPDOWN`
+- `SELECTION & FILES`
+- `DIALOG, EMPTY, SKELETON & PAGINATION`
+- `TOASTS, NOTICES & TABLE`
+
+**Rule cards:**
+
+- **Depth by surface, not shadow** — --sh-card and --sh-primary become none; a card reads as raised because #161C26 sits on #0F141C. Only toasts, panels, and dialogs keep a shadow, and it goes darker rather than softer.
+- **The fill flips its text** — White on a dark-mode green never clears 4.5:1 at a usable brightness, so the filled green lightens to #2FB25F and takes #0B1017 text (6.95:1). Read it from --green-on-fill so one button component serves both themes.
+- **Tints become translucent** — Every status tint is the tone at 14–24% over whatever surface it lands on — 7% for neutral chips and row hover — paired with the light tone as text — so a chip works on a card, a sunken strip, and a hovered row without a third value.
+- **Geometry never changes** — Same 38px fields, 9px radius, 22px chips, 32px notices, 24px gutters. Dark mode is a palette swap — if a size changes between themes, it is a bug.
+
+
+#### Tokens for handoff
+
+**Description:** Paste this block into your stylesheet first, then build components against the variables — not raw hex. Every value above resolves to one of these.
+
+**Rule cards:**
+
+- **{{ rule.title }}** — {{ rule.body }}
+
+
+#### Rule-card data
+
+#### toastRules
+
+- **One line, one consequence** — Title names what happened, body carries the detail a user would otherwise go looking for.
+- **Actions live in the toast** — Undo, Retry, and View belong here — a toast with no action and no detail should have been a quiet state change.
+- **Three at most** — Older toasts drop off the bottom of the stack; a fourth event means the page itself should say something.
+
+#### handoffRules
+
+- **Tokens first, components second** — Land olrs-tokens.css before any component work, then let every rule reference a variable. Raw hex in a component file is the bug.
+- **Height is the contract** — 38px fields and 34px compact controls line up across filter bars, forms, and table toolbars. If a control does not fit one of those two heights, it is the wrong control.
+- **One green per region** — A screen region gets exactly one filled green button. Everything else is outline, ghost, or destructive outline.
+- **Tone means state, never decoration** — Green issued, amber waiting or legacy, red blocked or overdue, blue portal-filed, violet modification, grey closed. No other pairings.
+
+#### containerRules
+
+- **Cards never nest** — A card that needs internal structure divides with 1px #EEF1F6 rules or drops to a sunken strip. Two stacked shadows means the layout is wrong.
+- **22px between cards, 24px inside** — Section gap 22px, card gutter 24px (20px on narrow cards), 12px between cards in a stat grid. Nothing else.
+- **One elevation per layer** — Cards 0 1px 2px, popovers 0 12px 28px, dialogs 0 24px 60px. Elevation signals layer, never importance.
+
+#### chipRules
+
+- **One tone per meaning** — Green = good or issued, amber = waiting or legacy, red = blocked or overdue, grey = neutral, purple = modification.
+- **Never two chips of the same tone** — If a row needs two amber chips, one of them is really a field, not a chip. Move it into the label line.
+- **Chips never wrap mid-phrase** — white-space: nowrap, and overflow collapses into a grey “+n more” that expands the row.
+
+#### tabRules
+
+- **Underline for content, segmented for filters** — Underline tabs swap what the table shows. Segmented chips narrow what's already shown.
+- **Counts belong on tabs, not beside them** — A mono count inside the tab keeps the row scannable and stops the label from shifting when numbers change.
+- **Never nest two tab rows** — If a view needs a second axis, that axis is a filter — put it in the bar below.
