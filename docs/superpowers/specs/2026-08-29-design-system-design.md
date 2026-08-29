@@ -224,7 +224,7 @@ Pinia store holds the queue (`useToastStore`); `<ToastRegion>` renders Ark `toas
 
 ## 12. Verification surface
 
-A `/design-system` route reproducing all 16 sections of the source canvas. This is the acceptance test — checked side-by-side against the artifact in **both** themes. Each phase appends its own sections, so the page grows with the system.
+A `/design-system` route reproducing every section of the source canvas — **15**, enumerated in Appendix D. (An earlier draft of this section said 16; Appendix D is the count.) This is the acceptance test — checked side-by-side against the artifact in **both** themes. Each phase appends its own sections, so the page grows with the system.
 
 The route is a single `src/pages/design-system.vue`; its section components live in `src/design-system/demo/`, **not** under `src/pages/`. Anything under `pages/` becomes a route with the file-based router, so a `sections/` subfolder there would silently generate a dozen junk routes. Keeping the demo beside the system also means both lift out together. The existing indigo/gray demo styling in `src/pages/index.vue` and `src/pages/about.vue` is replaced with token-based markup, since it currently contradicts the system.
 
