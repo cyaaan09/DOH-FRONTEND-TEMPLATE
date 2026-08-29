@@ -22,4 +22,13 @@ describe('design system page', () => {
       expect(wrapper.text(), `missing chip: ${tone}`).toContain(tone)
     }
   })
+
+  it('exercises the variants added in the conformance pass', () => {
+    const wrapper = mount(DesignSystemPage)
+    // Chip variants, FilterChip, icon Button, StatCard dot/urgent, Meter caption
+    for (const text of ['Pharmacy', 'Birthing Home', 'Uploaded']) {
+      expect(wrapper.text(), `missing: ${text}`).toContain(text)
+    }
+    expect(wrapper.findAll('[aria-pressed]').length).toBeGreaterThan(0)
+  })
 })

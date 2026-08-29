@@ -19,15 +19,26 @@ import { Button, Card, CardBody, CardFooter, CardHeader, Meter, StatCard } from 
       </CardFooter>
     </Card>
 
-    <div class="grid gap-card sm:grid-cols-3">
-      <StatCard label="Active LTOs" value="211" hint="2 due within 7 days" />
-      <StatCard label="Inspection" value="8" hint="ready to sign" />
+    <div class="cards-demo__stat-grid">
+      <StatCard label="Active LTOs" value="211" hint="2 due within 7 days" dot="green" />
+      <StatCard label="Inspection" value="8" hint="2 overdue" dot="amber" urgent />
       <StatCard label="Closed" value="41" hint="rejected · forfeited" muted />
     </div>
 
     <div class="max-w-sm">
-      <p class="text-hint text-text-meta mb-2">Meter at 62%</p>
-      <Meter :value="62" :max="100" label="Upload progress" />
+      <Meter :value="62" :max="100" label="Upload progress" caption="Uploaded" />
     </div>
   </div>
 </template>
+
+<style scoped>
+/* Redline "Stat cards & meters" Grid row — auto-fit minmax(190px,1fr), gap
+ * 12px. No Tailwind utility expresses an auto-fit track list, so this is the
+ * same var()-backed escape hatch the components use for values with no
+ * utility namespace. */
+.cards-demo__stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: var(--gap-card);
+}
+</style>

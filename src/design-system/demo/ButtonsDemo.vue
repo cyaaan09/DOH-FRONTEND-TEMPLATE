@@ -23,6 +23,7 @@ function runBusy() {
       <Button size="compact" variant="secondary">Apply</Button>
       <Button size="compact" variant="ghost">Reset filters</Button>
       <Button size="touch">Sign document</Button>
+      <Button size="icon" variant="secondary" aria-label="More actions">⋯</Button>
     </div>
 
     <div class="flex flex-wrap items-center gap-btn-row">
