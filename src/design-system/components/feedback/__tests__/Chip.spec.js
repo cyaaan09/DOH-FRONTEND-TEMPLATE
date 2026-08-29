@@ -112,19 +112,24 @@ describe('Chip — Appendix C conformance', () => {
 
   it('supports a filled variant', () => {
     // Redline "Active (filled)" — green-fill bg, green-on-fill text, 6.01:1.
+    // States no weight, so it keeps the chip family's bundled 700 from
+    // text-chip rather than inventing one.
     const classes = mount(Chip, { props: { variant: 'filled' } }).classes()
     expect(classes).toContain('bg-green-fill')
     expect(classes).toContain('text-green-on-fill')
+    expect(classes).toContain('text-chip')
   })
 
   it('supports a service variant', () => {
     // Redline "Service chip" — 12px/400, 5px 12px padding, white surface,
-    // border-soft, ink-600 text.
+    // border-soft, ink-600 text. text-hint bundles the 400 weight itself, so
+    // this also confirms no stray text-chip (bundled 700) leaked in.
     const classes = mount(Chip, { props: { variant: 'service' } }).classes()
     expect(classes).toContain('bg-surface')
     expect(classes).toContain('border-soft')
     expect(classes).toContain('text-ink-600')
     expect(classes).toContain('text-hint')
+    expect(classes).not.toContain('text-chip')
   })
 
   it('falls back to the tint variant for an unknown value', () => {
@@ -160,6 +165,18 @@ describe('FilterChip', () => {
       'true',
     )
     expect(mount(FilterChip).attributes('aria-pressed')).toBe('false')
+  })
+
+  it('renders the unselected/selected weight asymmetry the redline states', () => {
+    // Redline "Filter chip off" states weight 500 explicitly, so font-medium
+    // overrides text-chip's bundled 700. "Filter chip on" states no weight,
+    // so it is left at the bundled 700 rather than having one invented for
+    // it — the asymmetry is intentional, not a missed case.
+    const off = mount(FilterChip, { slots: { default: 'Hospital' } }).classes()
+    expect(off).toContain('font-medium')
+
+    const on = mount(FilterChip, { props: { selected: true } }).classes()
+    expect(on).not.toContain('font-medium')
   })
 })
 
