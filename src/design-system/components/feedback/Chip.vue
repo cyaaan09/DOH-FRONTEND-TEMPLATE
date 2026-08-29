@@ -1,21 +1,31 @@
 <script setup>
 import { computed } from 'vue'
+import { DEFAULT_TONE, TONE_TEXT, TONES } from '../tones'
 
 const props = defineProps({
-  tone: { type: String, default: 'neutral' },
+  tone: {
+    type: String,
+    default: DEFAULT_TONE,
+    validator: (value) => TONES.includes(value),
+  },
   dot: { type: Boolean, default: false },
 })
 
-const TONES = {
-  neutral: 'bg-neutral-100 text-ink-600',
-  green: 'bg-green-100 text-green-text',
-  amber: 'bg-amber-100 text-amber-text',
-  red: 'bg-red-100 text-red-700',
-  blue: 'bg-blue-100 text-blue-700',
-  violet: 'bg-violet-100 text-violet-700',
+// Chip's own filled tint per tone — genuinely different from Notice's
+// near-white surface, so it stays local rather than moving into tones.js.
+const BACKGROUNDS = {
+  neutral: 'bg-neutral-100',
+  green: 'bg-green-100',
+  amber: 'bg-amber-100',
+  red: 'bg-red-100',
+  blue: 'bg-blue-100',
+  violet: 'bg-violet-100',
 }
 
-const toneClass = computed(() => TONES[props.tone] ?? TONES.neutral)
+const toneClass = computed(
+  () =>
+    `${BACKGROUNDS[props.tone] ?? BACKGROUNDS[DEFAULT_TONE]} ${TONE_TEXT[props.tone] ?? TONE_TEXT[DEFAULT_TONE]}`,
+)
 </script>
 
 <template>

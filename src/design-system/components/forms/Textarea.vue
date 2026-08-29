@@ -5,6 +5,10 @@ const props = defineProps({
   modelValue: { type: String, default: '' },
   label: { type: String, required: true },
   hint: { type: String, default: '' },
+  error: { type: String, default: '' },
+  placeholder: { type: String, default: '' },
+  disabled: { type: Boolean, default: false },
+  readonly: { type: Boolean, default: false },
   rows: { type: Number, default: 3 },
   maxlength: { type: Number, default: 0 },
 })
@@ -12,6 +16,8 @@ const props = defineProps({
 defineEmits(['update:modelValue'])
 
 const id = useId()
+const messageId = `${id}-message`
+const message = computed(() => props.error || props.hint)
 const counter = computed(() =>
   props.maxlength ? `${props.modelValue.length} / ${props.maxlength}` : '',
 )
@@ -26,14 +32,30 @@ const counter = computed(() =>
 
     <textarea
       :id="id"
-      class="field__input w-full resize-y rounded-field border border-field bg-surface px-3 py-2 text-body text-ink-900 transition-colors"
+      class="field__input w-full resize-y rounded-field border px-3 py-2 text-body text-ink-900 transition-colors"
+      :class="[
+        error ? 'border-red-border' : 'border-field',
+        disabled || readonly ? 'bg-surface-input text-ink-500' : 'bg-surface',
+      ]"
       :rows="rows"
       :value="modelValue"
       :maxlength="maxlength || undefined"
+      :placeholder="placeholder"
+      :disabled="disabled"
+      :readonly="readonly"
+      :aria-invalid="error ? 'true' : undefined"
+      :aria-describedby="message ? messageId : undefined"
       @input="$emit('update:modelValue', $event.target.value)"
     />
 
-    <p v-if="hint" class="text-hint text-text-meta">{{ hint }}</p>
+    <p
+      v-if="message"
+      :id="messageId"
+      class="text-hint"
+      :class="error ? 'text-red-700' : 'text-text-meta'"
+    >
+      {{ message }}
+    </p>
   </div>
 </template>
 

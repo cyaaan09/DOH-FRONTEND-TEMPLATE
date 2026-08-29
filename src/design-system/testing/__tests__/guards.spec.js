@@ -112,8 +112,16 @@ describe('design-system components', () => {
   })
 
   it('excludes __tests__ directories from scanning', () => {
+    // A vacuous version of this test would pass even if listComponents()
+    // returned an empty list. Anchor it to a test file that is known to
+    // exist on disk, and assert it is both present on disk and absent from
+    // the scanned list — that only holds if the __tests__ filter actually
+    // ran.
+    const knownTestFile = join(COMPONENTS_DIR, 'feedback/__tests__/Chip.spec.js')
+    expect(readdirSync(join(COMPONENTS_DIR, 'feedback/__tests__'))).toContain('Chip.spec.js')
+
     const components = listComponents()
-    // Assert that no scanned file contains __tests__ in its path
+    expect(components).not.toContain(knownTestFile)
     for (const file of components) {
       expect(file).not.toMatch(/__tests__/)
     }
@@ -133,6 +141,41 @@ describe('findAppImports', () => {
     ])
   })
 
+  // Lazy component loading (defineAsyncComponent + dynamic import) is the
+  // dominant idiom future components will use, so these six forms are the
+  // realistic violations a `from`-clause-only regex would miss.
+  it('catches a dynamic import wrapped in defineAsyncComponent', () => {
+    expect(
+      findAppImports("defineAsyncComponent(() => import('@/components/Foo.vue'))"),
+    ).toEqual(['@/components/Foo.vue'])
+  })
+
+  it('catches an awaited dynamic import', () => {
+    expect(findAppImports("await import('../../components/Foo.vue')")).toEqual([
+      '../../components/Foo.vue',
+    ])
+  })
+
+  it('catches a side-effect import', () => {
+    expect(findAppImports("import '@/components/styles.css'")).toEqual([
+      '@/components/styles.css',
+    ])
+  })
+
+  it('catches a bare import with no sub-path', () => {
+    expect(findAppImports("import '@/components'")).toEqual(['@/components'])
+  })
+
+  it('catches a require() call', () => {
+    expect(findAppImports("require('@/components/Foo')")).toEqual(['@/components/Foo'])
+  })
+
+  it('catches the bare src/components path form', () => {
+    expect(findAppImports("import Foo from 'src/components/Foo.vue'")).toEqual([
+      'src/components/Foo.vue',
+    ])
+  })
+
   it('allows imports within the design system', () => {
     expect(findAppImports("import Chip from '../feedback/Chip.vue'")).toEqual([])
     expect(findAppImports("import { useTheme } from '@/design-system'")).toEqual([])
@@ -141,6 +184,18 @@ describe('findAppImports', () => {
   it('allows package imports', () => {
     expect(findAppImports("import { ref } from 'vue'")).toEqual([])
     expect(findAppImports("import { useDark } from '@vueuse/core'")).toEqual([])
+  })
+
+  it('allows a composable import that merely starts with @/comp', () => {
+    expect(findAppImports("import { useThing } from '@/composables/useThing'")).toEqual([])
+  })
+
+  it('does not false-positive on a sibling directory named components-legacy', () => {
+    expect(findAppImports("import Foo from '@/components-legacy/x'")).toEqual([])
+  })
+
+  it('allows prose mentioning "components"', () => {
+    expect(findAppImports('// this file renders several components internally')).toEqual([])
   })
 })
 

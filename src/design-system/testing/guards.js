@@ -40,11 +40,27 @@ export function findDarkVariants(source) {
   return [...source.matchAll(DARK_VARIANT)].map((match) => match[1])
 }
 
-// An import whose specifier resolves into the app's own components directory.
-// Matches the '@/components/...' alias and any relative path ending in a
-// '../components/' segment. Written with a capture group rather than a
+// An import whose specifier resolves into the app's own components
+// directory. Matches the '@/components/...' alias, the bare
+// 'src/components/...' path, and any relative path ending in a
+// '../components/' segment — preceded by the keyword `from`, `import` or
+// `require` (with an optional call-paren), so beyond a static from-clause
+// this also catches: a dynamic specifier passed to defineAsyncComponent, an
+// awaited dynamic specifier, a side-effect specifier with a stylesheet
+// sub-path, a bare directory specifier with no sub-path at all (the
+// trailing sub-path is optional), and a specifier passed to a CommonJS-style
+// loader call. Lazy component loading is the dominant idiom future
+// components will use, so the dynamic forms must be covered, not just
+// static from-clauses. Written with a capture group rather than a
 // lookbehind, which is not portable across JS engines.
-const APP_IMPORT = /from\s+['"]((?:@\/components|(?:\.\.\/)+components)\/[^'"]*)['"]/g
+//
+// NOTE for maintainers: avoid writing a literal matching specifier (the
+// keyword immediately followed by a quoted components path) anywhere in
+// this file's own source, including in comments — the design-system-wide
+// import-direction test below scans every .js file, itself included, and a
+// literal example here would trip its own guard.
+const APP_IMPORT =
+  /(?:from|import|require)\s*\(?\s*['"]((?:@\/components|src\/components|(?:\.\.\/)+components)(?:\/[^'"]*)?)['"]/g
 
 /**
  * @param {string} source file contents

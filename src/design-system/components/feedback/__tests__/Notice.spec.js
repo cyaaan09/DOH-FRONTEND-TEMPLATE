@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import Notice from '../Notice.vue'
 import Skeleton from '../Skeleton.vue'
 
@@ -19,9 +19,19 @@ describe('Notice', () => {
     expect(wrapper.classes()).toContain('bg-red-50')
   })
 
-  it('supports every tone Chip supports', () => {
-    for (const tone of ['neutral', 'green', 'amber', 'red', 'blue', 'violet']) {
-      expect(() => mount(Notice, { props: { tone, label: 'X' } })).not.toThrow()
+  it('maps every tone to its own surface/pill class pair', () => {
+    const cases = {
+      neutral: { surface: 'bg-neutral-100', pill: 'text-ink-600' },
+      green: { surface: 'bg-green-50', pill: 'text-green-text' },
+      amber: { surface: 'bg-amber-50', pill: 'text-amber-text' },
+      red: { surface: 'bg-red-50', pill: 'text-red-700' },
+      blue: { surface: 'bg-blue-50', pill: 'text-blue-700' },
+      violet: { surface: 'bg-violet-100', pill: 'text-violet-700' },
+    }
+    for (const [tone, { surface, pill }] of Object.entries(cases)) {
+      const wrapper = mount(Notice, { props: { tone, label: 'X' } })
+      expect(wrapper.classes(), `tone=${tone} surface`).toContain(surface)
+      expect(wrapper.get('[data-pill]').classes(), `tone=${tone} pill`).toContain(pill)
     }
   })
 
@@ -31,10 +41,32 @@ describe('Notice', () => {
     )
   })
 
-  it('announces errors politely to assistive tech', () => {
+  it('interrupts assistive tech for an error tone but stays polite otherwise', () => {
     expect(mount(Notice, { props: { tone: 'red', label: 'Error' } }).attributes('role')).toBe(
+      'alert',
+    )
+    expect(mount(Notice, { props: { tone: 'green', label: 'OK' } }).attributes('role')).toBe(
       'status',
     )
+  })
+
+  describe('prop validator', () => {
+    afterEach(() => {
+      vi.restoreAllMocks()
+    })
+
+    it('warns on an unknown tone but keeps the runtime fallback', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const wrapper = mount(Notice, { props: { tone: 'nonsense', label: 'X' } })
+      expect(warn).toHaveBeenCalled()
+      expect(wrapper.classes()).toContain('bg-neutral-100')
+    })
+
+    it('does not warn for a known tone', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      mount(Notice, { props: { tone: 'blue', label: 'X' } })
+      expect(warn).not.toHaveBeenCalled()
+    })
   })
 })
 

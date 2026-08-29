@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import Button from '../Button.vue'
 
 describe('Button', () => {
@@ -43,5 +43,31 @@ describe('Button', () => {
     // Guards against a typo silently rendering an unstyled button.
     const wrapper = mount(Button, { props: { variant: 'nonsense' } })
     expect(wrapper.classes()).toContain('btn--primary')
+  })
+
+  describe('prop validators', () => {
+    afterEach(() => {
+      vi.restoreAllMocks()
+    })
+
+    it('warns on an unknown variant but keeps the runtime fallback', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const wrapper = mount(Button, { props: { variant: 'nonsense' } })
+      expect(warn).toHaveBeenCalled()
+      expect(wrapper.classes()).toContain('btn--primary')
+    })
+
+    it('warns on an unknown size but keeps the runtime fallback', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const wrapper = mount(Button, { props: { size: 'nonsense' } })
+      expect(warn).toHaveBeenCalled()
+      expect(wrapper.classes()).toContain('h-field')
+    })
+
+    it('does not warn for a known variant or size', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      mount(Button, { props: { variant: 'secondary', size: 'compact' } })
+      expect(warn).not.toHaveBeenCalled()
+    })
   })
 })

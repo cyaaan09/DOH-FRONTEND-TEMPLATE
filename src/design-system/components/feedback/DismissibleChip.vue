@@ -17,7 +17,7 @@ const emit = defineEmits(['dismiss'])
       type="button"
       class="chip__remove"
       :aria-label="`Remove ${chipKey} ${value}`"
-      @click="emit('dismiss', value)"
+      @click="emit('dismiss', { chipKey, value })"
     >
       ×
     </button>

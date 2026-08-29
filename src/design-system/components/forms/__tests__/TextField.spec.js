@@ -76,6 +76,46 @@ describe('Textarea', () => {
   it('defaults to three rows', () => {
     expect(mount(Textarea, { props: { label: 'A' } }).get('textarea').attributes('rows')).toBe('3')
   })
+
+  it('shows a hint when there is no error', () => {
+    const wrapper = mount(Textarea, { props: { label: 'A', hint: 'Must be at least 1' } })
+    expect(wrapper.text()).toContain('Must be at least 1')
+  })
+
+  it('replaces the hint with the error and marks the textarea invalid', () => {
+    const wrapper = mount(Textarea, {
+      props: { label: 'A', hint: 'a hint', error: 'Required' },
+    })
+    expect(wrapper.text()).toContain('Required')
+    expect(wrapper.text()).not.toContain('a hint')
+    expect(wrapper.get('textarea').attributes('aria-invalid')).toBe('true')
+  })
+
+  it('points aria-describedby at whichever message is showing', () => {
+    const wrapper = mount(Textarea, { props: { label: 'A', error: 'Required' } })
+    const describedBy = wrapper.get('textarea').attributes('aria-describedby')
+    expect(describedBy).toBeTruthy()
+    expect(wrapper.get(`#${describedBy}`).text()).toBe('Required')
+  })
+
+  it('renders a placeholder when given one', () => {
+    const wrapper = mount(Textarea, { props: { label: 'A', placeholder: 'Add remarks…' } })
+    expect(wrapper.get('textarea').attributes('placeholder')).toBe('Add remarks…')
+  })
+
+  it('keeps its border but loses its white surface when disabled', () => {
+    const wrapper = mount(Textarea, { props: { label: 'A', disabled: true } })
+    expect(wrapper.get('textarea').attributes('disabled')).toBeDefined()
+    expect(wrapper.get('textarea').classes()).toContain('bg-surface-input')
+    expect(wrapper.get('textarea').classes()).toContain('border-field')
+  })
+
+  it('keeps its border but loses its white surface when readonly', () => {
+    const wrapper = mount(Textarea, { props: { label: 'A', readonly: true } })
+    expect(wrapper.get('textarea').attributes('readonly')).toBeDefined()
+    expect(wrapper.get('textarea').classes()).toContain('bg-surface-input')
+    expect(wrapper.get('textarea').classes()).toContain('border-field')
+  })
 })
 
 describe('SearchField', () => {

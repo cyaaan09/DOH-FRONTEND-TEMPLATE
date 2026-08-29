@@ -2,8 +2,22 @@
 import { computed } from 'vue'
 
 const props = defineProps({
-  variant: { type: String, default: 'primary' },
-  size: { type: String, default: 'default' },
+  // The validator only warns on a typo in dev; it must not change runtime
+  // behaviour, so the `?? DEFAULT` fallbacks below are unchanged. A
+  // defineProps() validator cannot reference a variable declared elsewhere
+  // in <script setup> (Vue hoists the props option out of setup()), so the
+  // allowed values are spelled out here rather than derived from SIZES /
+  // VARIANTS below.
+  variant: {
+    type: String,
+    default: 'primary',
+    validator: (value) => ['primary', 'secondary', 'destructive', 'ghost'].includes(value),
+  },
+  size: {
+    type: String,
+    default: 'default',
+    validator: (value) => ['default', 'compact', 'touch'].includes(value),
+  },
   busy: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
   type: { type: String, default: 'button' },

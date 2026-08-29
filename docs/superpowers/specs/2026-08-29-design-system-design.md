@@ -141,9 +141,11 @@ Tailwind v4 carries line-height, letter-spacing and weight on the same name (`--
 | `text-row-title` | 14px | 700 | — |
 | `text-body` | 13.5px | 400 | leading 1.55 |
 | `text-field-label` | 12.5px | 500 | — |
-| `text-meta` | 12px | 400 | — |
+| `text-hint` | 12px | 400 | — |
 | `text-column-header` | 10.5px | 700 | tracking 0.08em |
 | `text-mono` | 12.5px | 500 | — |
+
+Named `text-hint`, not `text-meta` as the source document's row label reads: `tokens.css` already defines a *colour* token `--text-meta`, bridged to `--color-text-meta`. A type-scale utility of the same name would give the confusing pair `text-meta` (size) and `text-text-meta` (colour), so the size utility is renamed to `text-hint` — see the rationale comment in `theme.css`.
 
 `--text-*` cannot carry `font-family`, so the Mono style is the only two-class case: `text-mono font-mono`. Components must never write an arbitrary size (`text-[13.5px]`) — a review point, since no static guard can distinguish a correct 13.5px from a typo'd 13px.
 

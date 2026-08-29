@@ -9,7 +9,7 @@ const emit = defineEmits(['update:modelValue'])
 </script>
 
 <template>
-  <div class="field relative flex items-center">
+  <div class="relative flex items-center">
     <svg
       class="pointer-events-none absolute left-3 h-4 w-4 text-ink-400"
       viewBox="0 0 16 16"

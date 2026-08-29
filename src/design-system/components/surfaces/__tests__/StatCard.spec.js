@@ -55,4 +55,15 @@ describe('Meter', () => {
     expect(mount(Meter, { props: { value: 150, max: 100, label: 'A' } }).get('[data-fill]').attributes('style')).toContain('width: 100%')
     expect(mount(Meter, { props: { value: -5, max: 100, label: 'A' } }).get('[data-fill]').attributes('style')).toContain('width: 0%')
   })
+
+  it('clamps the announced aria-valuenow instead of reporting an out-of-range value', () => {
+    // A screen reader computes a percentage from valuenow/min/max; an
+    // unclamped valuenow of 150 (max 100) or -5 announces nonsense even
+    // though the visual fill is already clamped.
+    const over = mount(Meter, { props: { value: 150, max: 100, label: 'A' } })
+    expect(over.get('[role="progressbar"]').attributes('aria-valuenow')).toBe('100')
+
+    const under = mount(Meter, { props: { value: -5, max: 100, label: 'A' } })
+    expect(under.get('[role="progressbar"]').attributes('aria-valuenow')).toBe('0')
+  })
 })

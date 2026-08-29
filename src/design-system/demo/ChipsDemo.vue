@@ -8,8 +8,13 @@ const applied = ref([
   { key: 'Source:', value: 'Online' },
 ])
 
-function dismiss(value) {
-  applied.value = applied.value.filter((chip) => chip.value !== value)
+function dismiss({ chipKey, value }) {
+  // Filter on key and value together — two chips can legitimately share a
+  // value under different keys, and filtering on value alone would remove
+  // both.
+  applied.value = applied.value.filter(
+    (chip) => !(chip.key === chipKey && chip.value === value),
+  )
 }
 </script>
 

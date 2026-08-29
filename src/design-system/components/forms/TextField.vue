@@ -25,7 +25,7 @@ const message = computed(() => props.error || props.hint)
   <div class="flex flex-col gap-1.5">
     <label :for="id" class="text-field-label text-ink-700">{{ label }}</label>
 
-    <div class="field relative flex items-center">
+    <div class="relative flex items-center">
       <input
         :id="id"
         class="field__input h-field w-full rounded-field border px-3 text-body text-ink-900 transition-colors"
