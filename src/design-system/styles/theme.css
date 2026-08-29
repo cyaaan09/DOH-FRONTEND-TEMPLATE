@@ -58,6 +58,17 @@
    * the spec §6 scale, which covers prose and table styles only. */
   --text-chip: 11px;
   --text-chip--font-weight: 700;
+
+  /* Notice body — redline "Notice text · 13px / 400 in tone colour". The
+   * 1.35 line-height is tighter than --text-body's 1.55 because a notice is
+   * one line inside a 32px shell. */
+  --text-notice: 13px;
+  --text-notice--line-height: 1.35;
+  --text-notice--font-weight: 400;
+
+  /* Stat card hint — redline "Hint · 11.5px / 400 #667085 · urgent 700 #B42318" */
+  --text-stat-hint: 11.5px;
+  --text-stat-hint--font-weight: 400;
 }
 
 @theme inline {
@@ -156,6 +167,30 @@
   --shadow-toast: var(--sh-toast);
   --shadow-panel: var(--sh-panel);
   --shadow-dialog: var(--sh-dialog);
+
+  /* additions — spec Appendix A.1 */
+  --color-notice-border-green: var(--notice-border-green);
+  --color-notice-border-blue: var(--notice-border-blue);
+  --color-notice-border-amber: var(--notice-border-amber);
+  --color-notice-border-red: var(--notice-border-red);
+  --color-toast-border-green: var(--toast-border-green);
+  --color-toast-border-amber: var(--toast-border-amber);
+  --color-toast-border-blue: var(--toast-border-blue);
+  --color-toast-bg-amber: var(--toast-bg-amber);
+  --color-toast-bg-blue: var(--toast-bg-blue);
+  --color-dot-green: var(--dot-green);
+  --color-border-dashed: var(--border-dashed);
+  --color-dropzone-hover: var(--dropzone-hover);
+  --color-surface-disabled: var(--surface-disabled);
+  --color-red-800: var(--red-800);
+  --color-green-link-hover: var(--green-link-hover);
+  --color-nav-ink: var(--nav-ink);
+  --color-item-mark: var(--item-mark);
+  --color-avatar-bg: var(--avatar-bg);
+  --color-logo-ink: var(--logo-ink);
+  --color-separator: var(--separator);
+  --color-row-hover-strong: var(--row-hover-strong);
+  --radius-bar: var(--r-bar);
 }
 
 /* Deliberately NOT bridged — no Tailwind namespace fits, so components use

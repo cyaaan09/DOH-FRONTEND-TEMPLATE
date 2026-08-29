@@ -15,7 +15,14 @@ describe('design tokens', () => {
   })
 
   it('introduces no token in dark that does not exist in light', () => {
-    const orphans = [...dark.keys()].filter((name) => !light.has(name))
+    // --green-on-fill-red and --red-fill-hover are dark-only by design (spec
+    // Appendix A.1): light mode's destructive button already has white text
+    // and --red-800 for its hover, so there is no light-mode role for these.
+    // Named here, not widened generally — a real orphan should still fail.
+    const DARK_ONLY_BY_DESIGN = new Set(['green-on-fill-red', 'red-fill-hover'])
+    const orphans = [...dark.keys()].filter(
+      (name) => !light.has(name) && !DARK_ONLY_BY_DESIGN.has(name),
+    )
     expect(orphans).toEqual([])
   })
 
@@ -47,5 +54,36 @@ describe('design tokens', () => {
   it('flips the fill label colour in dark mode', () => {
     expect(light.get('green-on-fill')).toBe('#FFFFFF')
     expect(dark.get('green-on-fill')).toBe('#0B1017')
+  })
+
+  it('carries the additions the source document uses but never tokenised', () => {
+    // Spec Appendix A.1 — each of these is cited to the redline that needs it.
+    for (const name of [
+      'notice-border-green', 'notice-border-blue', 'notice-border-amber', 'notice-border-red',
+      'toast-border-green', 'toast-border-amber', 'toast-border-blue',
+      'toast-bg-amber', 'toast-bg-blue',
+      'dot-green', 'border-dashed', 'dropzone-hover', 'surface-disabled',
+      'red-800', 'green-link-hover',
+      'nav-ink', 'item-mark', 'avatar-bg', 'logo-ink', 'separator', 'row-hover-strong',
+      'r-bar',
+    ]) {
+      expect(light.has(name), `tokens.css is missing --${name}`).toBe(true)
+    }
+  })
+
+  it('keeps the verbatim block intact above the additions', () => {
+    // The additions are appended after a marker comment; everything above it
+    // must still match spec Appendix A byte for byte.
+    const css = readStyle('tokens.css')
+    expect(css).toContain('/* --- additions: colours the source document uses but never tokenised --- */')
+    const verbatim = css.split('/* --- additions')[0]
+    expect(verbatim).toMatch(/^:root\s*\{/m)
+    expect(verbatim).not.toContain('--notice-border-green')
+  })
+
+  it('gives the two dark-mode additions their counterparts', () => {
+    for (const name of ['green-on-fill-red', 'red-fill-hover']) {
+      expect(dark.has(name), `tokens.dark.css is missing --${name}`).toBe(true)
+    }
   })
 })

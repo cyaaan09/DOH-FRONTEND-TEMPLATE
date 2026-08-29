@@ -73,3 +73,53 @@
   /* z-index */
   --z-header: 6; --z-popover: 12; --z-dialog: 40;
 }
+
+/* --- additions: colours the source document uses but never tokenised --- */
+:root {
+  /* Notice borders — redline "Notice label · 1px tone/200" */
+  --notice-border-green: #A6E7C3;
+  --notice-border-blue:  #B2DDFF;
+  --notice-border-amber: #F7D9A0;
+  --notice-border-red:   #F9C4BE;
+
+  /* Toast borders and fills — redline "Success/Error/Warning/Info tone".
+     The toast error border is #F5CDC7, already tokenised as --red-border. */
+  --toast-border-green: #CDEAD6;
+  --toast-border-amber: #F2E0BD;
+  --toast-border-blue:  #D5E4FA;
+  --toast-bg-amber:     #FFFBF2;
+  --toast-bg-blue:      #F5F9FF;
+
+  /* Status dot — redline "Success tone · dot #17A34A". Never behind white
+     text: the chips redline warns it is 3.29:1 and fails AA. */
+  --dot-green: #17A34A;
+
+  /* Dashed panel — redline "Dashed panel · 1.6px dashed #CDD5E2" */
+  --border-dashed: #CDD5E2;
+
+  /* Dropzone hover fill — redline "Dropzone hover · bg #F7FCF8". This is ONE
+     DIGIT off --green-tint-2 (#F7FCF9) and is very likely a typo in the source
+     document; kept literal so we match it exactly. */
+  --dropzone-hover: #F7FCF8;
+
+  /* Selection controls — redline "Disabled · #E9EDF3" */
+  --surface-disabled: #E9EDF3;
+
+  /* Destructive confirm hover — redline "Confirm button · #B42318 → hover #96190F" */
+  --red-800: #96190F;
+
+  /* Link hover — the source's base CSS uses a:hover { color: #166534 }. */
+  --green-link-hover: #166534;
+
+  /* App shell — redlines "Nav item", "Item mark", "Avatar", "Logo tile", "Breadcrumb" */
+  --nav-ink:      #4B5565;
+  --item-mark:    #B3BDCD;
+  --avatar-bg:    #DBE4F0;
+  --logo-ink:     #D9F2C4;
+  --separator:    #CBD3E0;
+  --row-hover-strong: #E0E5EE;
+
+  /* Radius — redlines "Skeleton bar · radius 6px" and "Stage number · radius 6px".
+     6px sits between --r-check (5px) and --r-tile (7px) and had no token. */
+  --r-bar: 6px;
+}

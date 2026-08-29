@@ -106,4 +106,21 @@ describe('tailwind theme bridge', () => {
     )
     expect(scaleRefs).toEqual([])
   })
+
+  it('adds the two type sizes this pass needs', () => {
+    expect(bridge.get('text-notice')).toBe('13px')
+    expect(bridge.get('text-notice--line-height')).toBe('1.35')
+    expect(bridge.get('text-stat-hint')).toBe('11.5px')
+  })
+
+  it('bridges the new colour additions', () => {
+    for (const name of [
+      'color-notice-border-green', 'color-notice-border-blue',
+      'color-notice-border-amber', 'color-notice-border-red',
+      'color-border-dashed', 'color-surface-disabled', 'color-dot-green',
+      'radius-bar',
+    ]) {
+      expect(bridge.has(name), `theme.css is missing --${name}`).toBe(true)
+    }
+  })
 })

@@ -57,3 +57,9 @@
   --sh-dialog: 0 24px 60px rgba(0,0,0,.60);
   --scrim: rgba(4,7,12,.62);
 }
+
+/* --- additions: dark counterparts (spec Appendix A.1) --- */
+[data-theme="dark"] {
+  --green-on-fill-red: #2A0806;   /* dark destructive fill text, on #FF9B95 */
+  --red-fill-hover:    #FFB2AD;   /* dark destructive hover */
+}
