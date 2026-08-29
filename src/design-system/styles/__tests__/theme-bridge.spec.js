@@ -113,6 +113,15 @@ describe('tailwind theme bridge', () => {
     expect(bridge.get('text-stat-hint')).toBe('11.5px')
   })
 
+  it('defines the note style the demo chrome needs', () => {
+    // Spec §17.1 — sub-block notes and rule-card bodies are 12.5px / 1.5.
+    // The scale's text-field-label is also 12.5px but carries weight 500 and
+    // no line-height, so it is the wrong style for running prose.
+    expect(bridge.get('text-caption')).toBe('12.5px')
+    expect(bridge.get('text-caption--line-height')).toBe('1.5')
+    expect(bridge.get('text-caption--font-weight')).toBe('400')
+  })
+
   it('bridges the new colour additions', () => {
     for (const name of [
       'color-notice-border-green', 'color-notice-border-blue',

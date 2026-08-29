@@ -69,6 +69,19 @@
   /* Stat card hint — redline "Hint · 11.5px / 400 #667085 · urgent 700 #B42318" */
   --text-stat-hint: 11.5px;
   --text-stat-hint--font-weight: 400;
+
+  /* Demo chrome caption style — spec §17.1. Sub-block notes and rule-card
+   * bodies are running prose at 12.5px with a 1.5 line-height; the scale's
+   * text-field-label is the same size but weight 500 with no line-height,
+   * which is a label style, not a prose one.
+   *
+   * Named `caption`, NOT `note`: the scale already has --text-notice (13px /
+   * 1.35), and `text-note` beside `text-notice` is a near-miss where both are
+   * valid classes that render at different sizes — a typo would look almost
+   * right and never fail a test. */
+  --text-caption: 12.5px;
+  --text-caption--line-height: 1.5;
+  --text-caption--font-weight: 400;
 }
 
 @theme inline {
