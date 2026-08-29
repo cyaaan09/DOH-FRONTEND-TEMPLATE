@@ -26,7 +26,7 @@ describe('design tokens', () => {
 
   it('keeps geometry theme-invariant', () => {
     const geometry = [...light.keys()].filter((n) =>
-      /^(r-|h-|size-|rail-|gap-|pad-|z-|w-)/.test(n),
+      /^(r-|h-|size-|rail-|gap-|pad-|z-|w-|chip-pad$)/.test(n),
     )
     expect(geometry.length).toBeGreaterThan(10)
     const overridden = geometry.filter((n) => dark.has(n))

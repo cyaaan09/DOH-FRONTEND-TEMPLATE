@@ -6,18 +6,30 @@ import { findDarkVariants, findRawHex } from '../guards'
 const COMPONENTS_DIR = 'src/design-system/components'
 
 /**
- * Lists .vue files under the components directory.
+ * Lists .vue and .js files under the components directory. .js is included
+ * because Phase 2 adds tone/variant map modules (e.g. variants.js) that can
+ * carry a raw hex or a `dark:` string just as easily as a .vue file can.
  * Uses readdirSync recursive rather than fs.globSync, which does not exist
  * on Node 20 — and package.json still allows Node ^20.19.0.
  */
 function listComponents() {
+  let entries
   try {
-    return readdirSync(COMPONENTS_DIR, { recursive: true })
-      .filter((name) => String(name).endsWith('.vue'))
-      .map((name) => join(COMPONENTS_DIR, String(name)))
-  } catch {
-    return [] // directory does not exist yet
+    entries = readdirSync(COMPONENTS_DIR, { recursive: true })
+  } catch (err) {
+    // ENOENT is the legitimate Phase 1 state: the directory does not exist
+    // yet. Anything else (permissions, a non-directory at that path, ...) is
+    // a real problem and must not be swallowed into a silent vacuous pass.
+    if (err.code === 'ENOENT') return []
+    throw err
   }
+  // The directory exists, so it must actually contain something — zero
+  // entries here means the path or filter is wrong, not that there is
+  // nothing to guard.
+  expect(entries.length, `${COMPONENTS_DIR} exists but is empty`).toBeGreaterThan(0)
+  return entries
+    .filter((name) => /\.(vue|js)$/.test(String(name)))
+    .map((name) => join(COMPONENTS_DIR, String(name)))
 }
 
 describe('findRawHex', () => {

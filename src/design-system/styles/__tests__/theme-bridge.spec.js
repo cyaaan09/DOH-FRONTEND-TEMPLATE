@@ -40,4 +40,35 @@ describe('tailwind theme bridge', () => {
       expect(bridge.has(name), `bridge is missing --${name}`).toBe(true)
     }
   })
+
+  /**
+   * Tokens that are deliberately not bridged into a Tailwind utility
+   * namespace (--spacing-, --color-, and so on), per the comment at the
+   * bottom of theme.css. Kept in
+   * sync with that comment by hand — a token belongs here only if it is
+   * listed there too.
+   */
+  const DELIBERATELY_UNBRIDGED = new Set([
+    'z-header', 'z-popover', 'z-dialog',
+    't-fast', 't-control', 't-rail',
+    'grad-primary', 'grad-meter',
+    'ring-focus', 'ring-select', 'scrim', 'chip-pad',
+    // Tailwind's built-in font-normal / font-medium / font-bold cover these.
+    'w-regular', 'w-medium', 'w-bold',
+  ])
+
+  /** The set of token names theme.css bridges (the target side of every var() reference). */
+  const bridgedTokens = new Set(references.map(([, target]) => target))
+
+  it('bridges every token, or names it as deliberately unbridged', () => {
+    // The inverse of "never references a token that does not exist" above:
+    // this catches a token that exists in tokens.css but was never wired
+    // into theme.css at all — which fails silently (the utility it should
+    // have fed just never generates, no build error, no test failure)
+    // unless something checks token -> bridge coverage explicitly.
+    const gaps = [...light.keys()].filter(
+      (name) => !bridgedTokens.has(name) && !DELIBERATELY_UNBRIDGED.has(name),
+    )
+    expect(gaps.map((name) => `--${name}`)).toEqual([])
+  })
 })

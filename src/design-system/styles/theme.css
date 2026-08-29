@@ -98,6 +98,12 @@
   --spacing-check: var(--size-check);
   --spacing-rail: var(--rail-w);
   --spacing-rail-collapsed: var(--rail-w-collapsed);
+  --spacing-card-x: var(--pad-card-x);
+  --spacing-section: var(--gap-section);
+  --spacing-card: var(--gap-card);
+  --spacing-btn-row: var(--gap-btn-row);
+  --spacing-chip-row: var(--gap-chip-row);
+  --spacing-control: var(--gap-control);
 
   /* elevation */
   --shadow-card: var(--sh-card);

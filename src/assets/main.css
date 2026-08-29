@@ -1,11 +1,15 @@
-/* Import order matters: tokens must exist before theme.css bridges them,
- * and base.css comes last so its element rules win over Tailwind preflight. */
+/* Import order matters: tokens must exist before theme.css bridges them.
+ * base.css is imported into `layer(base)` explicitly — Tailwind emits
+ * `@layer theme, base, components, utilities`, and within the shared `base`
+ * layer the last import wins, so our rules beat Tailwind preflight (both are
+ * layered, so this is NOT source-order-over-everything: later layers, i.e.
+ * utilities, still correctly win over base regardless of import order). */
 @import '../design-system/styles/fonts.css';
 @import 'tailwindcss';
 @import '../design-system/styles/tokens.css';
 @import '../design-system/styles/tokens.dark.css';
 @import '../design-system/styles/theme.css';
-@import '../design-system/styles/base.css';
+@import '../design-system/styles/base.css' layer(base);
 
 /* Dark mode is driven by data-theme, not a class. Kept so any `dark:` utility
  * in application code (outside the design system) still resolves. */
