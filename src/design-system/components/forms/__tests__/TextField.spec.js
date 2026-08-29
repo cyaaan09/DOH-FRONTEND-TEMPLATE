@@ -104,17 +104,19 @@ describe('Textarea', () => {
   })
 
   it('keeps its border but loses its white surface when disabled', () => {
+    // Redline "Read only" — disabled shares the read-only treatment, so
+    // its border is border-hairline, not the default border-field.
     const wrapper = mount(Textarea, { props: { label: 'A', disabled: true } })
     expect(wrapper.get('textarea').attributes('disabled')).toBeDefined()
     expect(wrapper.get('textarea').classes()).toContain('bg-surface-input')
-    expect(wrapper.get('textarea').classes()).toContain('border-field')
+    expect(wrapper.get('textarea').classes()).toContain('border-hairline')
   })
 
   it('keeps its border but loses its white surface when readonly', () => {
     const wrapper = mount(Textarea, { props: { label: 'A', readonly: true } })
     expect(wrapper.get('textarea').attributes('readonly')).toBeDefined()
     expect(wrapper.get('textarea').classes()).toContain('bg-surface-input')
-    expect(wrapper.get('textarea').classes()).toContain('border-field')
+    expect(wrapper.get('textarea').classes()).toContain('border-hairline')
   })
 })
 
@@ -147,6 +149,54 @@ describe('TextField — Appendix C conformance', () => {
   })
 })
 
+describe('TextField — border precedence', () => {
+  // Redline "Error" and "Read only" both set a border colour. Exactly one
+  // border class must ever apply — never two competing for the same
+  // property, which is a regression compile order could silently hide.
+  it('applies only border-field by default', () => {
+    const classes = mount(TextField, { props: { label: 'A' } }).get('input').classes()
+    expect(classes).toContain('border-field')
+    expect(classes).not.toContain('border-hairline')
+    expect(classes).not.toContain('border-red-700')
+  })
+
+  it('applies only border-hairline when read-only with no error', () => {
+    const classes = mount(TextField, { props: { label: 'A', readonly: true } })
+      .get('input')
+      .classes()
+    expect(classes).toContain('border-hairline')
+    expect(classes).not.toContain('border-field')
+  })
+
+  it('applies only border-hairline when disabled with no error', () => {
+    const classes = mount(TextField, { props: { label: 'A', disabled: true } })
+      .get('input')
+      .classes()
+    expect(classes).toContain('border-hairline')
+    expect(classes).not.toContain('border-field')
+  })
+
+  it('applies only border-red-700 when there is an error', () => {
+    const classes = mount(TextField, { props: { label: 'A', error: 'Required' } })
+      .get('input')
+      .classes()
+    expect(classes).toContain('border-red-700')
+    expect(classes).not.toContain('border-field')
+    expect(classes).not.toContain('border-hairline')
+  })
+
+  it('lets the error border win over read-only — Appendix C has no combined row', () => {
+    const classes = mount(TextField, {
+      props: { label: 'A', error: 'Required', readonly: true },
+    })
+      .get('input')
+      .classes()
+    expect(classes).toContain('border-red-700')
+    expect(classes).not.toContain('border-field')
+    expect(classes).not.toContain('border-hairline')
+  })
+})
+
 describe('Textarea — Appendix C conformance', () => {
   it('uses the taller textarea padding', () => {
     // Redline "Textarea" — 11px/12px padding, resize vertical.
@@ -163,6 +213,54 @@ describe('Textarea — Appendix C conformance', () => {
     expect(classes).toContain('bg-surface-input')
     expect(classes).toContain('border-hairline')
     expect(classes).toContain('text-ink-400')
+  })
+})
+
+describe('Textarea — border precedence', () => {
+  // Redline "Error" and "Read only" both set a border colour. Exactly one
+  // border class must ever apply — never two competing for the same
+  // property, which is a regression compile order could silently hide.
+  it('applies only border-field by default', () => {
+    const classes = mount(Textarea, { props: { label: 'A' } }).get('textarea').classes()
+    expect(classes).toContain('border-field')
+    expect(classes).not.toContain('border-hairline')
+    expect(classes).not.toContain('border-red-700')
+  })
+
+  it('applies only border-hairline when read-only with no error', () => {
+    const classes = mount(Textarea, { props: { label: 'A', readonly: true } })
+      .get('textarea')
+      .classes()
+    expect(classes).toContain('border-hairline')
+    expect(classes).not.toContain('border-field')
+  })
+
+  it('applies only border-hairline when disabled with no error', () => {
+    const classes = mount(Textarea, { props: { label: 'A', disabled: true } })
+      .get('textarea')
+      .classes()
+    expect(classes).toContain('border-hairline')
+    expect(classes).not.toContain('border-field')
+  })
+
+  it('applies only border-red-700 when there is an error', () => {
+    const classes = mount(Textarea, { props: { label: 'A', error: 'Required' } })
+      .get('textarea')
+      .classes()
+    expect(classes).toContain('border-red-700')
+    expect(classes).not.toContain('border-field')
+    expect(classes).not.toContain('border-hairline')
+  })
+
+  it('lets the error border win over read-only — Appendix C has no combined row', () => {
+    const classes = mount(Textarea, {
+      props: { label: 'A', error: 'Required', readonly: true },
+    })
+      .get('textarea')
+      .classes()
+    expect(classes).toContain('border-red-700')
+    expect(classes).not.toContain('border-field')
+    expect(classes).not.toContain('border-hairline')
   })
 })
 

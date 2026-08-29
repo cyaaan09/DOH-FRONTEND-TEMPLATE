@@ -30,12 +30,20 @@ const message = computed(() => props.error || props.hint)
         :id="id"
         class="field__input h-field w-full rounded-field border px-3 text-body transition-colors"
         :class="[
-          // Redline 'Error' — strong red border, not the pale tint used
-          // for toast and notice outlines.
-          error ? 'border-red-700' : 'border-field',
-          // Redline 'Read only' — input well surface, hairline border, muted text.
+          // Redline 'Error' and 'Read only' both set a border colour, so
+          // this is one chain, not two independent ternaries — exactly one
+          // border class must ever apply, never two competing for the same
+          // property. Appendix C has no row for error+readonly together;
+          // error wins because a field showing a validation error should
+          // look like it — that is the more urgent signal.
+          error
+            ? 'border-red-700'
+            : disabled || readonly
+              ? 'border-hairline'
+              : 'border-field',
+          // Redline 'Read only' — input well surface, muted text.
           disabled || readonly
-            ? 'bg-surface-input border-hairline text-ink-400'
+            ? 'bg-surface-input text-ink-400'
             : 'bg-surface text-ink-900',
           mono ? 'font-mono' : '',
           suffix ? 'pr-14' : '',
