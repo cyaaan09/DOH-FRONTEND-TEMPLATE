@@ -8,12 +8,15 @@
     "build": "vite build",
     "preview": "vite preview",
     "test:unit": "vitest",
+    "verify:css": "node scripts/verify-css-build.mjs",
     "lint": "run-s \"lint:*\"",
     "lint:oxlint": "oxlint . --fix",
     "lint:eslint": "eslint . --fix --cache",
     "format": "prettier --write --experimental-cli src/"
   },
   "dependencies": {
+    "@fontsource-variable/dm-sans": "5.3.0",
+    "@fontsource-variable/jetbrains-mono": "5.3.0",
     "@vueuse/core": "^14.4.0",
     "pinia": "^4.0.2",
     "unplugin-vue-router": "^0.19.2",

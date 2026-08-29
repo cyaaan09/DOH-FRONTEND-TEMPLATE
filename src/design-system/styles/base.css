@@ -1,0 +1,56 @@
+/* Element-level resets from the source document, rewritten against tokens so
+ * they follow the theme. The document's literals mapped exactly onto tokens
+ * with one exception, noted below.
+ */
+
+body {
+  margin: 0;
+  background: var(--canvas);
+  color: var(--ink-900);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--green-text);
+  text-decoration: none;
+}
+
+/* Source document specified #166534 for hover, which is not a token.
+ * --green-900 (#14532D) is the nearest token and is used deliberately. */
+a:hover {
+  color: var(--green-900);
+  text-decoration: underline;
+}
+
+input,
+button,
+textarea,
+select {
+  font-family: inherit;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--placeholder);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes toastTimer {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}

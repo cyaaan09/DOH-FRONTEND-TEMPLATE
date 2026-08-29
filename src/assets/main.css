@@ -1,4 +1,12 @@
+/* Import order matters: tokens must exist before theme.css bridges them,
+ * and base.css comes last so its element rules win over Tailwind preflight. */
+@import '../design-system/styles/fonts.css';
 @import 'tailwindcss';
+@import '../design-system/styles/tokens.css';
+@import '../design-system/styles/tokens.dark.css';
+@import '../design-system/styles/theme.css';
+@import '../design-system/styles/base.css';
 
-/* Enable class-based dark mode (VueUse's useDark toggles `.dark` on <html>). */
-@custom-variant dark (&:where(.dark, .dark *));
+/* Dark mode is driven by data-theme, not a class. Kept so any `dark:` utility
+ * in application code (outside the design system) still resolves. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
