@@ -12,6 +12,10 @@ const applied = ref([
   { key: 'Status:', value: 'Active' },
   { key: 'Expiry:', value: 'Within 90 days' },
   { key: 'Source:', value: 'Online' },
+  // Deliberately shares a value with "Source:" under a different key — proof
+  // that dismiss must key off { chipKey, value } together (Finding 9), not
+  // value alone. See ChipsSection in sections.spec.js.
+  { key: 'Payment:', value: 'Online' },
 ])
 
 const FILTERS = [
@@ -134,7 +138,7 @@ function toggle(label) {
       <ChipGroup>
         <DismissibleChip
           v-for="chip in applied"
-          :key="chip.value"
+          :key="`${chip.key}${chip.value}`"
           :chip-key="chip.key"
           :value="chip.value"
           @dismiss="dismiss"

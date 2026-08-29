@@ -41,6 +41,30 @@ describe('ChipsSection', () => {
     expect(wrapper.findAll('[data-rule]')).toHaveLength(3)
     expect(wrapper.text()).toContain('One tone per meaning')
   })
+
+  it('removes exactly the dismissed chip using the { chipKey, value } payload', async () => {
+    // Ported from the deleted ChipsDemo.spec.js. DismissibleChip emits an
+    // object payload, not a bare value (Finding 9 — a bare value can't
+    // disambiguate two chips that share a value under different keys). The
+    // applied list here deliberately gives "Source:" and "Payment:" the same
+    // value ("Online") so a handler that dropped back to filtering on value
+    // alone — or one still expecting the old bare-value shape — would remove
+    // both chips (or neither) instead of only the one that was dismissed.
+    const wrapper = mount(ChipsSection)
+    const removeButtons = () => wrapper.findAll('button[aria-label^="Remove"]')
+
+    expect(removeButtons()).toHaveLength(4)
+
+    await removeButtons()[2].trigger('click') // "Source: Online"
+
+    const remaining = removeButtons()
+    expect(remaining).toHaveLength(3)
+    const labels = remaining.map((button) => button.attributes('aria-label'))
+    expect(labels).not.toContain('Remove Source: Online')
+    expect(labels).toContain('Remove Payment: Online')
+    expect(labels).toContain('Remove Status: Active')
+    expect(labels).toContain('Remove Expiry: Within 90 days')
+  })
 })
 
 describe('NoticesSection', () => {

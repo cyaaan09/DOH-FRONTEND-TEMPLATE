@@ -1,44 +1,52 @@
 <script setup>
-import DemoSection from '@/design-system/demo/DemoSection.vue'
-import TypeScaleDemo from '@/design-system/demo/TypeScaleDemo.vue'
-import ButtonsDemo from '@/design-system/demo/ButtonsDemo.vue'
-import ChipsDemo from '@/design-system/demo/ChipsDemo.vue'
-import CardsDemo from '@/design-system/demo/CardsDemo.vue'
-import FieldsDemo from '@/design-system/demo/FieldsDemo.vue'
-import FeedbackDemo from '@/design-system/demo/FeedbackDemo.vue'
+import { SECTIONS } from '@/design-system/demo/chrome/sections'
+import FoundationsSection from '@/design-system/demo/sections/FoundationsSection.vue'
+import ContainersSection from '@/design-system/demo/sections/ContainersSection.vue'
+import ChipsSection from '@/design-system/demo/sections/ChipsSection.vue'
+import TabsSection from '@/design-system/demo/sections/TabsSection.vue'
+import FieldsSection from '@/design-system/demo/sections/FieldsSection.vue'
+import DropdownsSection from '@/design-system/demo/sections/DropdownsSection.vue'
+import ButtonsSection from '@/design-system/demo/sections/ButtonsSection.vue'
+import FilesSection from '@/design-system/demo/sections/FilesSection.vue'
+import NoticesSection from '@/design-system/demo/sections/NoticesSection.vue'
+import SelectionSection from '@/design-system/demo/sections/SelectionSection.vue'
+import DialogSection from '@/design-system/demo/sections/DialogSection.vue'
+import TypeScaleSection from '@/design-system/demo/sections/TypeScaleSection.vue'
+import SpecsSection from '@/design-system/demo/sections/SpecsSection.vue'
+import DarkModeSection from '@/design-system/demo/sections/DarkModeSection.vue'
+import TokensSection from '@/design-system/demo/sections/TokensSection.vue'
+
+// Keyed by the manifest's ids so the page order and the manifest cannot drift
+// apart — a test asserts the rendered order matches SECTIONS.
+const COMPONENTS = {
+  foundations: FoundationsSection,
+  containers: ContainersSection,
+  chips: ChipsSection,
+  tabs: TabsSection,
+  fields: FieldsSection,
+  dropdowns: DropdownsSection,
+  buttons: ButtonsSection,
+  files: FilesSection,
+  notices: NoticesSection,
+  selection: SelectionSection,
+  dialog: DialogSection,
+  'type-scale': TypeScaleSection,
+  specs: SpecsSection,
+  'dark-mode': DarkModeSection,
+  tokens: TokensSection,
+}
 </script>
 
 <template>
   <div>
     <h1 class="text-page-title text-ink-900">Design system</h1>
     <p class="text-body text-text-meta mt-2 mb-8 max-w-2xl">
-      Every component below is built against the design tokens — no raw hex, no
-      <code class="font-mono text-mono">dark:</code> variants. Toggle the theme in the header; only
-      the palette changes, never the geometry.
+      Chips, tabs, fields, dropdowns, and the type scale the licensing screens are built on. Every
+      field is 38px tall with a 9px radius, so a filter bar and a form read as the same system.
     </p>
 
-    <DemoSection title="Type scale" note="DM Sans at three weights. JetBrains Mono for numbers you might copy.">
-      <TypeScaleDemo />
-    </DemoSection>
-
-    <DemoSection title="Buttons" note="38px default, 34px compact, 44px touch. One filled green button per screen region.">
-      <ButtonsDemo />
-    </DemoSection>
-
-    <DemoSection title="Chips" note="Tone comes from meaning, never decoration.">
-      <ChipsDemo />
-    </DemoSection>
-
-    <DemoSection title="Cards" note="Three surfaces and nothing else. Cards never nest.">
-      <CardsDemo />
-    </DemoSection>
-
-    <DemoSection title="Text fields" note="Every field is 38px tall with a 9px radius. The green ring is the only focus signal.">
-      <FieldsDemo />
-    </DemoSection>
-
-    <DemoSection title="Feedback" note="Notices explain a state that stays — they live in the layout and never float.">
-      <FeedbackDemo />
-    </DemoSection>
+    <div v-for="section in SECTIONS" :key="section.id" :data-section="section.id">
+      <component :is="COMPONENTS[section.id]" />
+    </div>
   </div>
 </template>
