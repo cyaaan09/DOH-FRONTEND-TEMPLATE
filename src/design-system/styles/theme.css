@@ -13,6 +13,46 @@
 @theme {
   --font-sans: 'DM Sans', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+
+  /* Type scale — spec §6. Literals, not bridged: the source document states
+   * the scale as values and never tokenised it, and tokens.css is frozen
+   * verbatim. Tailwind carries leading/tracking/weight on the same name, so
+   * one utility sets a whole style. --text-* cannot carry font-family, so the
+   * mono style pairs with `font-mono`. */
+  --text-page-title: 26px;
+  --text-page-title--font-weight: 700;
+  --text-page-title--letter-spacing: -0.015em;
+
+  --text-card-figure: 23px;
+  --text-card-figure--font-weight: 700;
+  --text-card-figure--letter-spacing: -0.01em;
+
+  --text-section-title: 17px;
+  --text-section-title--font-weight: 700;
+
+  --text-row-title: 14px;
+  --text-row-title--font-weight: 700;
+
+  --text-body: 13.5px;
+  --text-body--line-height: 1.55;
+  --text-body--font-weight: 400;
+
+  --text-field-label: 12.5px;
+  --text-field-label--font-weight: 500;
+
+  /* Named `hint`, not `meta`: tokens.css already has a COLOUR called
+   * --text-meta (#667085), bridged to --color-text-meta. A type style of the
+   * same name would give the confusing pair `text-meta` (size) and
+   * `text-text-meta` (colour). Spec §6 calls this row "Meta / hint". */
+  --text-hint: 12px;
+  --text-hint--font-weight: 400;
+
+  --text-column-header: 10.5px;
+  --text-column-header--font-weight: 700;
+  --text-column-header--letter-spacing: 0.08em;
+
+  --text-mono: 12.5px;
+  --text-mono--font-weight: 500;
 }
 
 @theme inline {

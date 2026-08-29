@@ -71,4 +71,39 @@ describe('tailwind theme bridge', () => {
     )
     expect(gaps.map((name) => `--${name}`)).toEqual([])
   })
+
+  it('defines the nine text styles from spec §6', () => {
+    const expected = {
+      'text-page-title': '26px',
+      'text-card-figure': '23px',
+      'text-section-title': '17px',
+      'text-row-title': '14px',
+      'text-body': '13.5px',
+      'text-field-label': '12.5px',
+      'text-hint': '12px',
+      'text-column-header': '10.5px',
+      'text-mono': '12.5px',
+    }
+    for (const [name, size] of Object.entries(expected)) {
+      expect(bridge.get(name), `missing --${name}`).toBe(size)
+    }
+  })
+
+  it('carries leading, tracking and weight on the scale names', () => {
+    expect(bridge.get('text-body--line-height')).toBe('1.55')
+    expect(bridge.get('text-page-title--letter-spacing')).toBe('-0.015em')
+    expect(bridge.get('text-card-figure--letter-spacing')).toBe('-0.01em')
+    expect(bridge.get('text-column-header--letter-spacing')).toBe('0.08em')
+    expect(bridge.get('text-page-title--font-weight')).toBe('700')
+    expect(bridge.get('text-field-label--font-weight')).toBe('500')
+  })
+
+  it('declares the scale as literals, never as var() references', () => {
+    // The scale lives in theme.css because tokens.css has no size tokens and
+    // is frozen verbatim. A var() here would dangle.
+    const scaleRefs = [...bridge.entries()].filter(
+      ([name, value]) => name.startsWith('text-') && value.startsWith('var('),
+    )
+    expect(scaleRefs).toEqual([])
+  })
 })
