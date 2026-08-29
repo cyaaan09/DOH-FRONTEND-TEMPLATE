@@ -989,7 +989,36 @@ _DM Sans 400/500/700 · JetBrains Mono for copyable values_
 
 Extracted verbatim from the source artifact. This is the content authority for the
 `/design-system` page: section descriptions, sub-block labels, and rule-card footers.
-Sample data inside each sub-block comes from the artifact too — see §17.
+
+**Known limitation.** This appendix does NOT capture the inline content or markup structure of
+every sub-block — only its label and note. Where a sub-block's content is components, that is
+fine: the components are specified in Appendix C. Where a sub-block's content is bespoke markup
+(a swatch table, a labelled tint list), it is NOT here, and an implementer with no access to the
+source artifact will invent a plausible structure instead of reproducing the real one. That
+happened once already, in `INNER SURFACES`. **D.1 records the bespoke blocks explicitly; when a
+phase needs one that is not in D.1, extract it into D.1 first rather than guessing.**
+
+### D.1 — bespoke sub-block markup
+
+#### Containers & surfaces → INNER SURFACES
+
+A white card (radius 14, 1px hairline, card shadow, padding `16px 20px 18px`) holding four tint
+rows in a `flex-column` with `gap: 10px`. Each row is a filled box of `padding: 11px 13px`,
+`border-radius: 10px`, `font-size: 12.5px`, with the caption **inside** it — not a swatch square
+beside a label:
+
+| Row | Background | Border | Text colour | Caption |
+|---|---|---|---|---|
+| 1 | `--surface-sunken` | 1px `--divider` | `--ink-600` | `Sunken strip #FAFBFD — expanded row, footer` |
+| 2 | `--surface-input` | 1px `--border-card` | `--ink-600` | `Input well #F7F9FC — read-only fields, panel search` |
+| 3 | `--surface-muted` | none | `--ink-600` | `Control shell #F4F6FA — segmented tabs, hover` |
+| 4 | none | 1.6px dashed `--border-dashed` | `--text-meta` | `Dashed #CDD5E2 — dropzones and empty states only` |
+
+Below the card, a closing line at 12px in `--text-meta` with `margin-top: 8px`:
+`Four tints, each with one job. No new greys.`
+
+The hex values appear as literal text inside the captions — that is content, not styling, and the
+demo folder is exempt from the raw-hex guard precisely so blocks like this can quote them.
 
 #### Foundations
 
