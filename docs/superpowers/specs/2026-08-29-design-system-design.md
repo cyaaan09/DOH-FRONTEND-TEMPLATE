@@ -403,17 +403,16 @@ from the source.
   --logo-ink:     #D9F2C4;
   --separator:    #CBD3E0;
   --row-hover-strong: #E0E5EE;
+
+  /* Radius — redlines "Skeleton bar · radius 6px" and "Stage number · radius 6px".
+     6px sits between --r-check (5px) and --r-tile (7px) and had no token. */
+  --r-bar: 6px;
 }
 ```
 
-Dark-mode counterparts belong in `tokens.dark.css`:
-
-```css
-[data-theme="dark"] {
-  --green-on-fill-red: #2A0806;   /* dark destructive fill text, on #FF9B95 */
-  --red-fill-hover:    #FFB2AD;   /* dark destructive hover */
-}
-```
+Dark-mode counterparts (`--green-on-fill-red`, `--red-fill-hover`, for dark-mode destructive
+buttons) are deferred to the phase that first consumes them. Nothing in the conformance pass
+reads them yet, so they do not belong in `tokens.dark.css` until then — do not re-add them here.
 
 ## Appendix B — `tokens.dark.css`
 

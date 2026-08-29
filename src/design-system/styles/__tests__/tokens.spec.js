@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { parseTokens, readStyle } from './parse-tokens'
+import { extractCssBlockAfter, parseTokens, readSpec, readStyle } from './parse-tokens'
 
 const light = parseTokens(readStyle('tokens.css'))
 const dark = parseTokens(readStyle('tokens.dark.css'))
@@ -15,14 +15,7 @@ describe('design tokens', () => {
   })
 
   it('introduces no token in dark that does not exist in light', () => {
-    // --green-on-fill-red and --red-fill-hover are dark-only by design (spec
-    // Appendix A.1): light mode's destructive button already has white text
-    // and --red-800 for its hover, so there is no light-mode role for these.
-    // Named here, not widened generally — a real orphan should still fail.
-    const DARK_ONLY_BY_DESIGN = new Set(['green-on-fill-red', 'red-fill-hover'])
-    const orphans = [...dark.keys()].filter(
-      (name) => !light.has(name) && !DARK_ONLY_BY_DESIGN.has(name),
-    )
+    const orphans = [...dark.keys()].filter((name) => !light.has(name))
     expect(orphans).toEqual([])
   })
 
@@ -56,18 +49,36 @@ describe('design tokens', () => {
     expect(dark.get('green-on-fill')).toBe('#0B1017')
   })
 
-  it('carries the additions the source document uses but never tokenised', () => {
-    // Spec Appendix A.1 — each of these is cited to the redline that needs it.
-    for (const name of [
-      'notice-border-green', 'notice-border-blue', 'notice-border-amber', 'notice-border-red',
-      'toast-border-green', 'toast-border-amber', 'toast-border-blue',
-      'toast-bg-amber', 'toast-bg-blue',
-      'dot-green', 'border-dashed', 'dropzone-hover', 'surface-disabled',
-      'red-800', 'green-link-hover',
-      'nav-ink', 'item-mark', 'avatar-bg', 'logo-ink', 'separator', 'row-hover-strong',
-      'r-bar',
-    ]) {
-      expect(light.has(name), `tokens.css is missing --${name}`).toBe(true)
+  it('carries the additions the source document uses but never tokenised, at their exact values', () => {
+    // Spec Appendix A.1 — values quoted independently here, not read back
+    // from tokens.css, so a transcription error (e.g. one wrong hex digit)
+    // actually fails this test instead of passing an existence-only check.
+    const expected = {
+      'notice-border-green': '#A6E7C3',
+      'notice-border-blue': '#B2DDFF',
+      'notice-border-amber': '#F7D9A0',
+      'notice-border-red': '#F9C4BE',
+      'toast-border-green': '#CDEAD6',
+      'toast-border-amber': '#F2E0BD',
+      'toast-border-blue': '#D5E4FA',
+      'toast-bg-amber': '#FFFBF2',
+      'toast-bg-blue': '#F5F9FF',
+      'dot-green': '#17A34A',
+      'border-dashed': '#CDD5E2',
+      'dropzone-hover': '#F7FCF8',
+      'surface-disabled': '#E9EDF3',
+      'red-800': '#96190F',
+      'green-link-hover': '#166534',
+      'nav-ink': '#4B5565',
+      'item-mark': '#B3BDCD',
+      'avatar-bg': '#DBE4F0',
+      'logo-ink': '#D9F2C4',
+      'separator': '#CBD3E0',
+      'row-hover-strong': '#E0E5EE',
+      'r-bar': '6px',
+    }
+    for (const [name, value] of Object.entries(expected)) {
+      expect(light.get(name), `--${name}`).toBe(value)
     }
   })
 
@@ -80,10 +91,38 @@ describe('design tokens', () => {
     expect(verbatim).toMatch(/^:root\s*\{/m)
     expect(verbatim).not.toContain('--notice-border-green')
   })
+})
 
-  it('gives the two dark-mode additions their counterparts', () => {
-    for (const name of ['green-on-fill-red', 'red-fill-hover']) {
-      expect(dark.has(name), `tokens.dark.css is missing --${name}`).toBe(true)
-    }
+describe('spec Appendix A parity', () => {
+  // Nothing previously checked that tokens.css actually matches spec Appendix
+  // A / A.1 — undetected drift in exactly this layer is why this conformance
+  // pass exists. These parse the spec's own code blocks and diff them against
+  // the file, both directions, so a missing token, an extra token, or a
+  // changed value all fail loudly instead of silently.
+  const spec = readSpec()
+
+  // The spec's Appendix A markdown writes --font-sans and --font-mono inside
+  // the :root block it quotes from the source document, but tokens.css has
+  // never declared them there (see the "does not redeclare --font-sans or
+  // --font-mono" test above): theme.css owns them as literals instead,
+  // because `--font-sans: var(--font-sans)` would be circular. Documented,
+  // pre-existing, intentional — not drift — so it is the one named exception.
+  const KNOWN_EXCEPTIONS = new Set(['font-sans', 'font-mono'])
+
+  it('matches spec Appendix A exactly in the verbatim region', () => {
+    const specTokens = parseTokens(extractCssBlockAfter(spec, '## Appendix A — `tokens.css`'))
+    for (const name of KNOWN_EXCEPTIONS) specTokens.delete(name)
+    const verbatim = readStyle('tokens.css').split('/* --- additions')[0]
+    const fileTokens = parseTokens(verbatim)
+    expect(Object.fromEntries(fileTokens)).toEqual(Object.fromEntries(specTokens))
+  })
+
+  it('matches spec Appendix A.1 exactly in the additions region', () => {
+    const specTokens = parseTokens(
+      extractCssBlockAfter(spec, '### Appendix A.1 — additions beyond the source token block'),
+    )
+    const additions = readStyle('tokens.css').split('/* --- additions')[1]
+    const fileTokens = parseTokens(additions)
+    expect(Object.fromEntries(fileTokens)).toEqual(Object.fromEntries(specTokens))
   })
 })

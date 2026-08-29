@@ -26,3 +26,33 @@ export function readStyle(name) {
   const testsDir = dirname(fileURLToPath(import.meta.url))
   return readFileSync(join(testsDir, '..', name), 'utf8')
 }
+
+/**
+ * Reads the design-system-conformance spec markdown
+ * (docs/superpowers/specs/2026-08-29-design-system-design.md), so a test can
+ * diff the spec's own Appendix code blocks against the shipped CSS files.
+ * Same `node:path` reasoning as readStyle — no `new URL(..., import.meta.url)`.
+ */
+export function readSpec() {
+  const testsDir = dirname(fileURLToPath(import.meta.url))
+  return readFileSync(
+    join(testsDir, '..', '..', '..', '..', 'docs', 'superpowers', 'specs', '2026-08-29-design-system-design.md'),
+    'utf8',
+  )
+}
+
+/**
+ * Extracts the content of the first ```css fenced block that appears after
+ * `heading` in `markdown`. Uses plain string search (indexOf), not regex, so
+ * this stays simple and needs no lookbehind.
+ */
+export function extractCssBlockAfter(markdown, heading) {
+  const headingIndex = markdown.indexOf(heading)
+  if (headingIndex === -1) throw new Error(`heading not found in spec: ${heading}`)
+  const fenceStart = markdown.indexOf('```css', headingIndex)
+  if (fenceStart === -1) throw new Error(`no css fence after heading: ${heading}`)
+  const contentStart = markdown.indexOf('\n', fenceStart) + 1
+  const fenceEnd = markdown.indexOf('```', contentStart)
+  if (fenceEnd === -1) throw new Error(`unterminated css fence after heading: ${heading}`)
+  return markdown.slice(contentStart, fenceEnd)
+}
