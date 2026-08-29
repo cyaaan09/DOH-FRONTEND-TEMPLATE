@@ -1,0 +1,78 @@
+import { mount } from '@vue/test-utils'
+import { describe, expect, it } from 'vitest'
+import ChipsSection from '../ChipsSection.vue'
+import NoticesSection from '../NoticesSection.vue'
+import ButtonsSection from '../ButtonsSection.vue'
+import FieldsSection from '../FieldsSection.vue'
+import ContainersSection from '../ContainersSection.vue'
+import TypeScaleSection from '../TypeScaleSection.vue'
+
+describe('ChipsSection', () => {
+  it('carries the artifact description verbatim', () => {
+    expect(mount(ChipsSection).text()).toContain(
+      'Tone comes from the meaning, never from decoration.',
+    )
+  })
+
+  it('renders the five tone sub-blocks the artifact shows', () => {
+    const text = mount(ChipsSection).text()
+    for (const label of ['STATUS', 'APPLICATION TYPE', 'SERVICE', 'SOURCE', 'COUNT & OVERFLOW']) {
+      expect(text, `missing sub-block: ${label}`).toContain(label)
+    }
+  })
+
+  it('renders the interactive and dismissible strips', () => {
+    const text = mount(ChipsSection).text()
+    expect(text).toContain('INTERACTIVE — FILTER CHIPS')
+    expect(text).toContain('DISMISSIBLE — APPLIED FILTERS')
+  })
+
+  it('renders the three rule cards', () => {
+    const wrapper = mount(ChipsSection)
+    expect(wrapper.findAll('[data-rule]')).toHaveLength(3)
+    expect(wrapper.text()).toContain('One tone per meaning')
+  })
+})
+
+describe('NoticesSection', () => {
+  it('renders the inline notices strip with all four tones', () => {
+    const text = mount(NoticesSection).text()
+    expect(text).toContain('INLINE NOTICES — PERSISTENT, IN-FLOW')
+    for (const label of ['Success', 'Info', 'Warning', 'Error']) {
+      expect(text, `missing notice: ${label}`).toContain(label)
+    }
+  })
+
+  it('marks the toast stack as not built', () => {
+    // Toast is Phase 3e. Its slot must be visible, not absent.
+    expect(mount(NoticesSection).findAll('[data-gap]').length).toBeGreaterThan(0)
+  })
+})
+
+describe('sections with complete components render no gaps', () => {
+  it.each([
+    ['ButtonsSection', ButtonsSection],
+    ['FieldsSection', FieldsSection],
+    ['TypeScaleSection', TypeScaleSection],
+  ])('%s', (_name, component) => {
+    expect(mount(component).findAll('[data-gap]')).toHaveLength(0)
+  })
+})
+
+describe('ContainersSection', () => {
+  it('renders all four sub-blocks, gaps included', () => {
+    const text = mount(ContainersSection).text()
+    for (const label of [
+      'PAGE SHELL — CANVAS, RAIL, STICKY HEADER, CONTENT',
+      'CARD — HEADER, BODY, FOOTER',
+      'DIVIDED CARD — NO NESTING',
+      'INNER SURFACES',
+    ]) {
+      expect(text, `missing sub-block: ${label}`).toContain(label)
+    }
+  })
+
+  it('marks the page shell as not built', () => {
+    expect(mount(ContainersSection).findAll('[data-gap]').length).toBeGreaterThan(0)
+  })
+})
