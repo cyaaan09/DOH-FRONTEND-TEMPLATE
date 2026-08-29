@@ -208,6 +208,7 @@ describe('tailwind theme bridge', () => {
   it('bridges the namespaces components are written against', () => {
     for (const name of [
       'color-canvas', 'color-surface', 'color-ink-900', 'color-green-fill',
+      'color-hairline', 'color-field',
       'radius-field', 'radius-card', 'spacing-field', 'shadow-card',
     ]) {
       expect(bridge.has(name), `bridge is missing --${name}`).toBe(true)
@@ -297,10 +298,14 @@ Create `src/design-system/styles/theme.css`:
   --color-violet-100: var(--violet-100);
   --color-neutral-100: var(--neutral-100);
 
-  /* borders and rules */
-  --color-border-field: var(--border-field);
-  --color-border-card: var(--border-card);
-  --color-border-soft: var(--border-soft);
+  /* borders and rules — named so the generated utility reads naturally.
+   * Tailwind derives border colours from the --color-* namespace, so
+   * `--color-border-card` would produce `border-border-card`. The bridge
+   * layer already renames by design (--r-field → --radius-field), and
+   * "hairline" is the source document's own word for the card border. */
+  --color-hairline: var(--border-card);
+  --color-field: var(--border-field);
+  --color-soft: var(--border-soft);
   --color-divider: var(--divider);
   --color-divider-row: var(--divider-row);
 
@@ -691,7 +696,7 @@ Then replace every `dark:` utility and hardcoded grey in that file's template wi
 ```html
 <template>
   <div class="min-h-screen bg-canvas text-ink-900">
-    <header class="border-b border-card bg-surface">
+    <header class="border-b border-hairline bg-surface">
       <nav class="mx-auto flex max-w-5xl items-center gap-6 px-6 py-4">
         <span class="font-bold">Frontend Template</span>
         <RouterLink to="/" class="text-sm text-ink-600 hover:text-green-text">Home</RouterLink>
