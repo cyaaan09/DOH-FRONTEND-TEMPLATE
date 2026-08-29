@@ -18,9 +18,10 @@ describe('StatCard', () => {
     expect(wrapper.get('[data-figure]').classes()).toContain('text-card-figure')
   })
 
-  it('renders the label at column-header scale', () => {
+  it('renders the label at 12px medium, not column-header scale', () => {
+    // Redline "Label" — 12px/500, not the 10.5px/700 uppercase column-header style.
     const wrapper = mount(StatCard, { props: { label: 'A', value: '1' } })
-    expect(wrapper.get('[data-label]').classes()).toContain('text-column-header')
+    expect(wrapper.get('[data-label]').classes()).toContain('text-hint')
   })
 
   it('uses the muted surface for closed or archived stats', () => {
@@ -65,5 +66,83 @@ describe('Meter', () => {
 
     const under = mount(Meter, { props: { value: -5, max: 100, label: 'A' } })
     expect(under.get('[role="progressbar"]').attributes('aria-valuenow')).toBe('0')
+  })
+})
+
+describe('StatCard — Appendix C conformance', () => {
+  it('uses the panel radius and the redlined padding', () => {
+    // Redline "Card" — pad 14px 16px, radius 12px, white surface, hairline border.
+    const classes = mount(StatCard, { props: { label: 'A', value: '1' } }).classes()
+    expect(classes).toContain('rounded-panel')
+    expect(classes).toContain('px-4')
+    expect(classes).toContain('py-3.5')
+    expect(classes).not.toContain('rounded-card')
+  })
+
+  it('renders the label at 12px medium, not as an uppercase column header', () => {
+    // Redline "Label" — 12px/500.
+    const label = mount(StatCard, { props: { label: 'A', value: '1' } }).get('[data-label]')
+    expect(label.classes()).toContain('text-hint')
+    expect(label.classes()).toContain('font-medium')
+    expect(label.classes()).not.toContain('text-column-header')
+    expect(label.classes()).not.toContain('uppercase')
+  })
+
+  it('renders the hint at 11.5px', () => {
+    // Redline "Hint" — 11.5px/400, urgent variant 700 weight.
+    const hint = mount(StatCard, { props: { label: 'A', value: '1', hint: 'h' } }).get('[data-hint]')
+    expect(hint.classes()).toContain('text-stat-hint')
+  })
+
+  it('turns the hint red and bold when urgent', () => {
+    const hint = mount(StatCard, {
+      props: { label: 'A', value: '1', hint: '2 due within 7 days', urgent: true },
+    }).get('[data-hint]')
+    expect(hint.classes()).toContain('text-red-700')
+    expect(hint.classes()).toContain('font-bold')
+  })
+
+  it('mutes the figure colour on a muted card', () => {
+    // Redline "Muted card" — muted surface, header-grey figure (data, so AA applies).
+    const figure = mount(StatCard, {
+      props: { label: 'A', value: '1', muted: true },
+    }).get('[data-figure]')
+    expect(figure.classes()).toContain('text-text-header')
+  })
+
+  it('renders an optional tone dot beside the label', () => {
+    // Redline "Label" — dot 8px, gap 7px.
+    expect(
+      mount(StatCard, { props: { label: 'A', value: '1', dot: 'green' } })
+        .find('[data-dot]')
+        .exists(),
+    ).toBe(true)
+    expect(mount(StatCard, { props: { label: 'A', value: '1' } }).find('[data-dot]').exists()).toBe(
+      false,
+    )
+  })
+})
+
+describe('Meter — Appendix C conformance', () => {
+  it('uses the redlined track fill', () => {
+    // Redline "Meter track" — 6px, radius 999px, neutral-100 fill.
+    // The track is no longer the component root — a caption may sit above it —
+    // so query the progressbar element rather than the wrapper.
+    const track = mount(Meter, { props: { value: 50, label: 'A' } }).get('[role="progressbar"]')
+    expect(track.classes()).toContain('bg-neutral-100')
+    expect(track.classes()).not.toContain('bg-surface-muted')
+  })
+
+  it('renders an optional caption', () => {
+    // Redline "Meter caption" — 12px/400, value at 700 weight, 7px above.
+    const wrapper = mount(Meter, { props: { value: 50, label: 'A', caption: 'Uploaded' } })
+    expect(wrapper.text()).toContain('Uploaded')
+    expect(wrapper.find('[data-caption]').exists()).toBe(true)
+  })
+
+  it('omits the caption element when there is none', () => {
+    expect(
+      mount(Meter, { props: { value: 50, label: 'A' } }).find('[data-caption]').exists(),
+    ).toBe(false)
   })
 })
