@@ -53,6 +53,11 @@
 
   --text-mono: 12.5px;
   --text-mono--font-weight: 500;
+
+  /* Chips are 11px/700 per the source document's chips redline. Not part of
+   * the spec §6 scale, which covers prose and table styles only. */
+  --text-chip: 11px;
+  --text-chip--font-weight: 700;
 }
 
 @theme inline {
