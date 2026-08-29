@@ -1,9 +1,17 @@
 <script setup>
-defineProps({
+import { computed } from 'vue'
+
+const props = defineProps({
   component: { type: String, required: true },
-  group: { type: String, required: true },
+  group: { type: String, default: '' },
   source: { type: String, default: 'Appendix C' },
 })
+
+// Spec Appendix D.1, "Gap citations where Appendix C has no group" — a
+// component that would render an entire appendix (e.g. all 19 Appendix C
+// groups) cites the source alone; naming any single group would be as wrong
+// as omitting a real one. `group` is therefore optional.
+const citation = computed(() => (props.group ? `${props.source} “${props.group}”` : props.source))
 </script>
 
 <template>
@@ -15,7 +23,7 @@ defineProps({
          it to Appendix A, since they describe token scales, not components,
          and no Appendix C group governs them (spec Appendix D.1). -->
     <span class="font-mono text-mono">{{ component }}</span>
-    not built — {{ source }} “{{ group }}”
+    not built — {{ citation }}
   </div>
 </template>
 

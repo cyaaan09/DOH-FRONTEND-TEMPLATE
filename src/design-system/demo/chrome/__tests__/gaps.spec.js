@@ -68,6 +68,24 @@ describe('DemoGap', () => {
     expect(withSource.text()).toContain('Appendix A')
     expect(withSource.text()).not.toContain('Appendix C')
   })
+
+  it('renders the source alone when group is omitted, with no dangling quotes', () => {
+    // Spec Appendix D.1 — a gap that would cover an entire appendix (e.g.
+    // Component specs, which renders all 19 Appendix C groups) names no
+    // single group. There must be no empty "" left behind either.
+    const wrapper = mount(DemoGap, { props: { component: 'SpecTables' } })
+    const text = wrapper.text()
+    expect(text).toContain('Appendix C')
+    expect(text).not.toContain('“')
+    expect(text).not.toContain('”')
+  })
+
+  it('renders both the source and the group when a group is given', () => {
+    const wrapper = mount(DemoGap, { props: { component: 'X', group: 'Chips' } })
+    const text = wrapper.text()
+    expect(text).toContain('Appendix C')
+    expect(text).toContain('“Chips”')
+  })
 })
 
 describe('the section manifest', () => {

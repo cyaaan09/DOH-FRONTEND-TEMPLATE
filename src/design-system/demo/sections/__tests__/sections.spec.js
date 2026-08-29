@@ -181,4 +181,11 @@ describe('skeleton sections show their headings and mark their gaps', () => {
     // PNPKI/Compact demos carry field labels instead, not column headers.
     expect(mount(FilesSection).findAll('.text-column-header')).toHaveLength(1)
   })
+
+  it('SpecsSection cites Appendix C with no group, not the false "Component specs" heading', () => {
+    // "Component specs" is the source document's own section name, quoted in
+    // Appendix C's intro - it is not one of Appendix C's 19 groups. A gap
+    // that would render all 19 names none of them, so no curly quote appears.
+    expect(mount(SpecsSection).text()).not.toContain('“')
+  })
 })

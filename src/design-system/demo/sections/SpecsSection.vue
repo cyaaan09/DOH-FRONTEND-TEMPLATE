@@ -10,7 +10,7 @@ import DemoGap from '../chrome/DemoGap.vue'
     description="Redlines for everything above — geometry, type, and the exact colour per state. Values are literal CSS."
   >
     <DemoBlocks>
-      <DemoGap component="SpecTables" group="Component specs" />
+      <DemoGap component="SpecTables" />
     </DemoBlocks>
   </DemoCard>
 </template>
