@@ -21,7 +21,7 @@ describe('Notice', () => {
 
   it('maps every tone to its own surface/pill class pair', () => {
     const cases = {
-      neutral: { surface: 'bg-neutral-100', pill: 'text-ink-600' },
+      neutral: { surface: 'bg-neutral-100', pill: 'text-text-header' },
       green: { surface: 'bg-green-50', pill: 'text-green-text' },
       amber: { surface: 'bg-amber-50', pill: 'text-amber-text' },
       red: { surface: 'bg-red-50', pill: 'text-red-700' },

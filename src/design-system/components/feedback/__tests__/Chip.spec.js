@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import Chip from '../Chip.vue'
 import ChipGroup from '../ChipGroup.vue'
 import DismissibleChip from '../DismissibleChip.vue'
+import FilterChip from '../FilterChip.vue'
 
 describe('Chip', () => {
   it('renders its slot content', () => {
@@ -97,5 +98,77 @@ describe('DismissibleChip', () => {
       props: { chipKey: 'Status:', value: 'Active' },
     })
     expect(wrapper.find('button').attributes('aria-label')).toBe('Remove Status: Active')
+  })
+})
+
+describe('Chip — Appendix C conformance', () => {
+  it('uses the accessible neutral text colour', () => {
+    // Redline "Closed" — text-text-header, not the ink-500/text-meta colour
+    // that fails AA.
+    const classes = mount(Chip, { props: { tone: 'neutral' } }).classes()
+    expect(classes).toContain('text-text-header')
+    expect(classes).not.toContain('text-ink-600')
+  })
+
+  it('supports a filled variant', () => {
+    // Redline "Active (filled)" — green-fill bg, green-on-fill text, 6.01:1.
+    const classes = mount(Chip, { props: { variant: 'filled' } }).classes()
+    expect(classes).toContain('bg-green-fill')
+    expect(classes).toContain('text-green-on-fill')
+  })
+
+  it('supports a service variant', () => {
+    // Redline "Service chip" — 12px/400, 5px 12px padding, white surface,
+    // border-soft, ink-600 text.
+    const classes = mount(Chip, { props: { variant: 'service' } }).classes()
+    expect(classes).toContain('bg-surface')
+    expect(classes).toContain('border-soft')
+    expect(classes).toContain('text-ink-600')
+    expect(classes).toContain('text-hint')
+  })
+
+  it('falls back to the tint variant for an unknown value', () => {
+    expect(mount(Chip, { props: { variant: 'nonsense' } }).classes()).toContain('bg-neutral-100')
+  })
+})
+
+describe('FilterChip', () => {
+  it('renders unselected by default', () => {
+    // Redline "Filter chip off" — white surface, border-field, ink-600 text.
+    const classes = mount(FilterChip, { slots: { default: 'Hospital' } }).classes()
+    expect(classes).toContain('bg-surface')
+    expect(classes).toContain('border-field')
+    expect(classes).toContain('text-ink-600')
+  })
+
+  it('fills green when selected', () => {
+    // Redline "Filter chip on" — green-fill bg, green-on-fill text, 7px 13px, shadow.
+    const classes = mount(FilterChip, { props: { selected: true } }).classes()
+    expect(classes).toContain('bg-green-fill')
+    expect(classes).toContain('text-green-on-fill')
+  })
+
+  it('is a real button and emits toggle when pressed', async () => {
+    const wrapper = mount(FilterChip, { slots: { default: 'Hospital' } })
+    expect(wrapper.element.tagName).toBe('BUTTON')
+    await wrapper.trigger('click')
+    expect(wrapper.emitted('toggle')).toHaveLength(1)
+  })
+
+  it('reports its selected state to assistive tech', () => {
+    expect(mount(FilterChip, { props: { selected: true } }).attributes('aria-pressed')).toBe(
+      'true',
+    )
+    expect(mount(FilterChip).attributes('aria-pressed')).toBe('false')
+  })
+})
+
+describe('DismissibleChip — Appendix C conformance', () => {
+  it('gives the dismiss button a filled 17px circle', () => {
+    // Redline "Dismiss ×" — a filled 17px circle, not a bare glyph.
+    const button = mount(DismissibleChip, {
+      props: { chipKey: 'Status:', value: 'Active' },
+    }).get('button')
+    expect(button.classes()).toContain('chip__remove')
   })
 })

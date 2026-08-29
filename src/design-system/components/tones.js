@@ -21,7 +21,11 @@ export const DEFAULT_TONE = 'neutral'
 // an outline) — the one piece of the six-tone table that was truly
 // duplicated verbatim rather than merely parallel.
 export const TONE_TEXT = {
-  neutral: 'text-ink-600',
+  // Redline "Closed" — text-text-header is the accessible foreground here
+  // (5.21:1 on the tinted background); the chips redline explicitly rejects
+  // the ink-500/text-meta colour it used to share with Notice, at 4.39:1,
+  // failing AA.
+  neutral: 'text-text-header',
   green: 'text-green-text',
   amber: 'text-amber-text',
   red: 'text-red-700',

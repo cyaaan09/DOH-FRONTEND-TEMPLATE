@@ -29,23 +29,25 @@ const emit = defineEmits(['dismiss'])
   padding: var(--chip-pad);
 }
 
+/* Redline "Dismiss ×" — a filled 17px circle, not a bare glyph: border-card
+ * background, border-field on hover, ink-600 glyph (the ink-500/text-meta
+ * colour this used to share with the icon strokes fails at 4.05:1). */
 .chip__remove {
   display: grid;
   place-items: center;
-  width: 14px;
-  height: 14px;
+  width: 17px;
+  height: 17px;
   flex: none;
   border: 0;
   border-radius: 50%;
-  background: none;
-  color: var(--ink-400);
+  background: var(--border-card);
+  color: var(--ink-600);
   cursor: pointer;
   line-height: 1;
 }
 
 .chip__remove:hover {
-  color: var(--ink-700);
-  background: var(--surface-muted);
+  background: var(--border-field);
 }
 
 .chip__remove:focus-visible {
