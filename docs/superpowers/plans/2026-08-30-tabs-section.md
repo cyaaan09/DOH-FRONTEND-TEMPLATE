@@ -699,9 +699,11 @@ describe('StageTabs', () => {
   })
 
   it('mutes the Closed stage', () => {
+    // Background has exactly one source: both branches of the same binding.
     const cards = mountStages().findAll('[role="tab"]')
-    expect(cards[4].classes()).toContain('stage-tabs__card--muted')
-    expect(cards[0].classes()).not.toContain('stage-tabs__card--muted')
+    expect(cards[4].classes()).toContain('bg-surface-sunken')
+    expect(cards[0].classes()).toContain('bg-surface')
+    expect(cards[0].classes()).not.toContain('bg-surface-sunken')
   })
 
   it('renders the active stage panel through the default slot', () => {
@@ -747,12 +749,12 @@ const emit = defineEmits(['update:modelValue'])
         v-for="stage in stages"
         :key="stage.key"
         :value="stage.key"
-        class="stage-tabs__card border rounded-panel bg-surface text-left cursor-pointer"
+        class="stage-tabs__card border rounded-panel text-left cursor-pointer"
         :class="[
           stage.key === modelValue
             ? 'stage-tabs__card--active border-green-500'
             : 'border-border-card',
-          stage.muted ? 'stage-tabs__card--muted' : '',
+          stage.muted ? 'bg-surface-sunken' : 'bg-surface',
         ]"
       >
         <span class="flex items-center gap-2">
@@ -798,10 +800,6 @@ const emit = defineEmits(['update:modelValue'])
 /* Redline "Stage active" — the select ring sits outside the green border. */
 .stage-tabs__card--active {
   box-shadow: var(--ring-select);
-}
-
-.stage-tabs__card--muted {
-  background: var(--surface-sunken);
 }
 
 .stage-tabs__figure {
