@@ -50,8 +50,10 @@ if (/--font-sans:\s*var\(--font-sans\)/.test(css)) {
 // here proves the @theme inline bridge actually compiles, not just that it's
 // well-formed. A broken bridge produces no build error, just unstyled output;
 // this is the only check that would catch that.
-for (const className of ['.bg-canvas', '.border-hairline']) {
-  if (!css.includes(className)) failures.push(`utility ${className} missing from built CSS`)
+// The type scale compiles only if the bridge is well-formed AND something
+// uses it; the demo page is what uses it.
+for (const cls of ['.bg-canvas', '.border-hairline', '.text-body', '.text-column-header']) {
+  if (!css.includes(cls)) failures.push(`utility ${cls} missing from built CSS`)
 }
 
 if (failures.length > 0) {
