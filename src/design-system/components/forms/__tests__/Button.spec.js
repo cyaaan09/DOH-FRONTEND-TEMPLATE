@@ -113,11 +113,57 @@ describe('Button — Appendix C conformance', () => {
 
   it('gives disabled its own surface, border and text rather than opacity', () => {
     // Redline "Disabled · #F7F9FC bg · 1px #E4E8EF · #B9C1D1"
+    // Driven from the `disabled` prop directly (not a `disabled:` variant) so
+    // it does not also fire for a busy-but-not-disabled button — see the
+    // "Pending state" tests below for why that distinction matters.
     const classes = mount(Button, { props: { disabled: true } }).classes()
-    expect(classes).toContain('disabled:border')
-    expect(classes).toContain('disabled:bg-surface-input')
-    expect(classes).toContain('disabled:border-hairline')
-    expect(classes).toContain('disabled:text-ink-200')
+    expect(classes).toContain('border')
+    expect(classes).toContain('bg-surface-input')
+    expect(classes).toContain('border-hairline')
+    expect(classes).toContain('text-ink-200')
     expect(classes).not.toContain('disabled:opacity-60')
+    expect(classes).not.toContain('btn--busy')
+  })
+
+  describe('Pending state (busy) must not collapse into Disabled', () => {
+    // The native `disabled` attribute is set for two different reasons —
+    // the `disabled` prop and the `busy` prop — but redline "Pending" and
+    // redline "Disabled" are two different looks. A busy primary button
+    // must stay on the primary-hover green, not fall back to the Disabled
+    // row's grey surface/border/text.
+    it('keeps its green fill while busy and does not take on the disabled look', () => {
+      const classes = mount(Button, { props: { busy: true } }).classes()
+      expect(classes).toContain('bg-green-fill')
+      expect(classes).toContain('btn--busy')
+      expect(classes).not.toContain('bg-surface-input')
+      expect(classes).not.toContain('border-hairline')
+      expect(classes).not.toContain('text-ink-200')
+    })
+
+    it('stays non-interactive while busy: disabled attribute and aria-busy are unchanged', () => {
+      const wrapper = mount(Button, { props: { busy: true } })
+      expect(wrapper.attributes('disabled')).toBeDefined()
+      expect(wrapper.attributes('aria-busy')).toBe('true')
+    })
+
+    it('still gives a disabled-only button the full Disabled row appearance', () => {
+      const classes = mount(Button, { props: { disabled: true } }).classes()
+      expect(classes).toContain('bg-surface-input')
+      expect(classes).toContain('border-hairline')
+      expect(classes).toContain('text-ink-200')
+      expect(classes).not.toContain('btn--busy')
+    })
+
+    it('prioritises the Pending look when both disabled and busy are set', () => {
+      // Implementation choice: busy wins. A caller setting both is asking
+      // for a submit-in-flight button, which is the busy case; disabled is
+      // implied by busy already forcing the native attribute.
+      const wrapper = mount(Button, { props: { disabled: true, busy: true } })
+      const classes = wrapper.classes()
+      expect(classes).toContain('btn--busy')
+      expect(classes).not.toContain('bg-surface-input')
+      expect(classes).not.toContain('text-ink-200')
+      expect(wrapper.attributes('disabled')).toBeDefined()
+    })
   })
 })
