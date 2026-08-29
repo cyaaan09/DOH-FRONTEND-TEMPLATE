@@ -222,10 +222,35 @@ describe('skeleton sections show their headings and mark their gaps', () => {
     expect(mount(FilesSection).findAll('.text-column-header')).toHaveLength(1)
   })
 
-  it('SpecsSection cites Appendix C with no group, not the false "Component specs" heading', () => {
-    // "Component specs" is the source document's own section name, quoted in
+  it('SpecsSection cites Appendix C with no group, not the false “Component specs” heading', () => {
+    // “Component specs” is the source document's own section name, quoted in
     // Appendix C's intro - it is not one of Appendix C's 19 groups. A gap
     // that would render all 19 names none of them, so no curly quote appears.
-    expect(mount(SpecsSection).text()).not.toContain('“')
+    expect(mount(SpecsSection).text()).not.toContain('”')
+  })
+})
+
+describe('SpecsSection hosts the components the artifact only redlines', () => {
+  // StatCard and Meter have an Appendix C group (“Stat cards & meters”) but no
+  // page section of their own, so deleting the old CardsDemo left them
+  // invisible. Component specs is where redlines live, so they go here rather
+  // than in an invented section the artifact does not have.
+  it('renders StatCard with its label, figure and hint', () => {
+    const text = mount(SpecsSection).text()
+    expect(text).toContain('Active LTOs')
+    expect(text).toContain('211')
+    expect(text).toContain('2 due within 7 days')
+  })
+
+  it('renders a Meter with its caption', () => {
+    const wrapper = mount(SpecsSection)
+    expect(wrapper.find('[role=”progressbar”]').exists()).toBe(true)
+    expect(wrapper.text()).toContain('Uploaded')
+  })
+
+  it('still renders its SpecTables gap', () => {
+    // The spec-table component itself is still unbuilt; hosting StatCard here
+    // must not disturb that marker.
+    expect(mount(SpecsSection).findAll('[data-gap]')).toHaveLength(1)
   })
 })
