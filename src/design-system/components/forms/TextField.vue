@@ -22,16 +22,21 @@ const message = computed(() => props.error || props.hint)
 </script>
 
 <template>
-  <div class="flex flex-col gap-1.5">
-    <label :for="id" class="text-field-label text-ink-700">{{ label }}</label>
+  <div class="flex flex-col">
+    <label :for="id" class="text-field-label text-ink-700 mb-1.5">{{ label }}</label>
 
     <div class="relative flex items-center">
       <input
         :id="id"
-        class="field__input h-field w-full rounded-field border px-3 text-body text-ink-900 transition-colors"
+        class="field__input h-field w-full rounded-field border px-3 text-body transition-colors"
         :class="[
-          error ? 'border-red-border' : 'border-field',
-          disabled || readonly ? 'bg-surface-input text-ink-500' : 'bg-surface',
+          // Redline 'Error' — strong red border, not the pale tint used
+          // for toast and notice outlines.
+          error ? 'border-red-700' : 'border-field',
+          // Redline 'Read only' — input well surface, hairline border, muted text.
+          disabled || readonly
+            ? 'bg-surface-input border-hairline text-ink-400'
+            : 'bg-surface text-ink-900',
           mono ? 'font-mono' : '',
           suffix ? 'pr-14' : '',
         ]"
@@ -50,7 +55,7 @@ const message = computed(() => props.error || props.hint)
     <p
       v-if="message"
       :id="messageId"
-      class="text-hint"
+      class="text-hint mt-1.25"
       :class="error ? 'text-red-700' : 'text-text-meta'"
     >
       {{ message }}

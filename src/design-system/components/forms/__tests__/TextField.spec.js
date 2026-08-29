@@ -118,6 +118,54 @@ describe('Textarea', () => {
   })
 })
 
+describe('TextField — Appendix C conformance', () => {
+  it('uses the strong red for an error border, not the pale tint', () => {
+    // Redline "Error" — strong red border, not the pale tint used for
+    // toast and notice outlines.
+    const classes = mount(TextField, { props: { label: 'A', error: 'Required' } })
+      .get('input')
+      .classes()
+    expect(classes).toContain('border-red-700')
+    expect(classes).not.toContain('border-red-border')
+  })
+
+  it('gives read-only fields the hairline border and muted text', () => {
+    // Redline "Read only" — input well surface, hairline border, muted text.
+    const classes = mount(TextField, { props: { label: 'A', readonly: true } })
+      .get('input')
+      .classes()
+    expect(classes).toContain('bg-surface-input')
+    expect(classes).toContain('border-hairline')
+    expect(classes).toContain('text-ink-400')
+  })
+
+  it('spaces the label 6px above and the message 5px below', () => {
+    // Redline "Label" (6px below) and "Hint" (5px above).
+    const wrapper = mount(TextField, { props: { label: 'A', hint: 'h' } })
+    expect(wrapper.get('label').classes()).toContain('mb-1.5')
+    expect(wrapper.get('p').classes()).toContain('mt-1.25')
+  })
+})
+
+describe('Textarea — Appendix C conformance', () => {
+  it('uses the taller textarea padding', () => {
+    // Redline "Textarea" — 11px/12px padding, resize vertical.
+    const classes = mount(Textarea, { props: { label: 'A' } }).get('textarea').classes()
+    expect(classes).toContain('py-2.75')
+    expect(classes).toContain('px-3')
+    expect(classes).toContain('resize-y')
+  })
+
+  it('matches the read-only treatment TextField uses', () => {
+    const classes = mount(Textarea, { props: { label: 'A', readonly: true } })
+      .get('textarea')
+      .classes()
+    expect(classes).toContain('bg-surface-input')
+    expect(classes).toContain('border-hairline')
+    expect(classes).toContain('text-ink-400')
+  })
+})
+
 describe('SearchField', () => {
   it('shows the clear button only once there is a value', () => {
     expect(mount(SearchField, { props: { modelValue: '' } }).find('[data-clear]').exists()).toBe(false)

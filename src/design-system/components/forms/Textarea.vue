@@ -24,18 +24,23 @@ const counter = computed(() =>
 </script>
 
 <template>
-  <div class="flex flex-col gap-1.5">
+  <div class="flex flex-col">
     <div class="flex items-baseline justify-between gap-3">
-      <label :for="id" class="text-field-label text-ink-700">{{ label }}</label>
+      <label :for="id" class="text-field-label text-ink-700 mb-1.5">{{ label }}</label>
       <span v-if="counter" class="text-hint text-text-meta">{{ counter }}</span>
     </div>
 
     <textarea
       :id="id"
-      class="field__input w-full resize-y rounded-field border px-3 py-2 text-body text-ink-900 transition-colors"
+      class="field__input w-full resize-y rounded-field border px-3 py-2.75 text-body transition-colors"
       :class="[
-        error ? 'border-red-border' : 'border-field',
-        disabled || readonly ? 'bg-surface-input text-ink-500' : 'bg-surface',
+        // Redline 'Error' — strong red border, not the pale tint used
+        // for toast and notice outlines.
+        error ? 'border-red-700' : 'border-field',
+        // Redline 'Read only' — input well surface, hairline border, muted text.
+        disabled || readonly
+          ? 'bg-surface-input border-hairline text-ink-400'
+          : 'bg-surface text-ink-900',
       ]"
       :rows="rows"
       :value="modelValue"
@@ -51,7 +56,7 @@ const counter = computed(() =>
     <p
       v-if="message"
       :id="messageId"
-      class="text-hint"
+      class="text-hint mt-1.25"
       :class="error ? 'text-red-700' : 'text-text-meta'"
     >
       {{ message }}
