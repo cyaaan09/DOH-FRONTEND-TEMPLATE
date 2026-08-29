@@ -35,11 +35,32 @@ src/design-system/
     tokens.dark.css           [data-theme="dark"] — verbatim, Appendix B
     theme.css                 @theme inline bridge → Tailwind namespaces
     base.css                  body/a/input resets + spin & toastTimer keyframes
-  components/                 ~35 SFCs (§7)
+  components/                 ~35 SFCs, grouped by §7 family
+    surfaces/  forms/  selects/  selection/  tabs/
+    overlays/  files/  feedback/  data/  shell/
+  demo/                       kitchen-sink sections (§12)
   composables/
     useTheme.js               data-theme swap, VueUse-backed
     useToast.js               queue + auto-dismiss, Pinia-backed
 ```
+
+Grouping is invisible to consumers — `index.js` re-exports every component flat, so app code always writes `import { Button, TextField } from '@/design-system'` regardless of which family folder a component lives in.
+
+### 3.1 The app boundary
+
+`src/components/` holds components for **one app**; `src/design-system/components/` holds components that could ship in **any** project built from this template. The test is whether the component knows anything about a business domain:
+
+| `src/components/` (app) | `design-system/components/` |
+|---|---|
+| `LicenceStatusChip` — maps `expiring` → amber | `Chip` — takes a `tone` prop |
+| `FacilitySearchBar` — wired to facility filters | `SearchField`, `InlineFilter` |
+| `FacilityTable` — your columns and API shape | `DataTable` — takes columns and rows |
+
+A domain component is typically a thin wrapper that encodes a policy decision (*"expiring licences are amber"*), which has no place in a reusable template.
+
+**Dependency direction is one-way and enforced by test (§13):** app components may import design-system components freely; design-system components must never import from `src/components/`. Violating it makes the system un-liftable — you could not extract it into a package without dragging one app's domain concepts along.
+
+The template ships `src/components/` empty apart from a `README.md` stating this rule.
 
 `src/assets/main.css` becomes an ordered import manifest:
 
@@ -108,17 +129,23 @@ Weights required by the type scale: 400 (body), 500 (labels, mono), 700 (anythin
 
 ### Type scale
 
-| Token | Spec |
-|---|---|
-| Page title | 26px / 700 / -0.015em |
-| Section title | 17px / 700 |
-| Card figure | 23px / 700 / -0.01em |
-| Row title | 14px / 700 |
-| Body | 13.5px / 400 / 1.55 |
-| Field label | 12.5px / 500 |
-| Meta / hint | 12px / 400 |
-| Column header | 10.5px / 700 / 0.08em |
-| Mono | 12.5px / 500 |
+The source document states the scale as literal values and never tokenised it, so `tokens.css` has no size tokens. Rather than relax the verbatim-tokens constraint, the scale is defined in `theme.css` under Tailwind's `--text-*` namespace — the same layer that already owns `--font-sans`/`--font-mono` as literals and renames `--r-field` → `--radius-field`. `tokens.css` is not touched.
+
+Tailwind v4 carries line-height, letter-spacing and weight on the same name (`--text-body--line-height`), so one utility sets all of a style's properties:
+
+| Utility | Size | Weight | Extra |
+|---|---|---|---|
+| `text-page-title` | 26px | 700 | tracking -0.015em |
+| `text-card-figure` | 23px | 700 | tracking -0.01em |
+| `text-section-title` | 17px | 700 | — |
+| `text-row-title` | 14px | 700 | — |
+| `text-body` | 13.5px | 400 | leading 1.55 |
+| `text-field-label` | 12.5px | 500 | — |
+| `text-meta` | 12px | 400 | — |
+| `text-column-header` | 10.5px | 700 | tracking 0.08em |
+| `text-mono` | 12.5px | 500 | — |
+
+`--text-*` cannot carry `font-family`, so the Mono style is the only two-class case: `text-mono font-mono`. Components must never write an arbitrary size (`text-[13.5px]`) — a review point, since no static guard can distinguish a correct 13.5px from a typo'd 13px.
 
 ## 7. Component inventory
 
@@ -192,7 +219,9 @@ Pinia store holds the queue (`useToastStore`); `<ToastRegion>` renders Ark `toas
 
 ## 12. Verification surface
 
-A `/design-system` route reproducing all 16 sections of the source canvas. This is the acceptance test — checked side-by-side against the artifact in **both** themes. The existing indigo/gray demo styling in `src/pages/index.vue` and `src/pages/about.vue` is replaced with token-based markup, since it currently contradicts the system.
+A `/design-system` route reproducing all 16 sections of the source canvas. This is the acceptance test — checked side-by-side against the artifact in **both** themes. Each phase appends its own sections, so the page grows with the system.
+
+The route is a single `src/pages/design-system.vue`; its section components live in `src/design-system/demo/`, **not** under `src/pages/`. Anything under `pages/` becomes a route with the file-based router, so a `sections/` subfolder there would silently generate a dozen junk routes. Keeping the demo beside the system also means both lift out together. The existing indigo/gray demo styling in `src/pages/index.vue` and `src/pages/about.vue` is replaced with token-based markup, since it currently contradicts the system.
 
 **Assumption:** the kitchen sink uses neutral placeholder content, not the source document's domain-specific facility names, licence numbers, or office footer. Reversible if the real samples are wanted.
 
@@ -203,10 +232,13 @@ A `/design-system` route reproducing all 16 sections of the source canvas. This 
 | Token parity | Parse both token files; the dark file overrides a known subset and introduces no orphan names |
 | Raw-hex guard | No file under `design-system/components/` contains a hex literal |
 | Dark-variant guard | No file under `design-system/components/` contains a `dark:` variant |
-| Bridge integrity | Every `@theme inline` mapping points at a var that exists in `tokens.css` |
+| Bridge integrity | Every `@theme inline` mapping points at a var that exists in `tokens.css`, and every token is bridged or explicitly allowlisted as unbridged |
+| Import direction | No file under `src/design-system/` imports from `src/components/` (§3.1) |
 | Behavior | Select keyboard nav; Dialog focus trap + restore; toast auto-dismiss at 5s; checkbox indeterminate; bulk-select tri-state |
 
-The first four are cheap static checks and are the mechanical enforcement of §1's governing rules.
+The first five are cheap static checks and are the mechanical enforcement of §1's and §3.1's governing rules.
+
+`src/design-system/demo/` is deliberately **not** covered by the raw-hex guard: the swatch tables legitimately display values like `#177236` as visible text. Demo markup is a manual review point instead.
 
 ## 14. Sequencing
 
