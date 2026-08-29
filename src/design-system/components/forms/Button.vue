@@ -16,7 +16,7 @@ const props = defineProps({
   size: {
     type: String,
     default: 'default',
-    validator: (value) => ['default', 'compact', 'touch'].includes(value),
+    validator: (value) => ['default', 'compact', 'icon', 'touch'].includes(value),
   },
   busy: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
@@ -24,16 +24,28 @@ const props = defineProps({
 })
 
 const SIZES = {
-  default: 'h-field px-4',
-  compact: 'h-compact px-3',
-  touch: 'h-touch px-5',
+  // Redline "Default · 38px · pad 0 16px · radius 9px · 13.5px / 700"
+  default: 'h-field px-4 rounded-field text-body',
+  // Redline "Compact · 34px · pad 0 14px · radius 8px · 12.5px"
+  compact: 'h-compact px-3.5 rounded-control text-field-label',
+  // Redline "Icon only · 34×34px · radius 8px"
+  icon: 'h-compact w-compact rounded-control text-field-label',
+  // Not in the redline table; the source's responsive group specifies 44px
+  // for the one primary action on a mobile-width form.
+  touch: 'h-touch px-5 rounded-field text-body',
 }
 
 const VARIANTS = {
-  primary: 'btn--primary text-green-on-fill',
+  // Redline "Primary · flat green bg · white text · shadow 0 1px 2px rgba(20,80,40,.25)"
+  // (hex values omitted from this comment — the guards test below bans raw
+  // hex literals anywhere in this file, comments included).
+  primary: 'btn--primary bg-green-fill text-green-on-fill',
+  // Redline "Secondary · white bg · 1px grey-blue border · dark ink text / 500" + "hover light-grey surface"
   secondary: 'bg-surface text-ink-700 border border-field hover:bg-surface-muted',
+  // Redline "Destructive · white bg · 1px red border · red text · hover red-tint"
   destructive: 'bg-surface text-red-700 border border-red-border-btn hover:bg-red-50',
-  ghost: 'text-ink-600 hover:bg-surface-muted',
+  // Redline "Ghost · transparent · green text / 700 · hover green-tint"
+  ghost: 'text-green-text hover:bg-green-tint',
 }
 
 const sizeClass = computed(() => SIZES[props.size] ?? SIZES.default)
@@ -42,7 +54,7 @@ const variantClass = computed(() => VARIANTS[props.variant] ?? VARIANTS.primary)
 
 <template>
   <button
-    class="btn inline-flex items-center justify-center gap-2 rounded-field text-body font-medium whitespace-nowrap select-none transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+    class="btn inline-flex items-center justify-center gap-2 font-bold whitespace-nowrap select-none transition-colors disabled:cursor-not-allowed disabled:border disabled:bg-surface-input disabled:border-hairline disabled:text-ink-200"
     :class="[sizeClass, variantClass]"
     :type="type"
     :disabled="disabled || busy"
@@ -54,15 +66,16 @@ const variantClass = computed(() => VARIANTS[props.variant] ?? VARIANTS.primary)
 </template>
 
 <style scoped>
-/* Gradient, focus ring and keyframe animation have no utility namespace —
- * spec §4.2 routes those through var() here. */
+/* Shadow, focus ring and the spinner keyframe have no utility namespace —
+ * spec §4.2 routes those through var() here. The primary FILL is a flat
+ * --green-fill utility now, not the gradient: redline "Primary · flat green bg".
+ * (hex omitted — the guards test below bans raw hex literals file-wide.) */
 .btn:focus-visible {
   outline: none;
   box-shadow: var(--ring-focus);
 }
 
 .btn--primary {
-  background: var(--grad-primary);
   box-shadow: var(--sh-primary);
 }
 
@@ -70,13 +83,14 @@ const variantClass = computed(() => VARIANTS[props.variant] ?? VARIANTS.primary)
   background: var(--green-fill-hover);
 }
 
+/* Redline "Pending · primary-hover green + 12px spinner, 2px track rgba(255,255,255,.4)" */
 .btn__spinner {
-  width: 13px;
-  height: 13px;
+  width: 12px;
+  height: 12px;
   flex: none;
   border-radius: 50%;
-  border: 2px solid currentColor;
-  border-top-color: transparent;
+  border: 2px solid rgb(255 255 255 / 0.4);
+  border-top-color: currentColor;
   animation: spin 600ms linear infinite;
 }
 </style>
