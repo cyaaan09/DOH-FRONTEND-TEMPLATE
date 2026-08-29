@@ -29,7 +29,7 @@
 ## File Structure
 
 ```
-src/design-system/styles/theme.css          MODIFIED — adds --text-note (Task 1)
+src/design-system/styles/theme.css          MODIFIED — adds --text-caption (Task 1)
 
 src/design-system/demo/chrome/
   DemoCard.vue      section card: header, title, description, body slot   (Task 2)
@@ -64,7 +64,7 @@ The chrome needs a 12.5px/1.5 style the scale lacks. Nothing visual changes.
 
 **Interfaces:**
 - Consumes: nothing.
-- Produces: the `text-note` utility (12.5px / line-height 1.5 / weight 400). Tasks 2-6 use it for sub-block notes and rule-card bodies.
+- Produces: the `text-caption` utility (12.5px / line-height 1.5 / weight 400). Tasks 2-6 use it for sub-block notes and rule-card bodies.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -75,9 +75,9 @@ Add to `src/design-system/styles/__tests__/theme-bridge.spec.js`, inside its exi
     // Spec §17.1 — sub-block notes and rule-card bodies are 12.5px / 1.5.
     // The scale's text-field-label is also 12.5px but carries weight 500 and
     // no line-height, so it is the wrong style for running prose.
-    expect(bridge.get('text-note')).toBe('12.5px')
-    expect(bridge.get('text-note--line-height')).toBe('1.5')
-    expect(bridge.get('text-note--font-weight')).toBe('400')
+    expect(bridge.get('text-caption')).toBe('12.5px')
+    expect(bridge.get('text-caption--line-height')).toBe('1.5')
+    expect(bridge.get('text-caption--font-weight')).toBe('400')
   })
 ```
 
@@ -91,13 +91,18 @@ Expected: FAIL — `expected undefined to be '12.5px'`.
 Add to the **plain `@theme` block** in `src/design-system/styles/theme.css`, below the existing type scale — this is a literal, not a bridged token:
 
 ```css
-  /* Demo chrome note style — spec §17.1. Sub-block notes and rule-card
+  /* Demo chrome caption style — spec §17.1. Sub-block notes and rule-card
    * bodies are running prose at 12.5px with a 1.5 line-height; the scale's
    * text-field-label is the same size but weight 500 with no line-height,
-   * which is a label style, not a prose one. */
-  --text-note: 12.5px;
-  --text-note--line-height: 1.5;
-  --text-note--font-weight: 400;
+   * which is a label style, not a prose one.
+   *
+   * Named `caption`, NOT `note`: the scale already has --text-notice (13px /
+   * 1.35), and `text-note` beside `text-notice` is a near-miss where both are
+   * valid classes that render at different sizes — a typo would look almost
+   * right and never fail a test. */
+  --text-caption: 12.5px;
+  --text-caption--line-height: 1.5;
+  --text-caption--font-weight: 400;
 ```
 
 - [ ] **Step 4: Run test to verify it passes**
@@ -125,7 +130,7 @@ Four components reproducing the artifact's section furniture. Values are spec §
 - Create: `src/design-system/demo/chrome/__tests__/chrome.spec.js`
 
 **Interfaces:**
-- Consumes: `text-note` from Task 1.
+- Consumes: `text-caption` from Task 1.
 - Produces: `<DemoCard title description>` with a default slot; `<DemoBlocks>` wrapping `<DemoBlock label note>`; `<DemoStrip label>` with a default slot. Tasks 4-6 compose every section from these.
 
 - [ ] **Step 1: Write the failing test**
@@ -192,7 +197,7 @@ describe('DemoBlock', () => {
 
   it('renders a note only when given one', () => {
     const withNote = mount(DemoBlock, { props: { label: 'STATUS', note: 'A dot plus a word.' } })
-    expect(withNote.get('[data-note]').classes()).toContain('text-note')
+    expect(withNote.get('[data-note]').classes()).toContain('text-caption')
     expect(mount(DemoBlock, { props: { label: 'STATUS' } }).find('[data-note]').exists()).toBe(false)
   })
 
@@ -291,7 +296,7 @@ defineProps({
     <!-- Spec §17.1 — label 10.5/700/0.08em, margin-bottom 4px -->
     <div data-label class="text-column-header text-text-header mb-1">{{ label }}</div>
     <!-- note 12.5/1.5, margin-bottom 10px -->
-    <p v-if="note" data-note class="text-note text-text-meta mb-2.5">{{ note }}</p>
+    <p v-if="note" data-note class="text-caption text-text-meta mb-2.5">{{ note }}</p>
     <slot />
   </div>
 </template>
@@ -340,7 +345,7 @@ The two components that make the page a checklist, plus the manifest a test read
 - Create: `src/design-system/demo/chrome/__tests__/gaps.spec.js`
 
 **Interfaces:**
-- Consumes: `text-note` from Task 1.
+- Consumes: `text-caption` from Task 1.
 - Produces: `<DemoRules :rules="[{ title, body }]" />`; `<DemoGap component group />`; and `SECTIONS` from `sections.js` — an array of `{ id, title, complete }` in the artifact's order. Tasks 4-6 consume all three.
 
 - [ ] **Step 1: Write the failing test**
@@ -375,7 +380,7 @@ describe('DemoRules', () => {
     })
     expect(wrapper.get('[data-rule-title]').classes()).toContain('text-notice')
     expect(wrapper.get('[data-rule-title]').classes()).toContain('font-bold')
-    expect(wrapper.get('[data-rule-body]').classes()).toContain('text-note')
+    expect(wrapper.get('[data-rule-body]').classes()).toContain('text-caption')
   })
 
   it('renders nothing when given no rules', () => {
@@ -461,7 +466,7 @@ defineProps({
   <div v-if="rules.length" class="demo-rules border-t border-divider">
     <div v-for="rule in rules" :key="rule.title" data-rule class="demo-rules__card px-card-x py-4">
       <div data-rule-title class="text-notice font-bold text-ink-900">{{ rule.title }}</div>
-      <p data-rule-body class="text-note text-text-meta mt-1">{{ rule.body }}</p>
+      <p data-rule-body class="text-caption text-text-meta mt-1">{{ rule.body }}</p>
     </div>
   </div>
 </template>
@@ -492,7 +497,7 @@ defineProps({
 <template>
   <!-- Spec §17.2 — a slot whose component is not built yet. Visible on the
        page so the remaining work is a checklist rather than an absence. -->
-  <div data-gap class="demo-gap text-note text-ink-400">
+  <div data-gap class="demo-gap text-caption text-ink-400">
     <span class="font-mono text-mono">{{ component }}</span>
     not built — Appendix C “{{ group }}”
   </div>
@@ -792,11 +797,11 @@ function toggle(label) {
           @toggle="toggle(label)"
           >{{ label }}</FilterChip
         >
-        <span v-if="selected.length" class="text-note text-green-text ml-1">
+        <span v-if="selected.length" class="text-caption text-green-text ml-1">
           Clear {{ selected.length }}
         </span>
       </div>
-      <p class="text-note text-text-meta mt-2.5">
+      <p class="text-caption text-text-meta mt-2.5">
         Selected chips fill green; unselected keep a hairline border so the row reads as one control
         group.
       </p>
@@ -811,7 +816,7 @@ function toggle(label) {
           :value="chip.value"
           @dismiss="dismiss"
         />
-        <span v-if="applied.length === 0" class="text-note text-text-meta">No filters applied.</span>
+        <span v-if="applied.length === 0" class="text-caption text-text-meta">No filters applied.</span>
       </ChipGroup>
     </DemoStrip>
 
