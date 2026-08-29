@@ -1,7 +1,6 @@
 <script setup>
 import DemoCard from '../chrome/DemoCard.vue'
 import DemoBlocks from '../chrome/DemoBlocks.vue'
-import DemoBlock from '../chrome/DemoBlock.vue'
 import DemoRules from '../chrome/DemoRules.vue'
 import DemoGap from '../chrome/DemoGap.vue'
 
@@ -20,9 +19,7 @@ const RULES = [
     description="Paste this block into your stylesheet first, then build components against the variables — not raw hex. Every value above resolves to one of these."
   >
     <DemoBlocks>
-      <DemoBlock label="TOKENS">
-        <DemoGap component="TokenBlock" group="Tokens for handoff" />
-      </DemoBlock>
+      <DemoGap component="TokenBlock" source="Appendix A" group="tokens.css" />
     </DemoBlocks>
 
     <DemoRules :rules="RULES" />

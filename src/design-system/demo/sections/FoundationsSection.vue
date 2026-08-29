@@ -8,6 +8,9 @@ import DemoGap from '../chrome/DemoGap.vue'
 // Data-driven in the artifact via {{ group.label }}: BRAND GREEN, NEUTRALS
 // and STATUS TONES carry a note; RADIUS, SIZE & SPACING and ELEVATION &
 // BORDERS do not. None of the six is built yet, so every block is a gap.
+// Foundations describes token scales, not components: no Appendix C group
+// governs it, so every gap cites Appendix A ("tokens.css") instead - see
+// spec Appendix D.1, "Gap citations where Appendix C has no group".
 </script>
 
 <template>
@@ -17,22 +20,22 @@ import DemoGap from '../chrome/DemoGap.vue'
   >
     <DemoBlocks>
       <DemoBlock label="BRAND GREEN" note="actions, active state, anything issued">
-        <DemoGap component="SwatchGrid" group="Foundations" />
+        <DemoGap component="SwatchGrid" source="Appendix A" group="tokens.css" />
       </DemoBlock>
       <DemoBlock label="NEUTRALS" note="text, borders, surfaces">
-        <DemoGap component="SwatchGrid" group="Foundations" />
+        <DemoGap component="SwatchGrid" source="Appendix A" group="tokens.css" />
       </DemoBlock>
       <DemoBlock label="STATUS TONES" note="one meaning each — never decorative">
-        <DemoGap component="SwatchGrid" group="Foundations" />
+        <DemoGap component="SwatchGrid" source="Appendix A" group="tokens.css" />
       </DemoBlock>
       <DemoBlock label="RADIUS">
-        <DemoGap component="SwatchGrid" group="Foundations" />
+        <DemoGap component="SwatchGrid" source="Appendix A" group="tokens.css" />
       </DemoBlock>
       <DemoBlock label="SIZE &amp; SPACING">
-        <DemoGap component="SwatchGrid" group="Foundations" />
+        <DemoGap component="SwatchGrid" source="Appendix A" group="tokens.css" />
       </DemoBlock>
       <DemoBlock label="ELEVATION &amp; BORDERS">
-        <DemoGap component="SwatchGrid" group="Foundations" />
+        <DemoGap component="SwatchGrid" source="Appendix A" group="tokens.css" />
       </DemoBlock>
     </DemoBlocks>
   </DemoCard>

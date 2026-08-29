@@ -2,6 +2,7 @@
 defineProps({
   component: { type: String, required: true },
   group: { type: String, required: true },
+  source: { type: String, default: 'Appendix C' },
 })
 </script>
 
@@ -9,9 +10,12 @@ defineProps({
   <div data-gap class="demo-gap text-caption text-ink-400">
     <!-- Spec §17.2 — a slot whose component is not built yet. Visible on the
          page so the remaining work is a checklist rather than an absence.
-         Comment inside the root, per the Fragment-root note above. -->
+         Comment inside the root, per the Fragment-root note above. `source`
+         defaults to Appendix C; Foundations and Tokens for handoff override
+         it to Appendix A, since they describe token scales, not components,
+         and no Appendix C group governs them (spec Appendix D.1). -->
     <span class="font-mono text-mono">{{ component }}</span>
-    not built — Appendix C "{{ group }}"
+    not built — {{ source }} “{{ group }}”
   </div>
 </template>
 

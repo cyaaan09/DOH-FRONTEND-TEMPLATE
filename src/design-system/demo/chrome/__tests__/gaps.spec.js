@@ -54,6 +54,20 @@ describe('DemoGap', () => {
       'demo-gap',
     )
   })
+
+  it('cites Appendix C by default and a given source otherwise', () => {
+    // Spec Appendix D.1, "Gap citations where Appendix C has no group" —
+    // Foundations and Tokens for handoff describe token scales, not
+    // components, so their gaps must cite Appendix A instead.
+    const withoutSource = mount(DemoGap, { props: { component: 'X', group: 'Y' } })
+    expect(withoutSource.text()).toContain('Appendix C')
+
+    const withSource = mount(DemoGap, {
+      props: { component: 'X', group: 'tokens.css', source: 'Appendix A' },
+    })
+    expect(withSource.text()).toContain('Appendix A')
+    expect(withSource.text()).not.toContain('Appendix C')
+  })
 })
 
 describe('the section manifest', () => {

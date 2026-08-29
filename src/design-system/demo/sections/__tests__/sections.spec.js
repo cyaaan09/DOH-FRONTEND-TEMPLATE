@@ -13,6 +13,8 @@ import SelectionSection from '../SelectionSection.vue'
 import DialogSection from '../DialogSection.vue'
 import FoundationsSection from '../FoundationsSection.vue'
 import DarkModeSection from '../DarkModeSection.vue'
+import SpecsSection from '../SpecsSection.vue'
+import TokensSection from '../TokensSection.vue'
 
 describe('ChipsSection', () => {
   it('carries the artifact description verbatim', () => {
@@ -163,5 +165,20 @@ describe('skeleton sections show their headings and mark their gaps', () => {
     }
     expect(wrapper.findAll('[data-gap]')).toHaveLength(6)
     expect(wrapper.findAll('[data-rule]')).toHaveLength(4)
+  })
+
+  it('renders no invented uppercase headings for Dropdowns, Component specs and Tokens', () => {
+    // Spec Appendix D.1, "Sections with NO uppercase sub-blocks" — an earlier
+    // pass invented DemoBlock headings for these three; none exists in the
+    // source, so none of these sections should render the column-header class.
+    for (const Section of [DropdownsSection, SpecsSection, TokensSection]) {
+      expect(mount(Section).findAll('.text-column-header')).toHaveLength(0)
+    }
+  })
+
+  it('FilesSection renders exactly one uppercase heading (FILE LIST)', () => {
+    // Appendix D.1 gives File inputs exactly one uppercase sub-block; the
+    // PNPKI/Compact demos carry field labels instead, not column headers.
+    expect(mount(FilesSection).findAll('.text-column-header')).toHaveLength(1)
   })
 })
