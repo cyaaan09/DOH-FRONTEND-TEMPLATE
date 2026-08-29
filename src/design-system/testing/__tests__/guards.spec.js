@@ -1,9 +1,10 @@
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { findDarkVariants, findRawHex } from '../guards'
+import { findAppImports, findDarkVariants, findRawHex } from '../guards'
 
 const COMPONENTS_DIR = 'src/design-system/components'
+const DESIGN_SYSTEM_DIR = 'src/design-system'
 
 /**
  * Lists .vue and .js files under the components directory. .js is included
@@ -30,6 +31,19 @@ function listComponents() {
   return entries
     .filter((name) => /\.(vue|js)$/.test(String(name)))
     .map((name) => join(COMPONENTS_DIR, String(name)))
+}
+
+/** Every .vue and .js file in the design system, excluding test files. */
+function listDesignSystemFiles() {
+  try {
+    return readdirSync(DESIGN_SYSTEM_DIR, { recursive: true })
+      .map((name) => String(name))
+      .filter((name) => /\.(vue|js)$/.test(name) && !name.includes('__tests__'))
+      .map((name) => join(DESIGN_SYSTEM_DIR, name))
+  } catch (err) {
+    if (err.code === 'ENOENT') return []
+    throw err
+  }
 }
 
 describe('findRawHex', () => {
@@ -91,6 +105,43 @@ describe('design-system components', () => {
       const source = readFileSync(file, 'utf8')
       for (const hex of findRawHex(source)) violations.push(`${file}: raw hex ${hex}`)
       for (const v of findDarkVariants(source)) violations.push(`${file}: ${v}`)
+    }
+    expect(violations).toEqual([])
+  })
+})
+
+describe('findAppImports', () => {
+  it('catches an alias import from the app components directory', () => {
+    expect(findAppImports("import Foo from '@/components/Foo.vue'")).toEqual([
+      '@/components/Foo.vue',
+    ])
+  })
+
+  it('catches a relative import that climbs into app components', () => {
+    expect(findAppImports("import Foo from '../../components/Foo.vue'")).toEqual([
+      '../../components/Foo.vue',
+    ])
+  })
+
+  it('allows imports within the design system', () => {
+    expect(findAppImports("import Chip from '../feedback/Chip.vue'")).toEqual([])
+    expect(findAppImports("import { useTheme } from '@/design-system'")).toEqual([])
+  })
+
+  it('allows package imports', () => {
+    expect(findAppImports("import { ref } from 'vue'")).toEqual([])
+    expect(findAppImports("import { useDark } from '@vueuse/core'")).toEqual([])
+  })
+})
+
+describe('design-system import direction', () => {
+  // Spec §3.1: app code may import the design system; the design system may
+  // never import app code, or it cannot be lifted into a package.
+  it('never imports from src/components', () => {
+    const violations = []
+    for (const file of listDesignSystemFiles()) {
+      const source = readFileSync(file, 'utf8')
+      for (const spec of findAppImports(source)) violations.push(`${file}: ${spec}`)
     }
     expect(violations).toEqual([])
   })

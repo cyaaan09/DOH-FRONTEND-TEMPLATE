@@ -39,3 +39,17 @@ export function findRawHex(source) {
 export function findDarkVariants(source) {
   return [...source.matchAll(DARK_VARIANT)].map((match) => match[1])
 }
+
+// An import whose specifier resolves into the app's own components directory.
+// Matches the '@/components/...' alias and any relative path ending in a
+// '../components/' segment. Written with a capture group rather than a
+// lookbehind, which is not portable across JS engines.
+const APP_IMPORT = /from\s+['"]((?:@\/components|(?:\.\.\/)+components)\/[^'"]*)['"]/g
+
+/**
+ * @param {string} source file contents
+ * @returns {string[]} import specifiers that reach into src/components
+ */
+export function findAppImports(source) {
+  return [...source.matchAll(APP_IMPORT)].map((match) => match[1])
+}
