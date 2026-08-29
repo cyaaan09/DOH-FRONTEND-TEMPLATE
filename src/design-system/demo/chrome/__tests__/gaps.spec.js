@@ -80,9 +80,9 @@ describe('the section manifest', () => {
 
   it('gives every section a title and a completeness flag', () => {
     for (const section of SECTIONS) {
-      expect(typeof section.title).toBe('string')
-      expect(section.title.length).toBeGreaterThan(0)
-      expect(typeof section.complete).toBe('boolean')
+      expect(typeof section.title, `${section.id}: title`).toBe('string')
+      expect(section.title.length, `${section.id}: title is empty`).toBeGreaterThan(0)
+      expect(typeof section.complete, `${section.id}: complete flag`).toBe('boolean')
     }
   })
 })
