@@ -1,0 +1,59 @@
+[data-theme="dark"] {
+  /* surfaces — depth by lightness, not shadow */
+  --canvas: #0F141C;            /* page */
+  --surface: #161C26;           /* card */
+  --surface-sunken: #1C242F;    /* header, footer, expanded row */
+  --surface-input: #10161F;     /* field well */
+  --surface-muted: #222B38;     /* control shell, icon tile */
+  --surface-card-muted: #141A23;/* closed / archived card */
+  --row-hover: #1A212B;
+  --border-card: #2A3441;       /* hairline */
+  --border-field: #384556;
+  --divider: #222B38;  --divider-row: #222B38;
+
+  /* text — ratios on --surface #161C26 */
+  --ink-900: #E8ECF3;  /* 14.43:1 */
+  --ink-700: #C3CCDA;  /* 10.56:1 */
+  --ink-600: #C3CCDA;
+  --ink-500: #9AA5B5;  /* 6.86:1 — hints, meta */
+  --text-header: #9AA5B5;
+  --text-meta: #9AA5B5;
+  --placeholder: #9AA5B5;
+  --ink-400: #6F7B8C;  /* 3.98:1 — decorative only */
+  --ink-200: #55606F;  /* disabled text — 1.4.3 exempt */
+
+  /* green — the fill carries DARK text on dark */
+  --green-fill: #2FB25F;        /* #0B1017 on it = 6.95:1 (white would be 2.74:1) */
+  --green-fill-hover: #3FC26E;
+  --green-on-fill: #0B1017;     /* light mode uses #FFF here */
+  --green-text: #6FDC96;        /* 10.06:1 on --surface */
+  --green-100: rgba(47,178,95,.16);
+  --green-50:  rgba(47,178,95,.14);   /* notice fill — matches the preview */
+  --green-tint: rgba(47,178,95,.12);   /* selected option row */
+  --green-tint-2: #1C242F;             /* selected card surface */
+  --grad-primary: linear-gradient(180deg,#2FB25F,#249A4F);
+  --grad-meter: linear-gradient(90deg,#2FB25F,#6FDC96);
+  --ring-focus: 0 0 0 3px rgba(47,178,95,.18);
+  --ring-select: 0 0 0 3px rgba(47,178,95,.14);
+
+  /* status tones — tint = tone over surface, text = light tone */
+  --amber-text: #F0C070; --amber-100: rgba(217,161,59,.18);
+  --red-700: #FF9B95;    --red-100:   rgba(229,72,77,.18);
+  --red-border: rgba(255,155,149,.45);
+  --blue-700: #8FB8FF;   --blue-100:  rgba(23,92,211,.24);
+  --violet-700: #C4B2FF; --violet-100: rgba(140,110,240,.22);
+  --neutral-100: rgba(255,255,255,.07);
+  --amber-50: rgba(217,161,59,.14);
+  --red-50:   rgba(229,72,77,.16);
+  --blue-50:  rgba(23,92,211,.16);
+  --border-soft: #384556;              /* service chip, inline filter */
+  --red-border-btn: rgba(255,155,149,.45);
+
+  /* elevation — shadows go darker and stay for layers only */
+  --sh-card: none;
+  --sh-primary: none;
+  --sh-toast:  0 8px 24px rgba(0,0,0,.50);
+  --sh-panel:  0 12px 28px rgba(0,0,0,.45);
+  --sh-dialog: 0 24px 60px rgba(0,0,0,.60);
+  --scrim: rgba(4,7,12,.62);
+}
