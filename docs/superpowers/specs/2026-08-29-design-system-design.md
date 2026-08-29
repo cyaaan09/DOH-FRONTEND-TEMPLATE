@@ -187,6 +187,56 @@ All names verified present in `@ark-ui/vue@5.39.1`.
 - Components forward attrs and expose their root element.
 - No component hardcodes a hex value.
 
+### 8.1 What `label` means
+
+**`label` is the short text that names the thing. How it is presented is the component's business.**
+
+This looked like three inconsistent meanings across the built components; it is one meaning with
+three presentations:
+
+| Component | `label` names | Presented as |
+|---|---|---|
+| `TextField`, `Textarea` | the input | a visible `<label>` |
+| `SearchField`, `Meter` | the control | `aria-label`, invisible by design |
+| `Notice` | the notice's kind | the tone pill |
+| `StatCard` | the figure | the caption above it |
+
+Every component whose `label` is **not** visible must say so in its JSDoc, so a consumer knows
+without reading the template. Phase 3's ~20 components follow this rule rather than inventing
+`name`, `title`, `caption` or `kind` variants.
+
+`Notice.label` in particular keeps its name because the source document's own redline row is
+called "Notice label" — diverging from the source's vocabulary to chase a consistency that
+already exists would be the wrong trade.
+
+## 18. Accessibility baseline
+
+**This design system targets WCAG 2.1 Level AA.**
+
+The source document is meticulous about accessibility: it cites contrast ratios on nearly every
+colour and explicitly rejects `#667085` (4.39:1) and `#A16207` (4.45:1) as failing AA. It was
+written by someone tracking WCAG closely — and it still specifies a 17px dismiss target and a 20px
+clear button. Those are considered decisions made against 2.1, not oversights, and overriding them
+would break the exact-mirror requirement.
+
+### 18.1 Known gap against WCAG 2.2
+
+Two controls fail **SC 2.5.8 Target Size (Minimum)**, which requires 24×24 CSS px at Level AA in
+WCAG 2.2:
+
+| Control | Size | Redline |
+|---|---|---|
+| `DismissibleChip`'s remove button | 17px | Chips · "Dismiss × · 17px circle" |
+| `SearchField`'s clear button | 20px | — |
+
+The **Spacing** exception is unlikely to rescue the dismiss button: chips sit 7–8px apart, so a
+24px circle centred on one remove target would overlap its neighbour. No **Equivalent** control
+exists — the chip body is not clickable.
+
+If this project adopts 2.2, the remediation is localised to those two components — but the source
+document would need updating too, since 17px is its own specification. That is a design decision
+for the document's author, not a unilateral fix.
+
 ## 9. DataTable architecture
 
 `@tanstack/vue-table@9.2.4` — note this is the **v9 API**, which differs from v8: `useTable` (not `useVueTable`), explicit feature opt-in (no `getCoreRowModel()` calls), and reactivity backed by `@tanstack/store` atoms.
