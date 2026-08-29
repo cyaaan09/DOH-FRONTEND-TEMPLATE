@@ -2,6 +2,7 @@
 defineProps({
   modelValue: { type: String, default: '' },
   placeholder: { type: String, default: 'Search' },
+  label: { type: String, default: 'Search' },
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -24,6 +25,7 @@ const emit = defineEmits(['update:modelValue'])
       type="search"
       :value="modelValue"
       :placeholder="placeholder"
+      :aria-label="label"
       @input="emit('update:modelValue', $event.target.value)"
     />
 

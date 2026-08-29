@@ -94,4 +94,21 @@ describe('SearchField', () => {
     const wrapper = mount(SearchField, { props: { modelValue: 'rhu' } })
     expect(wrapper.get('[data-clear]').attributes('aria-label')).toBe('Clear search')
   })
+
+  it('exposes an accessible name by default', () => {
+    const wrapper = mount(SearchField, { props: { modelValue: '' } })
+    expect(wrapper.get('input').attributes('aria-label')).toBe('Search')
+  })
+
+  it('lets a custom label override the accessible name', () => {
+    const wrapper = mount(SearchField, {
+      props: { modelValue: '', label: 'Search facilities' },
+    })
+    expect(wrapper.get('input').attributes('aria-label')).toBe('Search facilities')
+  })
+
+  it('keeps the accessible name once the field has a value', () => {
+    const wrapper = mount(SearchField, { props: { modelValue: 'rhu' } })
+    expect(wrapper.get('input').attributes('aria-label')).toBe('Search')
+  })
 })
