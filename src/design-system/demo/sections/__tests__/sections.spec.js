@@ -12,6 +12,7 @@ import FilesSection from '../FilesSection.vue'
 import SelectionSection from '../SelectionSection.vue'
 import DialogSection from '../DialogSection.vue'
 import FoundationsSection from '../FoundationsSection.vue'
+import DarkModeSection from '../DarkModeSection.vue'
 
 describe('ChipsSection', () => {
   it('carries the artifact description verbatim', () => {
@@ -145,5 +146,22 @@ describe('skeleton sections show their headings and mark their gaps', () => {
     ['FoundationsSection', FoundationsSection],
   ])('%s marks its gaps', (_name, component) => {
     expect(mount(component).findAll('[data-gap]').length).toBeGreaterThan(0)
+  })
+
+  it('DarkModeSection renders all six sub-blocks and four rule cards', () => {
+    const wrapper = mount(DarkModeSection)
+    const text = wrapper.text()
+    for (const label of [
+      'CHIPS & TONES',
+      'TABS & STAGE CARDS',
+      'FIELDS & DROPDOWN',
+      'SELECTION & FILES',
+      'DIALOG, EMPTY, SKELETON & PAGINATION',
+      'TOASTS, NOTICES & TABLE',
+    ]) {
+      expect(text, `missing: ${label}`).toContain(label)
+    }
+    expect(wrapper.findAll('[data-gap]')).toHaveLength(6)
+    expect(wrapper.findAll('[data-rule]')).toHaveLength(4)
   })
 })
