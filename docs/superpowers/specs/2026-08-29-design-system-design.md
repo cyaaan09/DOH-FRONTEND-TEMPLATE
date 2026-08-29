@@ -19,6 +19,8 @@ The source document's own governing rule drives the architecture: **build agains
 | 3 | Tailwind relationship | `@theme inline` bridge | Utilities resolve *through* the vars, so a theme swap needs no `dark:` variant anywhere — matches the doc's stated architecture. |
 | 4 | Primitive library | Ark UI (`@ark-ui/vue` 5.39.1) | Covers four components a Radix-style library does not: `FileUpload`, `Steps`, `SegmentGroup`, `PasswordInput`. Zag.js state machines underneath. Verified present in the published package. |
 | 5 | Table logic | TanStack Table (`@tanstack/vue-table` 9.2.4) | No primitive library does tables. TanStack is pure logic with zero DOM, so the doc's exact markup is preserved. |
+| 6 | Redlines are the authority | Appendix C, 310 rows | Phase 2 components were built from this spec's prose summary rather than the source document's per-component redlines, and drifted. Appendix C captures every literal value; components are built and reviewed against it, not against §7's inventory. |
+| 7 | Missing colours | Added to `tokens.css` and Appendix A | The source document uses 23 colours its own token block never defines (notice borders, toast borders, dashed panels, disabled surfaces, shell greys). Extending `tokens.css` was chosen over a second file or raw hex. Appendix A marks each addition with the redline it came from, so the parity test stays strict rather than relaxed. |
 
 Rejected: **Reka UI** (excellent, but hand-rolling `FileInput`/`FileList` is the single largest hand-built component in the system); **Headless UI Vue** (stalled on 1.7.x while React moved to v2 — no Checkbox, no Toast, no Pagination); **PrimeVue unstyled** (pass-through API fights precise redlines).
 
@@ -348,6 +350,71 @@ Backend integration, form validation library, i18n, and any application screen. 
 }
 ```
 
+### Appendix A.1 — additions beyond the source token block
+
+The source document uses these colours in its component redlines and demo markup but never
+tokenised them. They are appended to `tokens.css` after the verbatim block, each with the
+redline that justifies it. Everything above this point in `tokens.css` remains byte-verbatim
+from the source.
+
+```css
+/* --- additions: colours the source document uses but never tokenised --- */
+:root {
+  /* Notice borders — redline "Notice label · 1px tone/200" */
+  --notice-border-green: #A6E7C3;
+  --notice-border-blue:  #B2DDFF;
+  --notice-border-amber: #F7D9A0;
+  --notice-border-red:   #F9C4BE;
+
+  /* Toast borders and fills — redline "Success/Error/Warning/Info tone" */
+  --toast-border-green: #CDEAD6;
+  --toast-border-amber: #F2E0BD;
+  --toast-border-blue:  #D5E4FA;
+  --toast-bg-amber:     #FFFBF2;
+  --toast-bg-blue:      #F5F9FF;
+  /* toast error border is #F5CDC7 — already tokenised as --red-border */
+
+  /* Status dot — redline "Success tone · dot #17A34A"; also the Active status dot.
+     Never used behind white text: the redline warns it is 3.29:1. */
+  --dot-green: #17A34A;
+
+  /* Dashed panel — redline "Dashed panel · 1.6px dashed #CDD5E2" (dropzones, empty states) */
+  --border-dashed: #CDD5E2;
+
+  /* Dropzone hover fill — redline "Dropzone hover · border #25A94E · bg #F7FCF8".
+     Note this is ONE DIGIT off --green-tint-2 (#F7FCF9) and is very likely a typo in the
+     source document. Kept literal to match the source exactly; revisit if it ever matters. */
+  --dropzone-hover: #F7FCF8;
+
+  /* Selection controls — redline "Disabled · #E9EDF3" (checkbox/radio disabled fill) */
+  --surface-disabled: #E9EDF3;
+
+  /* Destructive confirm hover — redline "Confirm button · #B42318 → hover #96190F" */
+  --red-800: #96190F;
+
+  /* Link hover — the source's base CSS uses a:hover { color: #166534 }.
+     Phase 1 substituted --green-900; this is the real value. */
+  --green-link-hover: #166534;
+
+  /* App shell — redlines "Nav item", "Item mark", "Avatar", "Logo tile", "Breadcrumb" */
+  --nav-ink:      #4B5565;
+  --item-mark:    #B3BDCD;
+  --avatar-bg:    #DBE4F0;
+  --logo-ink:     #D9F2C4;
+  --separator:    #CBD3E0;
+  --row-hover-strong: #E0E5EE;
+}
+```
+
+Dark-mode counterparts belong in `tokens.dark.css`:
+
+```css
+[data-theme="dark"] {
+  --green-on-fill-red: #2A0806;   /* dark destructive fill text, on #FF9B95 */
+  --red-fill-hover:    #FFB2AD;   /* dark destructive hover */
+}
+```
+
 ## Appendix B — `tokens.dark.css`
 
 ```css
@@ -411,3 +478,459 @@ Backend integration, form validation library, i18n, and any application screen. 
   --scrim: rgba(4,7,12,.62);
 }
 ```
+
+---
+
+## Appendix C — component redlines
+
+**This appendix is the authority for every component's literal values.** It is extracted verbatim
+from the source document's "Component specs" section — 310 rows across 19 groups, described there
+as "Redlines for everything above — geometry, type, and the exact colour per state. Values are
+literal CSS."
+
+Phase 2 was built from §7's inventory and §8's conventions without these rows, and drifted. Any
+component built or reviewed from here on is checked against the group below that covers it. Where
+this appendix and the prose sections disagree, this appendix wins.
+
+### Containers & surfaces
+
+_canvas #EEF1F6 · card #FFF radius 14 · sunken #FAFBFD_
+
+| Property | Value |
+|---|---|
+| Canvas | #EEF1F6 — page background; text on it uses #5A6577 |
+| Card | #FFF · radius 14px · 1px #E4E8EF · shadow 0 1px 2px rgba(16,24,40,.04) |
+| Card gutter | 24px x · 20px on cards under ~360px |
+| Card header | pad 20px 24px 4px · title 17px / 700 · sub 13.5px / 400 #667085 |
+| Card footer | #FAFBFD · 1px top #EEF1F6 · pad 13–16px 20–24px |
+| Internal rule | 1px #EEF1F6 (rows use #F5F7FA) |
+| Sunken strip | #FAFBFD — expanded rows, headers, footers |
+| Input well | #F7F9FC — read-only fields, in-panel search |
+| Control shell | #F4F6FA — segmented tabs, row hover in nav |
+| Muted card | #FBFCFE — closed / archived stat cards |
+| Dashed panel | 1.6px dashed #CDD5E2 · radius 10–12px — dropzones, empty states only |
+| Selected surface | #F7FCF9 + 1px #25A94E + ring 0 0 0 3px rgba(37,169,78,.10–.12) |
+| Popover panel | #FFF · radius 12px · pad 6px · shadow 0 12px 28px rgba(16,24,40,.14) |
+| Dialog surface | #FFF · radius 14px · max-w 428px · shadow 0 24px 60px rgba(16,24,40,.28) |
+| Section gap | 22px between cards · 12px in stat grids · 20px between sub-blocks |
+| Content width | detail pages max-w 1320px · table pages 1560px · page pad 26px 32px, both |
+| Nesting | cards never nest — divide or sink instead |
+| Overflow | cards clip with overflow:hidden; popover parents need overflow:visible |
+
+### Chips
+
+_auto height (20px) · radius 999 · 11px/700 · tint + matching text_
+
+| Property | Value |
+|---|---|
+| Height | auto — padding 3px 9px renders 20px at 11px type |
+| Radius | 999px |
+| Type | 11px / 700 / nowrap |
+| Dot | 6px circle, gap 6px, left pad 7px |
+| Gap in row | 7px |
+| Approved | #E8F6EC bg · #15803D text |
+| Active (filled) | #177236 bg · #FFFFFF text = 6.01:1 (never #17A34A — 3.29:1) |
+| Pending | #FEF2E0 bg · #8A5206 text = 5.77:1 (#A16207 is 4.45:1 — fails) |
+| Returned | #FEE2E2 bg · #B42318 text = 5.38:1 |
+| Closed | #EEF1F6 bg · #5A6577 text = 5.21:1 (#667085 is 4.39:1 — fails) |
+| Online | #EAF2FE bg · #175CD3 text |
+| Add / Modify | #F0ECFE bg · #6941C6 text |
+| Service chip | 12px/400 · 5px 12px · #FFF bg · 1px #DDE2EA · #475467 |
+| Filter chip on | #177236 bg · #FFF text = 6.01:1 · 7px 13px · shadow 0 1px 2px rgba(20,80,40,.24) |
+| Filter chip off | #FFF bg · 1px #D5DBE6 · #475467 / 500 |
+| Dismiss × | 17px circle · #E4E8EF bg → #D5DBE6 hover · glyph #475467 (4.05:1 at #667085 fails) |
+
+### Tabs
+
+_underline 2.5px · segmented 3px inset · stage cards 12px radius_
+
+| Property | Value |
+|---|---|
+| Underline pad | 14px 2px · row gap 22px |
+| Underline type | 13.5px / 700 |
+| Marker | 2.5px solid #177236 |
+| Active text | #15803D |
+| Idle tab text | #5A6577 (5.89:1) |
+| Tab count | mono 11.5px/500 · pad 2px 7px · radius 9px |
+| Count active | #E8F6EC bg · #15803D |
+| Count idle | #F4F6FA bg · #5A6577 |
+| Segmented shell | #F4F6FA · radius 9px · pad 3px · gap 6px |
+| Segment on | #FFF · radius 7px · 12.5px/700 · shadow 0 1px 2px rgba(16,24,40,.08) |
+| Segment off | transparent · #667085 / 500 |
+| Stage card | radius 12px · pad 13px 15px 14px · 1px #E4E8EF |
+| Stage active | 1px #25A94E + ring 0 0 0 3px rgba(37,169,78,.12) |
+| Stage figure | 25px / 700 / -0.02em |
+| Stage urgent | 11.5px / 700 · #B42318 |
+
+### Text fields
+
+_38px · radius 9 · 1px #D5DBE6 · green focus ring_
+
+| Property | Value |
+|---|---|
+| Height | 38px · pad 0 12px |
+| Radius | 9px |
+| Border | 1px solid #D5DBE6 |
+| Value type | 13.5px / 400 · #1E2532 |
+| Placeholder | #667085 |
+| Label | 12.5px / 500 · #344054 · 6px below |
+| Hint | 12px / 400 · #667085 · 5px above |
+| Focus | border #25A94E + 0 0 0 3px rgba(37,169,78,.15) |
+| Error | border #B42318 · hint #B42318 |
+| Read only | bg #F7F9FC · border #E4E8EF · text #8A94A6 |
+| Leading icon | 12px ring · gap 8px |
+| Trailing action | 11.5px / 700 · #667085 · pad 6px |
+| Textarea | pad 11px 12px · line-height 1.55 · resize vertical |
+| Mono values | JetBrains Mono 13.5px / 400 |
+
+### Dropdowns
+
+_38px trigger · panel radius 12 · option 9px 10px_
+
+| Property | Value |
+|---|---|
+| Trigger | 38px · radius 9px · 1px #D5DBE6 · gap 8px |
+| Open trigger | 1px #25A94E + ring rgba(37,169,78,.15) |
+| Value | 13.5px / 500 · #1E2532 · ellipsis |
+| Placeholder | 13.5px / 400 · #667085 |
+| Caret | 9px ▾ · #98A2B3 (decorative) |
+| Panel | top 44px · radius 12px · pad 6px · 1px #E4E8EF |
+| Panel shadow | 0 12px 28px rgba(16,24,40,.14) |
+| Panel max-h | 246px (214px with filter) |
+| Option | pad 9px 10px · radius 8px · 13.5px / 400 |
+| Option selected | #F2FAF4 bg · #15803D / 700 · ✓ 12px |
+| Checkbox in list | 15px · radius 4px · #177236 when on (white ✓) |
+| Panel filter | 32px field · #F7F9FC · radius 8px |
+| Panel footer | #FAFBFD · 1px top #EEF1F6 · pad 9px 12px |
+| Inline variant | 34px · radius 8px · 1px #DDE2EA · 12.5px / 700 |
+| Menu item | 13.5px / 400 · destructive #B42318 / 700 last |
+
+### Buttons
+
+_38 / 34 / 44px · radius 9 (8 compact) · one filled green per region_
+
+| Property | Value |
+|---|---|
+| Default | 38px · pad 0 16px · radius 9px · 13.5px / 700 |
+| Compact | 34px · pad 0 14px · radius 8px · 12.5px |
+| Icon only | 34×34px · radius 8px |
+| Primary | #177236 bg · #FFF text = 6.01:1 · shadow 0 1px 2px rgba(20,80,40,.25) |
+| Primary hover | #125A2B (8.35:1) |
+| Secondary | #FFF bg · 1px #D5DBE6 · #344054 / 500 |
+| Secondary hover | #F4F6FA |
+| Destructive | #FFF bg · 1px #E4A49C · #B42318 · hover #FEF3F2 |
+| Ghost | transparent · #15803D / 700 · hover #F2FAF4 |
+| Disabled | #F7F9FC bg · 1px #E4E8EF · #B9C1D1 |
+| Pending | #125A2B + 12px spinner, 2px track rgba(255,255,255,.4) |
+| Row gap | 10px (8px in dialogs and cards) |
+
+### File inputs
+
+_dashed 1.6px dropzone · file row 10px radius_
+
+| Property | Value |
+|---|---|
+| Dropzone | pad 16px · radius 10px · 1.6px dashed #CDD5E2 |
+| Dropzone hover | border #25A94E · bg #F7FCF8 |
+| Icon tile | 36×36px · radius 8px · #EEF1F6 · #667085 |
+| Primary line | 13.5px / 700 |
+| Constraint line | 12px / 400 · #667085 |
+| Compact variant | 38px shell · Browse 28px · radius 7px |
+| File row | pad 12px 14px · radius 10px · 1px #E4E8EF · gap 12px |
+| Type mark | 34×34px · radius 8px · #EEF1F6 · #5A6577 10px / 700 |
+| Progress track | 5px · radius 999px · #EEF1F6 |
+| Progress fill | linear-gradient(90deg,#25A94E,#7BC96F) |
+| Done note | 12px / 400 · #15803D |
+| Failed row | #FEF3F2 bg · 1px #F5CDC7 · mark #FEE2E2/#B42318 |
+| Remove | 26px · radius 7px · #667085 → #B42318 hover |
+
+### Toasts & notices
+
+_toast 12px radius, 5s timer · notice 32px pill_
+
+| Property | Value |
+|---|---|
+| Toast width | 372px · stack gap 10px · bottom-right 16px |
+| Toast shell | radius 12px · pad 13px 12px 15px 13px · #FFF |
+| Toast shadow | 0 8px 24px rgba(16,24,40,.12) |
+| Icon tile | 26×26px · radius 8px · #FFF glyph on the tone TEXT colour (#15803D / #B42318 / #8A5206 / #175CD3) — the lighter dot tones fail with white |
+| Title / body | 13.5px / 700 · 12.5px / 400 #667085 |
+| Timer bar | 3px · scaleX 1→0 over 5s · tone fill |
+| Success tone | dot #17A34A · border #CDEAD6 · text/icon #15803D |
+| Error tone | dot #E5484D · border #F5CDC7 · text/icon #B42318 |
+| Warning tone | dot #D9A13B · border #F2E0BD · text/icon #8A5206 |
+| Info tone | dot #175CD3 · border #D5E4FA · text/icon #175CD3 |
+| Max stack | 3 toasts, newest first |
+| Notice shell | min-h 32px · radius 16px · pad 4px 10px 4px 4px · gap 12px |
+| Notice label | 24px · radius 16px · pad 0 12px · 12.5px / 400 · 1px tone/200 |
+| Notice text | 13px / 400 in tone colour on tone/50 — all four ≥ 4.5:1 |
+| Notice fills | #ECFDF3 · #EFF8FF · #FFFAEB · #FEF3F2 |
+
+### Selection controls
+
+_17px targets · gap 10px · cards radius 11_
+
+| Property | Value |
+|---|---|
+| Checkbox | 17×17px · radius 5px · 1.8px border |
+| Checkbox on | #177236 fill + border · ✓ 10px / 700 #FFF (6.01:1) |
+| Checkbox off | #FFF fill · 1.8px #C3CAD6 |
+| Indeterminate | same fill, glyph – (dash) |
+| Disabled | #E9EDF3 fill · 1.8px #DDE2EA · glyph #B9C1D1 |
+| Radio | 17×17px circle · 1.8px · inner dot 8px #177236 |
+| Label | 13.5px / 400 · #344054 · gap 10px |
+| Row gap | 11px (14px for switches) |
+| Card | pad 13px 14px · radius 11px · 1px #E4E8EF · gap 11px |
+| Card selected | 1px #25A94E · bg #F7FCF9 · ring rgba(37,169,78,.10) |
+| Switch track | 38×22px · radius 999px · pad 2px |
+| Track on / off | #177236 / #D5DBE6 · disabled #C3CAD6 |
+| Knob | 18px circle #FFF · shadow 0 1px 2px rgba(16,24,40,.2) |
+| Bulk bar | pad 11px 16px · #FAFBFD idle · #F2FAF4 active |
+| Selected row | #F7FCF9 bg · 1px top #F5F7FA |
+
+### Dialog, empty & loading
+
+_dialog 428px · scrim 42% ink · skeleton 11px bars_
+
+| Property | Value |
+|---|---|
+| Scrim | rgba(23,30,44,.42) · pad 24px |
+| Dialog | max-w 428px · radius 14px · #FFF |
+| Dialog shadow | 0 24px 60px rgba(16,24,40,.28) |
+| Body pad | 22px 24px 18px |
+| Icon tile | 30×30px · radius 9px · #FEF3F2 · 1px #F5CDC7 · #B42318 |
+| Title / body | 16.5px / 700 · 13.5px / 400 line-height 1.55 |
+| Footer | #FAFBFD · 1px top #EEF1F6 · pad 14px 24px · gap 8px |
+| Confirm button | #B42318 → hover #96190F |
+| Empty state | pad 30px 20px · 1px dashed #DDE2EA · radius 12px |
+| Empty title | 14.5px / 700 · sub 13px #667085 |
+| Skeleton bar | 11px · radius 6px · #EEF1F6 · 3 rows max |
+
+### App shell — sidebar & header
+
+_rail 244px · item 9px radius · header 12px 32px sticky_
+
+| Property | Value |
+|---|---|
+| Rail width | 244px expanded · 62px collapsed (transition 160ms ease) |
+| Rail surface | #FFF · 1px right #E4E8EF · sticky top 0 · h 100vh |
+| Brand block | pad 16px 16px 13px · 1px bottom #EEF1F6 · gap 10px |
+| Logo tile | 30×30px · radius 9px · #14532D · #D9F2C4 10.5px / 700 |
+| Group header | pad 14px 8px 7px · 10.5px / 700 / 0.1em · #5A6577 |
+| Nav item | pad 8px 10px · radius 9px · gap 10px · 13.5px / 400 #4B5565 |
+| Nav active | linear-gradient(180deg,#177236,#125A2B) · #FFF / 700 = 6.01:1 at the lightest stop |
+| Nav hover | #F4F6FA bg · #1E2532 text |
+| Item mark | 13px · 1.8px #B3BDCD — square PTC, circle LTO, diamond config |
+| Nav badge | min-w 20px h 20px · radius 10px · #FEE2E2 / #B42318 11px / 700 |
+| Badge on active | rgba(255,255,255,.25) bg · #FFF text |
+| Collapsed badge | 7px dot #E5484D · 2px #FFF ring · top/right 5px |
+| Rail footer | pad 12px 14px · #FBFCFE · 1px top #EEF1F6 |
+| Header | pad 12px 32px · rgba(255,255,255,.75) · blur 6px · sticky z 6 |
+| Breadcrumb | 13px / 500 #667085 · separator / #CBD3E0 · current #1E2532 |
+| Avatar | 34px circle · #DBE4F0 · 2px #FFF · ring 1px #E4E8EF |
+
+### Tables
+
+_header 11px 20px · row 13px 20px · expand panel #FAFBFD_
+
+| Property | Value |
+|---|---|
+| Column header | pad 11px 20px · #FAFBFD · 10.5px / 700 / 0.08em #5A6577 |
+| Header rule | 1px bottom #EEF1F6 |
+| Row | pad 13px 20px · 1px bottom #F5F7FA · grid gap 14px |
+| Row hover | #FAFBFD · cursor pointer when expandable |
+| Row title | 14px / 700 / -0.005em · ellipsis single line |
+| Row sub | 12px / 400 #667085 · 3px above |
+| Numeric cell | mono 12.5px / 400 · #15803D for LTO numbers |
+| Caret cell | 44px wide · 13px ▸/▾ · #98A2B3 (decorative) · right aligned |
+| Expanded panel | #FAFBFD · pad 16px 20px 20px · auto-fit minmax(260px,1fr) gap 22px |
+| Panel label | 10.5px / 700 / 0.08em #5A6577 · 8px below |
+| Min table width | 1020–1180px inside overflow-x:auto |
+| Footer bar | pad 13px 20px · #FAFBFD · 12.5px #667085 |
+| Pagination | 34×32px · radius 8px · active #177236/#FFF · idle 1px #D5DBE6 |
+| Result pill | pad 8px 12px · radius 999px · #E8F6EC / #15803D 12.5px / 700 (4.50:1) |
+
+### Stat cards & meters
+
+_card 12px radius · dot 8px · meter 6px track_
+
+| Property | Value |
+|---|---|
+| Grid | auto-fit minmax(190px,1fr) · gap 12px |
+| Card | pad 14px 16px · radius 12px · #FFF · 1px #E4E8EF |
+| Card selected | 1px #25A94E + 0 0 0 3px rgba(37,169,78,.12) |
+| Muted card | #FBFCFE bg · figure #5A6577 (data, so AA applies) |
+| Label | 12px / 500 #667085 · dot 8px · gap 7px |
+| Figure | 23px / 700 / -0.01em · 5px above |
+| Hint | 11.5px / 400 #667085 · urgent 700 #B42318 |
+| Stage number | 19×19px · radius 6px · idle #EEF1F6/#5A6577 · active #177236/#FFF |
+| Meter track | 6px · radius 999px · #EEF1F6 |
+| Meter fill | linear-gradient(90deg,#25A94E,#7BC96F) |
+| Meter caption | 12px / 400 #667085 · value 700 #15803D · 7px above |
+| Expiry pill | ≤60d #FEE2E2/#B42318 · ≤180d #FEF2E0/#A16207 · else #EEF1F6/#667085 |
+
+### Motion, states & z-index
+
+_120–160ms · one focus ring · z 6/12/40_
+
+| Property | Value |
+|---|---|
+| Hover / fill | transition background 120ms |
+| Border change | transition border-color 120ms |
+| Switch | transition background 140ms + justify-content 140ms |
+| Rail collapse | transition width 160ms ease |
+| Toast timer | @keyframes toastTimer scaleX 1→0, 5s linear forwards |
+| Spinner | @keyframes spin 700ms linear infinite |
+| Focus ring | 0 0 0 3px rgba(37,169,78,.15) + border #25A94E — every focusable |
+| Disabled | surface #F7F9FC · border #E4E8EF · text #B9C1D1 (--ink-200, the only disabled text value) · cursor not-allowed |
+| Empty value | em dash — in #C3CAD6 (decorative, has a text equivalent in the header) |
+| Sticky header | z-index 6 |
+| Dropdown / menu | z-index 12 · top 44px (40px for 34px triggers) |
+| Dialog + scrim | z-index 40 · position fixed inset 0 |
+| Reduced motion | drop timer + spinner animations, keep state colours |
+
+### Keyboard & focus
+
+_every control reachable · one visible ring · Esc always closes_
+
+| Property | Value |
+|---|---|
+| Focus ring | :focus-visible → border #25A94E + 0 0 0 3px rgba(37,169,78,.15) |
+| Never | outline:none without replacing the ring |
+| Tab order | DOM order = visual order; no positive tabindex anywhere |
+| Chips (filter) | role=button tabindex=0 · Space/Enter toggles |
+| Chips (dismiss) | × is a real <button> with aria-label='Remove {filter}' |
+| Underline tabs | ←/→ moves and selects · Home/End jumps · only active tab tabbable |
+| Segmented | radiogroup semantics · ←/→ changes selection |
+| Stage cards | tabbable buttons · Enter/Space selects · ←/→ optional |
+| Dropdown open | Enter/Space/↓ opens and focuses first option |
+| Dropdown nav | ↑/↓ moves · Enter picks · Esc closes and returns focus to trigger |
+| Multi-select | Space toggles without closing · Tab reaches Clear/Apply |
+| Typeahead | typing in an open panel filters, does not jump-select |
+| Row menu | Esc closes · click-outside closes · focus returns to ⋯ |
+| Dialog | focus moves to dialog on open, traps inside, returns to trigger on close |
+| Dialog keys | Esc = cancel · Enter on focused button only (never auto-confirm) |
+| Toast focus | never steals focus · action reachable by Tab while visible |
+| Toast timing | pause auto-dismiss on hover/focus-within; resume on leave |
+| Table rows | expandable row = button with aria-expanded; caret is decorative |
+| Bulk select | header checkbox is aria-checked=mixed when partial |
+| Skip link | first tab stop jumps past the rail to <main> |
+
+### ARIA & semantics
+
+_native elements first · aria only where markup can't say it_
+
+| Property | Value |
+|---|---|
+| Buttons | <button type=button> — never a div with onClick |
+| Fields | <label for> or aria-label; hint via aria-describedby |
+| Error state | aria-invalid=true + aria-describedby pointing at the error text |
+| Required | required attr; asterisk optional, never the only signal |
+| Tabs | role=tablist / tab / tabpanel · aria-selected · aria-controls |
+| Segmented | role=radiogroup with role=radio children + aria-checked |
+| Dropdown | role=combobox aria-expanded aria-haspopup=listbox + role=listbox/option |
+| Multi-select | aria-multiselectable=true · aria-selected per option |
+| Row menu | aria-haspopup=menu · role=menu / menuitem |
+| Dialog | role=dialog aria-modal=true aria-labelledby + aria-describedby |
+| Toast region | aria-live=polite (assertive for error) · role=status · aria-atomic=true |
+| Inline notice | role=status; error notice role=alert |
+| Switch | role=switch aria-checked — not a checkbox |
+| Chips as status | plain text, no role; the word carries the meaning, colour never alone |
+| Counts | badge text needs context: aria-label='10 applications for checking' |
+| Progress | role=progressbar aria-valuenow/min/max on upload + expiry meters |
+| Skeletons | aria-hidden=true inside an aria-busy=true container |
+| Icon-only | aria-label required (⋯ = 'Row actions', × = 'Dismiss') |
+| Nav | <nav aria-label='Primary'> · active item aria-current=page |
+| Tables | real <table> with <th scope=col>; grid CSS is fine, faked headers are not |
+
+### Responsive & touch
+
+_single rail breakpoint · tables scroll · 44px on touch_
+
+| Property | Value |
+|---|---|
+| ≥1280px | full layout · content max-w 1280px (tables 1560px) |
+| 1024–1279px | stat grids reflow via auto-fit minmax(190px,1fr) |
+| <1024px | rail collapses to 62px; two-column detail becomes one |
+| <768px | rail off-canvas behind a 44px toggle; header stays sticky |
+| Tables | never reflow — overflow-x:auto with min-width 1020–1180px |
+| Table on mobile | row becomes a stacked card: title, chips, then key/value pairs |
+| Filter bar | wraps: search 1 1 280px, segmented and sort drop to a second line |
+| Toasts | width 372px desktop · calc(100% - 32px) below 420px |
+| Dialog | max-w 428px · full-width minus 24px scrim padding on mobile |
+| Touch targets | 44×44px minimum — 34px controls get padding, not a smaller box |
+| Checkbox / radio | 17px box inside a 44px tappable row on touch |
+| Hover styles | guard with @media (hover:hover) so touch doesn't stick them |
+| Reduced motion | @media (prefers-reduced-motion:reduce) → animation/transition none; toast timer becomes a static bar |
+| Zoom | layout holds to 200% zoom; no fixed heights on text containers |
+| Dark on white | #1E2532 15.37:1 · #344054 10.46:1 · #475467 7.69:1 · #667085 4.97:1 — all pass |
+| Column headers | #5A6577 = 5.89:1 on #FFF (10.5px is normal text — the large-text exemption needs ≥18.66px bold) |
+| On tinted surfaces | canvas #EEF1F6 costs ~0.6 — #667085 drops to 4.39:1 and FAILS there; use #5A6577 (5.21:1) for page subtitles, breadcrumbs, footers, and text on #EEF1F6 tiles |
+| Hints & meta | #667085 inside white cards only — 12px meta is still normal text |
+| Muted figures | 25px/700 muted stat = #5A6577; #98A2B3 is 2.51:1 on #FBFCFE and misses even the 3:1 large-text bar |
+| Placeholder | #667085 — placeholder is in scope for 1.4.3 |
+| Decorative greys | #8A94A6 3.06:1 · #98A2B3 2.58:1 · #C3CAD6 1.66:1 — icons, carets, dots, em-dashes only; never readable text |
+| Disabled | #B9C1D1 1.81:1 — allowed, 1.4.3 exempts disabled controls |
+| White on green | only on #177236 (6.01:1) or darker — #1D8F42 is 4.15:1, #17A34A 3.29:1, #25A94E 3.06:1 and all fail with white text |
+| Tone text on tint | #8A5206/#FEF2E0 5.77 · #B42318/#FEE2E2 5.38 · #175CD3/#EAF2FE 5.31 · #5A6577/#EEF1F6 5.21 · #15803D/#E8F6EC 4.50 — passes with zero headroom, so never lighten either side |
+| Colour alone | never the only signal — every tone pairs with a word (Approved, Legacy, Returned) |
+| Focus ring | #25A94E on #FFF = 3.06:1 · #2FB25F on #161C26 = 6.23:1 — both meet 1.4.11 |
+| 1.4.11 exception | resting control BORDERS do not reach 3:1 in either theme — light #C3CAD6/#FFF 1.65, #D5DBE6/#FFF 1.39; dark #55606F/#161C26 2.68, #384556 1.75. Known, deliberate: state is carried by the filled/focused state (both ≥ 3:1) and by an always-visible label, never by the resting border alone |
+
+### Dark mode
+
+_data-theme=\"dark\" · same geometry · dark text on the green fill_
+
+| Property | Value |
+|---|---|
+| Canvas | #0F141C |
+| Card | #161C26 · 1px #2A3441 · shadow none |
+| Sunken strip | #1C242F — header, footer, expanded row |
+| Field well | #10161F · 1px #384556 |
+| Control shell | #222B38 · segmented active #2A3441 |
+| Muted card | #141A23 · row hover #1A212B |
+| Divider | 1px #222B38 (card border #2A3441) |
+| Text | #E8ECF3 14.43:1 · #C3CCDA 10.56:1 · #9AA5B5 6.86:1 — all on #161C26 |
+| Decorative | #6F7B8C 3.98:1 · disabled #55606F 2.36:1 (exempt) |
+| Green fill | #2FB25F with #0B1017 text = 6.95:1 (white would be 2.74:1) — read --green-on-fill |
+| Green hover | #3FC26E |
+| Green text | #6FDC96 = 10.06:1 — links, active tab, mono numbers |
+| Focus ring | 1px #2FB25F + 0 0 0 3px rgba(47,178,95,.18) |
+| Amber | text #F0C070 · tint rgba(217,161,59,.18) |
+| Red | text #FF9B95 · tint rgba(229,72,77,.18) |
+| Blue | text #8FB8FF · tint rgba(23,92,211,.24) |
+| Violet | text #C4B2FF · tint rgba(140,110,240,.22) |
+| Neutral tint | rgba(255,255,255,.07) with #C3CCDA text |
+| Elevation | card/button none · toast 0 8px 24px rgba(0,0,0,.50) · panel .45 · dialog .60 |
+| Scrim | rgba(4,7,12,.62) |
+| Selected surfaces | option row rgba(47,178,95,.12) · selected card #1C242F (light #F2FAF4 / #F7FCF9 have no place on dark) |
+| Notice fills | green .14 · amber .14 · red .16 · blue .16 over the surface |
+| Soft border | #384556 — service chips and inline filters (light #DDE2EA) |
+| Destructive | outline border rgba(255,155,149,.45) · filled #FF9B95 with #2A0806 text |
+| Dialog | #161C26 · 1px #2A3441 · shadow 0 24px 60px rgba(0,0,0,.60) · scrim rgba(4,7,12,.62) |
+| Empty state | 1px dashed #384556 · title #E8ECF3 · sub #9AA5B5 (1.6px dashed is the dropzone only) |
+| Skeleton | 11px bars #222B38 on #161C26 · 3 rows max |
+| Pagination | active #2FB25F/#0B1017 · idle 1px #384556/#C3CCDA · disabled #6F7B8C |
+| Unchanged | every height, radius, padding, gap, weight and font — palette only |
+
+### Type & layout
+
+_DM Sans 400/500/700 · JetBrains Mono for copyable values_
+
+| Property | Value |
+|---|---|
+| Family | 'DM Sans', system-ui, sans-serif |
+| Mono | 'JetBrains Mono', monospace |
+| Page title | 26px / 700 / -0.015em |
+| Section title | 17px / 700 |
+| Card figure | 23px / 700 / -0.01em |
+| Row title | 14px / 700 |
+| Body | 13.5px / 400 / 1.55 · #475467 (7.69:1) |
+| Field label | 12.5px / 500 · #344054 |
+| Meta | 12px / 400 · #667085 |
+| Column header | 10.5px / 700 / 0.08em uppercase · #5A6577 |
+| Page canvas | #EEF1F6 |
+| Card | #FFF · 1px #E4E8EF · radius 14px · shadow 0 1px 2px rgba(16,24,40,.04) |
+| Section gutter | 24px x · 22px between cards |
+| Content max-w | 1320px detail · 1560px tables · gutter 32px |
+| Table row | pad 13px 20px · 1px #F5F7FA · hover #FAFBFD |
