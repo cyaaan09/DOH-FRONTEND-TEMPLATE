@@ -39,11 +39,30 @@ describe('findRawHex', () => {
     expect(findRawHex('<a href="#main">')).toEqual([])
     expect(findRawHex('&#39;')).toEqual([])
   })
+
+  it('excludes numeric HTML entities', () => {
+    expect(findRawHex('&#8217;')).toEqual([])
+    expect(findRawHex('&#160;')).toEqual([])
+  })
+
+  it('catches genuine hex colours not preceded by &', () => {
+    expect(findRawHex('color: #8217ab')).toEqual(['#8217ab'])
+  })
 })
 
 describe('findDarkVariants', () => {
   it('catches a dark: utility in a class attribute', () => {
     expect(findDarkVariants('class="bg-surface dark:bg-black"')).toEqual(['dark:bg-black'])
+  })
+
+  it('catches stacked dark: variants', () => {
+    expect(findDarkVariants('class="md:dark:bg-black"')).toEqual(['dark:bg-black'])
+    expect(findDarkVariants('class="hover:dark:text-white"')).toEqual(['dark:text-white'])
+    expect(findDarkVariants('class="group-hover:dark:bg-black"')).toEqual(['dark:bg-black'])
+  })
+
+  it('captures the full utility with arbitrary values', () => {
+    expect(findDarkVariants('class="dark:bg-[#fff]"')).toEqual(['dark:bg-[#fff]'])
   })
 
   it('allows the word dark outside a variant', () => {

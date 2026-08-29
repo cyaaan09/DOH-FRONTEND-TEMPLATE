@@ -12,14 +12,24 @@ const RAW_HEX = /#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3,4})(?![0-9a-zA-
 // A `dark:` Tailwind variant, anchored to a class-list boundary so prose and
 // identifiers containing "dark" are not flagged. Written with a capture group
 // rather than a lookbehind, which is not portable across JS engines.
-const DARK_VARIANT = /(?:^|["'\s])(dark:[\w[\]/.,%()-]+)/g
+// Catches stacked variants like md:dark:bg-black by including : in boundaries.
+// Includes # for arbitrary values like dark:bg-[#fff].
+const DARK_VARIANT = /(?:^|["'\s:])(dark:[\w[\]/.,%()#-]+)/g
 
 /**
  * @param {string} source file contents
  * @returns {string[]} raw hex colour literals found
  */
 export function findRawHex(source) {
-  return source.match(RAW_HEX) ?? []
+  const results = []
+  for (const match of source.matchAll(RAW_HEX)) {
+    // Exclude HTML entities like &#8217; which are preceded by &
+    if (match.index > 0 && source[match.index - 1] === '&') {
+      continue
+    }
+    results.push(match[0])
+  }
+  return results
 }
 
 /**
