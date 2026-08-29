@@ -75,4 +75,17 @@ describe('ContainersSection', () => {
   it('marks the page shell as not built', () => {
     expect(mount(ContainersSection).findAll('[data-gap]').length).toBeGreaterThan(0)
   })
+
+  it('renders the INNER SURFACES captions and closing line verbatim (Appendix D.1)', () => {
+    const text = mount(ContainersSection).text()
+    for (const caption of [
+      'Sunken strip #FAFBFD — expanded row, footer',
+      'Input well #F7F9FC — read-only fields, panel search',
+      'Control shell #F4F6FA — segmented tabs, hover',
+      'Dashed #CDD5E2 — dropzones and empty states only',
+    ]) {
+      expect(text, `missing caption: ${caption}`).toContain(caption)
+    }
+    expect(text).toContain('Four tints, each with one job. No new greys.')
+  })
 })

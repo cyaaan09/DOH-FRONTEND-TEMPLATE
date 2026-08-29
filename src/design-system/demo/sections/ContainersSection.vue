@@ -22,34 +22,27 @@ const RULES = [
   },
 ]
 
-// Inner surfaces - Appendix D's sub-block list names this block but does
-// not give per-swatch captions. The label/caption pairs below are Appendix
-// C's own "Containers & surfaces" redline row for each surface, matched to
-// the bg-surface-* token that actually carries that hex value: Sunken strip
-// -> bg-surface-sunken, Input well -> bg-surface-input, Control shell ->
-// bg-surface-muted. Appendix C's separate "Muted card" row is a different
-// hex (#FBFCFE) with no bg-surface-* token and is not one of the four rows
-// named in the task brief.
+// Inner surfaces - Appendix D.1 "Containers & surfaces -> INNER SURFACES" records
+// the bespoke markup: a white card holding four filled tint rows, with the
+// caption (hex included) set as the row's own text, not a swatch beside a
+// label. demo/ is exempt from the raw-hex guard so these captions can quote
+// the literal values as content, per D.1.
 const SURFACES = [
   {
-    cls: 'bg-surface-sunken border border-hairline',
-    label: 'Sunken strip',
-    caption: 'expanded rows, headers, footers',
+    cls: 'bg-surface-sunken text-ink-600 border border-divider',
+    caption: 'Sunken strip #FAFBFD — expanded row, footer',
   },
   {
-    cls: 'bg-surface-input border border-hairline',
-    label: 'Input well',
-    caption: 'read-only fields, in-panel search',
+    cls: 'bg-surface-input text-ink-600 border border-hairline',
+    caption: 'Input well #F7F9FC — read-only fields, panel search',
   },
   {
-    cls: 'bg-surface-muted border border-hairline',
-    label: 'Control shell',
-    caption: 'segmented tabs, row hover in nav',
+    cls: 'bg-surface-muted text-ink-600',
+    caption: 'Control shell #F4F6FA — segmented tabs, hover',
   },
   {
-    cls: 'demo-dashed-swatch',
-    label: 'Dashed panel',
-    caption: 'dropzones, empty states only',
+    cls: 'demo-surface-row--dashed text-text-meta',
+    caption: 'Dashed #CDD5E2 — dropzones and empty states only',
   },
 ]
 </script>
@@ -86,15 +79,19 @@ const SURFACES = [
       </DemoBlock>
 
       <DemoBlock label="INNER SURFACES">
-        <div class="flex flex-col gap-2.5">
-          <div v-for="surface in SURFACES" :key="surface.label" class="flex items-center gap-2.5">
-            <div class="h-9 w-9 shrink-0 rounded-tile" :class="surface.cls" />
-            <div>
-              <div class="text-caption font-bold text-ink-900">{{ surface.label }}</div>
-              <p class="text-caption text-text-meta">{{ surface.caption }}</p>
-            </div>
+        <div
+          class="flex flex-col gap-2.5 rounded-card border border-hairline bg-surface shadow-card pt-4 px-5 pb-4.5"
+        >
+          <div
+            v-for="surface in SURFACES"
+            :key="surface.caption"
+            class="demo-surface-row text-caption"
+            :class="surface.cls"
+          >
+            {{ surface.caption }}
           </div>
         </div>
+        <p class="text-hint text-text-meta mt-2">Four tints, each with one job. No new greys.</p>
       </DemoBlock>
     </DemoBlocks>
 
@@ -103,9 +100,15 @@ const SURFACES = [
 </template>
 
 <style scoped>
-/* Appendix C "Dashed panel" - 1.6px dashed, no Tailwind border-width utility
- * matches 1.6px; same escape hatch DemoGap uses for the same treatment. */
-.demo-dashed-swatch {
+/* Appendix D.1 "INNER SURFACES" row treatment - padding 11px 13px and radius
+ * 10px match no Tailwind spacing/radius step, so they are expressed here,
+ * the same escape hatch DemoGap uses for its own 11px/13px padding. */
+.demo-surface-row {
+  padding: 11px 13px;
+  border-radius: 10px;
+}
+
+.demo-surface-row--dashed {
   border: 1.6px dashed var(--border-dashed);
 }
 </style>
