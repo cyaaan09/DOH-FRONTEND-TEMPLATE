@@ -222,16 +222,19 @@ describe('skeleton sections show their headings and mark their gaps', () => {
     expect(mount(FilesSection).findAll('.text-column-header')).toHaveLength(1)
   })
 
-  it('SpecsSection cites Appendix C with no group, not the false “Component specs" heading', () => {
-    // “Component specs" is the source document's own section name, quoted in
+  it('SpecsSection cites Appendix C with no group, not the false "Component specs" heading', () => {
+    // "Component specs" is the source document's own section name, quoted in
     // Appendix C's intro - it is not one of Appendix C's 19 groups. A gap
     // that would render all 19 names none of them, so no curly quote appears.
-    expect(mount(SpecsSection).text()).not.toContain('"')
+    // U+201C as an escape, not a literal: this assertion has already been
+    // corrupted once by smart-quote substitution, and an escape cannot be
+    // silently mangled.
+    expect(mount(SpecsSection).text()).not.toContain('\u201c')
   })
 })
 
 describe('SpecsSection hosts the components the artifact only redlines', () => {
-  // StatCard and Meter have an Appendix C group (“Stat cards & meters") but no
+  // StatCard and Meter have an Appendix C group ("Stat cards & meters") but no
   // page section of their own, so deleting the old CardsDemo left them
   // invisible. Component specs is where redlines live, so they go here rather
   // than in an invented section the artifact does not have.
