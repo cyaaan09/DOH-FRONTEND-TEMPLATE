@@ -1252,6 +1252,15 @@ demo folder is exempt from the raw-hex guard precisely so blocks like this can q
 - **Never two chips of the same tone** — If a row needs two amber chips, one of them is really a field, not a chip. Move it into the label line.
 - **Chips never wrap mid-phrase** — white-space: nowrap, and overflow collapses into a grey “+n more” that expands the row.
 
+#### typeRules
+
+Missed by the original rule-card extraction — its regex did not match this array's shape, so
+Appendix D showed a `**Rule cards:**` heading under `Type scale` with nothing beneath it.
+
+- **Three weights only** — 400 for prose, 500 for field labels and values, 700 for titles and figures. No 600 — DM Sans's 500 already reads as emphasis.
+- **Tighten as you scale up** — Anything above 20px takes -0.015em; anything under 12px takes +0.08em and uppercase. Body text stays at 0.
+- **Mono earns its place** — JetBrains Mono only for values a user might copy or compare digit by digit — LTO numbers, serials, dates in tables.
+
 #### tabRules
 
 - **Underline for content, segmented for filters** — Underline tabs swap what the table shows. Segmented chips narrow what's already shown.
