@@ -1000,6 +1000,30 @@ phase needs one that is not in D.1, extract it into D.1 first rather than guessi
 
 ### D.1 — bespoke sub-block markup
 
+#### Sections with NO uppercase sub-blocks
+
+Verified against the artifact. These sections lay their content out inline, under the section
+description, with no `DemoBlock` headings at all:
+
+| Section | Uppercase sub-blocks | Notes |
+|---|---|---|
+| `Dropdowns` | **none** | all four dropdown demos sit inline |
+| `Component specs` | **none** | the redline tables sit inline |
+| `Tokens for handoff` | **none** | the token block sits inline |
+| `File inputs` | **one**: `FILE LIST — UPLOADING, DONE, FAILED` | the dropzone and compact demos carry 12.5px/500 **field labels** — `PNPKI certificate` and `Compact · inside a form row` — not uppercase sub-block headings |
+
+An earlier plan invented eight uppercase labels across these four sections (`SINGLE SELECT`,
+`MULTI SELECT`, `INLINE FILTER — TABLE BAR`, `ROW MENU — ACTIONS`, `PNPKI CERTIFICATE`,
+`COMPACT · INSIDE A FORM ROW`, `REDLINES`, `TOKENS`). None exists in the source. Rendering
+headings the artifact does not have breaks the mirror as surely as omitting ones it does.
+
+#### Gap citations where Appendix C has no group
+
+`Foundations` and `Tokens for handoff` describe token scales, not components, so **no Appendix C
+group governs them** — Appendix C has 19 groups and neither is among them. Their gap markers must
+cite **Appendix A** (the token block) instead. `DemoGap` therefore takes an optional `source` prop
+defaulting to `Appendix C`.
+
 #### Chips → the five tone sub-blocks
 
 Data-driven in the artifact (`{{ set.label }}`), so the original extraction captured only the two
