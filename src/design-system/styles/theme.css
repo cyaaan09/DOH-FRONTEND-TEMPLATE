@@ -1,0 +1,118 @@
+/* Bridges the design tokens into Tailwind v4's utility namespaces.
+ *
+ * `@theme inline` inlines the var() reference into each generated utility
+ * instead of snapshotting its value. That is what makes `bg-surface` follow
+ * [data-theme="dark"] without a single `dark:` variant. Do not drop `inline`.
+ *
+ * --font-sans and --font-mono are declared here with literal values rather
+ * than bridged, because those names exist in both the token block and
+ * Tailwind's own namespace; `--font-sans: var(--font-sans)` is circular and
+ * fails silently. See spec §4.1.
+ */
+
+@theme {
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+@theme inline {
+  /* surfaces */
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-surface-input: var(--surface-input);
+  --color-surface-muted: var(--surface-muted);
+  --color-surface-card-muted: var(--surface-card-muted);
+  --color-row-hover: var(--row-hover);
+
+  /* text */
+  --color-ink-900: var(--ink-900);
+  --color-ink-700: var(--ink-700);
+  --color-ink-600: var(--ink-600);
+  --color-ink-500: var(--ink-500);
+  --color-ink-400: var(--ink-400);
+  --color-ink-300: var(--ink-300);
+  --color-ink-200: var(--ink-200);
+  --color-ink-100: var(--ink-100);
+  --color-text-header: var(--text-header);
+  --color-text-meta: var(--text-meta);
+  --color-placeholder: var(--placeholder);
+
+  /* green */
+  --color-green-900: var(--green-900);
+  --color-green-fill: var(--green-fill);
+  --color-green-fill-hover: var(--green-fill-hover);
+  --color-green-600: var(--green-600);
+  --color-green-500: var(--green-500);
+  --color-green-text: var(--green-text);
+  --color-green-on-fill: var(--green-on-fill);
+  --color-green-100: var(--green-100);
+  --color-green-50: var(--green-50);
+  --color-green-tint: var(--green-tint);
+  --color-green-tint-2: var(--green-tint-2);
+
+  /* status tones */
+  --color-amber-text: var(--amber-text);
+  --color-amber-400: var(--amber-400);
+  --color-amber-100: var(--amber-100);
+  --color-amber-50: var(--amber-50);
+  --color-red-700: var(--red-700);
+  --color-red-500: var(--red-500);
+  --color-red-100: var(--red-100);
+  --color-red-50: var(--red-50);
+  --color-red-border: var(--red-border);
+  --color-red-border-btn: var(--red-border-btn);
+  --color-blue-700: var(--blue-700);
+  --color-blue-100: var(--blue-100);
+  --color-blue-50: var(--blue-50);
+  --color-violet-700: var(--violet-700);
+  --color-violet-100: var(--violet-100);
+  --color-neutral-100: var(--neutral-100);
+
+  /* borders and rules — named so the generated utility reads naturally.
+   * Tailwind derives border colours from the --color-* namespace, so
+   * `--color-border-card` would produce `border-border-card`. The bridge
+   * layer already renames by design (--r-field → --radius-field), and
+   * "hairline" is the source document's own word for the card border. */
+  --color-hairline: var(--border-card);
+  --color-field: var(--border-field);
+  --color-soft: var(--border-soft);
+  --color-divider: var(--divider);
+  --color-divider-row: var(--divider-row);
+
+  /* radius */
+  --radius-pill: var(--r-pill);
+  --radius-notice: var(--r-notice);
+  --radius-card: var(--r-card);
+  --radius-panel: var(--r-panel);
+  --radius-field: var(--r-field);
+  --radius-control: var(--r-control);
+  --radius-tile: var(--r-tile);
+  --radius-check: var(--r-check);
+
+  /* sizing — feeds h-*, w-*, p-*, gap-* */
+  --spacing-touch: var(--h-touch);
+  --spacing-field: var(--h-field);
+  --spacing-compact: var(--h-compact);
+  --spacing-notice: var(--h-notice);
+  --spacing-check: var(--size-check);
+  --spacing-rail: var(--rail-w);
+  --spacing-rail-collapsed: var(--rail-w-collapsed);
+
+  /* elevation */
+  --shadow-card: var(--sh-card);
+  --shadow-primary: var(--sh-primary);
+  --shadow-toast: var(--sh-toast);
+  --shadow-panel: var(--sh-panel);
+  --shadow-dialog: var(--sh-dialog);
+}
+
+/* Deliberately NOT bridged — no Tailwind namespace fits, so components use
+ * these as var() inside <style> blocks (spec §4.2):
+ *   --z-header --z-popover --z-dialog
+ *   --t-fast --t-control --t-rail
+ *   --grad-primary --grad-meter
+ *   --ring-focus --ring-select --scrim --chip-pad
+ * Font weights are not bridged either: 400/500/700 are Tailwind's built-in
+ * font-normal / font-medium / font-bold.
+ */
