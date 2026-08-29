@@ -11,7 +11,10 @@ defineProps({
       <h2 class="text-section-title text-ink-900">{{ title }}</h2>
       <p v-if="subtitle" class="text-body text-text-meta mt-0.5">{{ subtitle }}</p>
     </div>
-    <div v-if="$slots.actions" class="flex items-center gap-btn-row shrink-0">
+    <!-- Redline "Row gap" — 8px inside cards, not the default 10px button-row
+         gap. No token exists for 8px, so this uses Tailwind's built-in
+         gap-2, which is exactly 8px. -->
+    <div v-if="$slots.actions" class="flex items-center gap-2 shrink-0">
       <slot name="actions" />
     </div>
   </div>

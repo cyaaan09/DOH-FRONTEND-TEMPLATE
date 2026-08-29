@@ -16,8 +16,13 @@ const emit = defineEmits(['update:modelValue'])
       fill="none"
       aria-hidden="true"
     >
-      <circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.6" />
-      <path d="M10.5 10.5 14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+      <!-- Redline "Leading icon" — 12px ring is the drawn circle's outer
+           diameter (2 * r + stroke), not the svg box: r 5.2 at stroke 1.6
+           renders exactly 12px. left-3 + pl-9 on the input already yield the
+           redlined 8px gap and are unchanged. The handle is lengthened to
+           still meet the bigger ring cleanly. -->
+      <circle cx="7" cy="7" r="5.2" stroke="currentColor" stroke-width="1.6" />
+      <path d="M11 11 14.5 14.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
     </svg>
 
     <input

@@ -57,7 +57,8 @@ const message = computed(() => props.error || props.hint)
         :aria-describedby="message ? messageId : undefined"
         @input="$emit('update:modelValue', $event.target.value)"
       />
-      <span v-if="suffix" class="absolute right-3 text-hint text-ink-500">{{ suffix }}</span>
+      <!-- Redline "Trailing action" — 11.5px/700, meta grey, 6px padding. -->
+      <span v-if="suffix" class="absolute right-3 text-stat-hint font-bold text-text-meta p-1.5">{{ suffix }}</span>
     </div>
 
     <p

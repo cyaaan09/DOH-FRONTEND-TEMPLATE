@@ -125,6 +125,40 @@ describe('Button — Appendix C conformance', () => {
     expect(classes).not.toContain('btn--busy')
   })
 
+  describe('Disabled overrides every variant, not just the default', () => {
+    // The bug this guards: stateClass used to APPEND the disabled colours
+    // alongside the variant's own, so the winner depended on Tailwind's
+    // compile order rather than the code. That only happened to render
+    // correctly for primary and ghost — a disabled secondary button kept
+    // its dark text, and a disabled destructive button kept its red text
+    // and border. Asserting only the disabled classes (as the pre-existing
+    // "gives disabled its own surface..." test above does, for the default
+    // variant alone) would not have caught that: the negative assertions
+    // below — that the variant's own colour classes are gone — are the
+    // actual regression check.
+    const VARIANT_OWN_COLOR_CLASSES = {
+      primary: ['bg-green-fill', 'text-green-on-fill'],
+      secondary: ['text-ink-700', 'border-field', 'hover:bg-surface-muted'],
+      destructive: ['text-red-700', 'border-red-border-btn', 'hover:bg-red-50'],
+      ghost: ['text-green-text', 'hover:bg-green-tint'],
+    }
+
+    it.each(Object.keys(VARIANT_OWN_COLOR_CLASSES))(
+      'gives disabled %s the disabled surface/border/text and drops its own colours',
+      (variant) => {
+        const classes = mount(Button, { props: { variant, disabled: true } }).classes()
+
+        expect(classes).toContain('bg-surface-input')
+        expect(classes).toContain('border-hairline')
+        expect(classes).toContain('text-ink-200')
+
+        for (const ownClass of VARIANT_OWN_COLOR_CLASSES[variant]) {
+          expect(classes).not.toContain(ownClass)
+        }
+      },
+    )
+  })
+
   describe('Pending state (busy) must not collapse into Disabled', () => {
     // The native `disabled` attribute is set for two different reasons —
     // the `disabled` prop and the `busy` prop — but redline "Pending" and

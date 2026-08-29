@@ -123,6 +123,39 @@ describe('StatCard — Appendix C conformance', () => {
   })
 })
 
+describe('StatCard — selected state (Card selected redline)', () => {
+  it('is unselected by default: hairline border and card shadow, no green border or ring', () => {
+    const classes = mount(StatCard, { props: { label: 'A', value: '1' } }).classes()
+    expect(classes).toContain('border-hairline')
+    expect(classes).toContain('shadow-card')
+    expect(classes).not.toContain('border-green-500')
+    expect(classes).not.toContain('statcard--selected')
+  })
+
+  it('shows the green border and ring shadow when selected, dropping the hairline/card-shadow pair', () => {
+    // Redline "Card selected · 1px green + ring shadow" — border and shadow
+    // are one state, never layered alongside the default hairline border
+    // and card shadow.
+    const classes = mount(StatCard, {
+      props: { label: 'A', value: '1', selected: true },
+    }).classes()
+    expect(classes).toContain('border-green-500')
+    expect(classes).toContain('statcard--selected')
+    expect(classes).not.toContain('border-hairline')
+    expect(classes).not.toContain('shadow-card')
+  })
+
+  it('combines selected with muted: green border plus the muted surface', () => {
+    const classes = mount(StatCard, {
+      props: { label: 'A', value: '1', selected: true, muted: true },
+    }).classes()
+    expect(classes).toContain('border-green-500')
+    expect(classes).toContain('statcard--selected')
+    expect(classes).toContain('bg-surface-card-muted')
+    expect(classes).not.toContain('border-hairline')
+  })
+})
+
 describe('Meter — Appendix C conformance', () => {
   it('uses the redlined track fill', () => {
     // Redline "Meter track" — 6px, radius 999px, neutral-100 fill.

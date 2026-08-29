@@ -147,6 +147,17 @@ describe('TextField — Appendix C conformance', () => {
     expect(wrapper.get('label').classes()).toContain('mb-1.5')
     expect(wrapper.get('p').classes()).toContain('mt-1.25')
   })
+
+  it('renders the trailing suffix at 11.5px/700 in the meta grey with 6px padding', () => {
+    // Redline "Trailing action · 11.5px / 700 · #667085 · pad 6px"
+    const classes = mount(TextField, { props: { label: 'A', suffix: 'beds' } }).get('span').classes()
+    expect(classes).toContain('text-stat-hint')
+    expect(classes).toContain('font-bold')
+    expect(classes).toContain('text-text-meta')
+    expect(classes).toContain('p-1.5')
+    expect(classes).not.toContain('text-hint')
+    expect(classes).not.toContain('text-ink-500')
+  })
 })
 
 describe('TextField — border precedence', () => {
@@ -166,6 +177,7 @@ describe('TextField — border precedence', () => {
       .classes()
     expect(classes).toContain('border-hairline')
     expect(classes).not.toContain('border-field')
+    expect(classes).not.toContain('border-red-700')
   })
 
   it('applies only border-hairline when disabled with no error', () => {
@@ -174,6 +186,7 @@ describe('TextField — border precedence', () => {
       .classes()
     expect(classes).toContain('border-hairline')
     expect(classes).not.toContain('border-field')
+    expect(classes).not.toContain('border-red-700')
   })
 
   it('applies only border-red-700 when there is an error', () => {
@@ -233,6 +246,7 @@ describe('Textarea — border precedence', () => {
       .classes()
     expect(classes).toContain('border-hairline')
     expect(classes).not.toContain('border-field')
+    expect(classes).not.toContain('border-red-700')
   })
 
   it('applies only border-hairline when disabled with no error', () => {
@@ -241,6 +255,7 @@ describe('Textarea — border precedence', () => {
       .classes()
     expect(classes).toContain('border-hairline')
     expect(classes).not.toContain('border-field')
+    expect(classes).not.toContain('border-red-700')
   })
 
   it('applies only border-red-700 when there is an error', () => {
@@ -296,5 +311,24 @@ describe('SearchField', () => {
   it('keeps the accessible name once the field has a value', () => {
     const wrapper = mount(SearchField, { props: { modelValue: 'rhu' } })
     expect(wrapper.get('input').attributes('aria-label')).toBe('Search')
+  })
+})
+
+describe('SearchField — Appendix C conformance', () => {
+  it('draws the leading icon ring at a 12px outer diameter, not the svg box', () => {
+    // Redline "Leading icon · 12px ring · gap 8px" — "ring" is the drawn
+    // circle (2 * r + stroke), not the 16px svg box. left-3 + pl-9 already
+    // yield the redlined 8px gap and are untouched here.
+    const circle = mount(SearchField).get('circle')
+    const r = Number(circle.attributes('r'))
+    const strokeWidth = Number(circle.attributes('stroke-width'))
+    expect(2 * r + strokeWidth).toBeCloseTo(12, 5)
+    expect(circle.attributes('stroke')).toBe('currentColor')
+  })
+
+  it('keeps the icon container geometry the redline already got right', () => {
+    const wrapper = mount(SearchField)
+    expect(wrapper.get('svg').classes()).toEqual(expect.arrayContaining(['left-3', 'h-4', 'w-4']))
+    expect(wrapper.get('input').classes()).toContain('pl-9')
   })
 })

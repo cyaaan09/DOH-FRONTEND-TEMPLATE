@@ -35,9 +35,13 @@ const SIZES = {
   touch: 'h-touch px-5 rounded-field text-body',
 }
 
-const VARIANTS = {
+// Colour classes only — one entry per property (background, text, border,
+// hover) per variant. Kept separate from the `btn--primary` marker class
+// below so the marker (which drives the shadow and hover-green in scoped
+// CSS) never has to be duplicated inside a colour string.
+const VARIANT_COLORS = {
   // Redline "Primary"
-  primary: 'btn--primary bg-green-fill text-green-on-fill',
+  primary: 'bg-green-fill text-green-on-fill',
   // Redline "Secondary" (+ "Secondary hover")
   secondary: 'bg-surface text-ink-700 border border-field hover:bg-surface-muted',
   // Redline "Destructive"
@@ -46,27 +50,46 @@ const VARIANTS = {
   ghost: 'text-green-text hover:bg-green-tint',
 }
 
+// Redline "Disabled" — a single colour set that REPLACES the variant's own
+// background/border/text rather than sitting alongside it. Two classes for
+// the same property (e.g. bg-green-fill AND bg-surface-input) have equal
+// specificity in the same Tailwind layer, so the winner would be decided by
+// compile order rather than by this code — which is exactly the defect this
+// fixes: only primary and ghost happened to compile with the disabled
+// colours winning, so secondary rendered dark text and destructive kept its
+// red text and border. Because the variant's own hover class is dropped
+// entirely rather than left in place, a disabled button also can no longer
+// change colour on hover — only primary was previously guarded for that.
+const DISABLED_COLORS = 'bg-surface-input border border-hairline text-ink-200'
+
 const sizeClass = computed(() => SIZES[props.size] ?? SIZES.default)
-const variantClass = computed(() => VARIANTS[props.variant] ?? VARIANTS.primary)
+
+const variantKey = computed(() => (VARIANT_COLORS[props.variant] ? props.variant : 'primary'))
 
 // The native `disabled` attribute below is set for two different reasons
 // (disabled prop OR busy prop), but the two reasons must not look the same:
 // redline "Pending" keeps the primary fill at its hover green, while redline
-// "Disabled" swaps in a distinct grey surface/border/text. Driving the look
-// from a `disabled:` variant conflates the two, because both cases set the
-// same attribute — so the appearance is driven from the props directly,
-// with busy taking priority when a caller (unusually) sets both.
-const stateClass = computed(() => {
-  if (props.busy) return 'btn--busy'
-  if (props.disabled) return 'bg-surface-input border border-hairline text-ink-200'
-  return ''
+// "Disabled" swaps in a distinct grey surface/border/text. Colour is
+// resolved as exactly one set of classes per state — busy keeps the
+// variant's own colours (with `btn--busy` layered on via scoped CSS below),
+// disabled replaces them outright — with busy taking priority when a caller
+// (unusually) sets both.
+const colorClass = computed(() => {
+  if (props.disabled && !props.busy) return DISABLED_COLORS
+  return VARIANT_COLORS[variantKey.value]
 })
+
+// Independent of colour: drives the primary shadow/hover-green and the
+// busy-spinner override in scoped CSS. Kept out of colorClass so it never
+// competes with a colour utility for the same property.
+const markerClass = computed(() => (variantKey.value === 'primary' ? 'btn--primary' : ''))
+const busyClass = computed(() => (props.busy ? 'btn--busy' : ''))
 </script>
 
 <template>
   <button
     class="btn inline-flex items-center justify-center gap-2 font-bold whitespace-nowrap select-none transition-colors disabled:cursor-not-allowed"
-    :class="[sizeClass, variantClass, stateClass]"
+    :class="[sizeClass, colorClass, markerClass, busyClass]"
     :type="type"
     :disabled="disabled || busy"
     :aria-busy="busy || undefined"

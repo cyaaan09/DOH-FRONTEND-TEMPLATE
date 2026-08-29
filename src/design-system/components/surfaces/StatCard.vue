@@ -11,6 +11,8 @@ const props = defineProps({
   dot: { type: String, default: '' },
   // Redline "Hint" — urgent variant renders at 700 weight.
   urgent: { type: Boolean, default: false },
+  // Redline "Card selected" — green border + ring shadow.
+  selected: { type: Boolean, default: false },
 })
 
 // The dot's fill per tone. --dot-green is the source's dedicated dot colour;
@@ -30,8 +32,15 @@ const showDot = computed(() => TONES.includes(props.dot))
 
 <template>
   <div
-    class="flex flex-col rounded-panel border border-hairline px-4 py-3.5 shadow-card"
-    :class="muted ? 'bg-surface-card-muted' : 'bg-surface'"
+    class="flex flex-col rounded-panel border px-4 py-3.5"
+    :class="[
+      muted ? 'bg-surface-card-muted' : 'bg-surface',
+      // Redline 'Card selected' — border and shadow are resolved together
+      // as one state, never layered alongside the default hairline border
+      // and card shadow (the same one-class-per-property shape as Button's
+      // disabled fix elsewhere in this pass).
+      selected ? 'border-green-500 statcard--selected' : 'border-hairline shadow-card',
+    ]"
   >
     <!-- Redline "Label" — 12px/500, dot 8px, gap 7px, no uppercase. -->
     <span data-label class="flex items-center text-hint font-medium text-text-meta">
@@ -72,5 +81,12 @@ const showDot = computed(() => TONES.includes(props.dot))
   flex: none;
   border-radius: 50%;
   margin-right: 7px;
+}
+
+/* Redline "Card selected" — the ring shadow has no utility namespace
+ * (spec §4.2), so it is applied here rather than through a class that would
+ * compete with the default `shadow-card` utility for the same property. */
+.statcard--selected {
+  box-shadow: var(--ring-select);
 }
 </style>
