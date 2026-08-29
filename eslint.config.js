@@ -44,6 +44,17 @@ export default defineConfig([
     },
   },
 
+  {
+    // Design-system components are single-word primitives consumed through a namespaced barrel import
+    // (e.g. import { Button, Card, Notice } from '@/design-system'), which is the textbook exemption
+    // for this rule. Single-word names are correct here and will scale to ~15 components in this phase.
+    name: 'design-system/components',
+    files: ['src/design-system/components/**/*.vue'],
+    rules: {
+      'vue/multi-word-component-names': 'off',
+    },
+  },
+
   ...pluginOxlint.buildFromOxlintConfigFile('.oxlintrc.json'),
 
   skipFormatting,

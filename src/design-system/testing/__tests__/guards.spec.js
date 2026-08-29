@@ -12,6 +12,8 @@ const DESIGN_SYSTEM_DIR = 'src/design-system'
  * carry a raw hex or a `dark:` string just as easily as a .vue file can.
  * Uses readdirSync recursive rather than fs.globSync, which does not exist
  * on Node 20 — and package.json still allows Node ^20.19.0.
+ * Excludes __tests__ directories so test files are never scanned — test files
+ * may contain hex fixtures or dark: assertions that would spuriously fail guards.
  */
 function listComponents() {
   let entries
@@ -29,7 +31,7 @@ function listComponents() {
   // nothing to guard.
   expect(entries.length, `${COMPONENTS_DIR} exists but is empty`).toBeGreaterThan(0)
   return entries
-    .filter((name) => /\.(vue|js)$/.test(String(name)))
+    .filter((name) => /\.(vue|js)$/.test(String(name)) && !String(name).includes('__tests__'))
     .map((name) => join(COMPONENTS_DIR, String(name)))
 }
 
@@ -107,6 +109,14 @@ describe('design-system components', () => {
       for (const v of findDarkVariants(source)) violations.push(`${file}: ${v}`)
     }
     expect(violations).toEqual([])
+  })
+
+  it('excludes __tests__ directories from scanning', () => {
+    const components = listComponents()
+    // Assert that no scanned file contains __tests__ in its path
+    for (const file of components) {
+      expect(file).not.toMatch(/__tests__/)
+    }
   })
 })
 
