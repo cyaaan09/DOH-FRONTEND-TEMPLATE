@@ -1,0 +1,88 @@
+import { mount } from '@vue/test-utils'
+import { describe, expect, it } from 'vitest'
+import DemoRules from '../DemoRules.vue'
+import DemoGap from '../DemoGap.vue'
+import { SECTIONS } from '../sections'
+
+describe('DemoRules', () => {
+  it('renders one card per rule', () => {
+    const wrapper = mount(DemoRules, {
+      props: {
+        rules: [
+          { title: 'One tone per meaning', body: 'Green = good or issued.' },
+          { title: 'Never two chips of the same tone', body: 'Move it into the label line.' },
+        ],
+      },
+    })
+    expect(wrapper.findAll('[data-rule]')).toHaveLength(2)
+    expect(wrapper.text()).toContain('One tone per meaning')
+    expect(wrapper.text()).toContain('Move it into the label line.')
+  })
+
+  it('renders the title at rule scale and the body at note scale', () => {
+    const wrapper = mount(DemoRules, {
+      props: { rules: [{ title: 'A', body: 'B' }] },
+    })
+    expect(wrapper.get('[data-rule-title]').classes()).toContain('text-notice')
+    expect(wrapper.get('[data-rule-title]').classes()).toContain('font-bold')
+    expect(wrapper.get('[data-rule-body]').classes()).toContain('text-caption')
+  })
+
+  it('renders nothing when given no rules', () => {
+    expect(mount(DemoRules, { props: { rules: [] } }).findAll('[data-rule]')).toHaveLength(0)
+  })
+})
+
+describe('DemoGap', () => {
+  it('names the missing component and the redline group that governs it', () => {
+    const wrapper = mount(DemoGap, {
+      props: { component: 'SegmentedTabs', group: 'Tabs' },
+    })
+    expect(wrapper.text()).toContain('SegmentedTabs')
+    expect(wrapper.text()).toContain('Tabs')
+  })
+
+  it('marks itself so a test can count gaps', () => {
+    expect(mount(DemoGap, { props: { component: 'X', group: 'Y' } }).attributes('data-gap')).toBe(
+      '',
+    )
+  })
+
+  it('uses the dashed panel treatment', () => {
+    // Spec §17.1 — dashed --border-dashed at 1.6px
+    expect(mount(DemoGap, { props: { component: 'X', group: 'Y' } }).classes()).toContain(
+      'demo-gap',
+    )
+  })
+})
+
+describe('the section manifest', () => {
+  it('lists the artifact sections in order', () => {
+    // Spec Appendix D. The order is the artifact's own and must not drift.
+    expect(SECTIONS.map((s) => s.id)).toEqual([
+      'foundations',
+      'containers',
+      'chips',
+      'tabs',
+      'fields',
+      'dropdowns',
+      'buttons',
+      'files',
+      'notices',
+      'selection',
+      'dialog',
+      'type-scale',
+      'specs',
+      'dark-mode',
+      'tokens',
+    ])
+  })
+
+  it('gives every section a title and a completeness flag', () => {
+    for (const section of SECTIONS) {
+      expect(typeof section.title).toBe('string')
+      expect(section.title.length).toBeGreaterThan(0)
+      expect(typeof section.complete).toBe('boolean')
+    }
+  })
+})
