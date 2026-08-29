@@ -46,24 +46,27 @@ describe('ChipsSection', () => {
     // Ported from the deleted ChipsDemo.spec.js. DismissibleChip emits an
     // object payload, not a bare value (Finding 9 — a bare value can't
     // disambiguate two chips that share a value under different keys). The
-    // applied list here deliberately gives "Source:" and "Payment:" the same
-    // value ("Online") so a handler that dropped back to filtering on value
-    // alone — or one still expecting the old bare-value shape — would remove
-    // both chips (or neither) instead of only the one that was dismissed.
+    // applied list gives "Source:" and "Payment:" the same value ("Online")
+    // so a handler filtering on value alone would remove both chips (or
+    // neither) instead of only the one dismissed — and separately gives two
+    // chips the same "Source:" key with different values ("Online" and
+    // "Migrated", review Finding 3) so a handler filtering on chipKey alone
+    // fails the same way. Only checking BOTH fields together passes.
     const wrapper = mount(ChipsSection)
     const removeButtons = () => wrapper.findAll('button[aria-label^="Remove"]')
 
-    expect(removeButtons()).toHaveLength(4)
+    expect(removeButtons()).toHaveLength(5)
 
     await removeButtons()[2].trigger('click') // "Source: Online"
 
     const remaining = removeButtons()
-    expect(remaining).toHaveLength(3)
+    expect(remaining).toHaveLength(4)
     const labels = remaining.map((button) => button.attributes('aria-label'))
     expect(labels).not.toContain('Remove Source: Online')
     expect(labels).toContain('Remove Payment: Online')
     expect(labels).toContain('Remove Status: Active')
     expect(labels).toContain('Remove Expiry: Within 90 days')
+    expect(labels).toContain('Remove Source: Migrated')
   })
 })
 
@@ -89,6 +92,19 @@ describe('sections with complete components render no gaps', () => {
     ['TypeScaleSection', TypeScaleSection],
   ])('%s', (_name, component) => {
     expect(mount(component).findAll('[data-gap]')).toHaveLength(0)
+  })
+})
+
+describe('TypeScaleSection', () => {
+  it('renders the three rule cards (Appendix D, typeRules)', () => {
+    // Finding 1 — the original rule extraction missed this array's shape, so
+    // Appendix D showed an empty "Rule cards:" heading and the section was
+    // built with no DemoRules footer. It has since been extracted (spec
+    // Appendix D, "typeRules"); this section must render it like any other.
+    const wrapper = mount(TypeScaleSection)
+    expect(wrapper.findAll('[data-rule]')).toHaveLength(3)
+    expect(wrapper.text()).toContain('Three weights only')
+    expect(wrapper.text()).toContain("DM Sans's 500 already reads as emphasis.")
   })
 })
 

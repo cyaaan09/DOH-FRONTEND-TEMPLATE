@@ -16,6 +16,12 @@ const applied = ref([
   // that dismiss must key off { chipKey, value } together (Finding 9), not
   // value alone. See ChipsSection in sections.spec.js.
   { key: 'Payment:', value: 'Online' },
+  // Deliberately shares a key with "Source: Online" under a different value
+  // — the other half of the same proof (review Finding 3): a handler that
+  // filtered on chipKey alone would remove both "Source:" chips instead of
+  // only the one dismissed. All four applied chips used to have distinct
+  // keys, so that half of the { chipKey, value } contract went unproven.
+  { key: 'Source:', value: 'Migrated' },
 ])
 
 const FILTERS = [
@@ -108,7 +114,7 @@ function toggle(label) {
       </DemoBlock>
 
       <DemoBlock
-        label="COUNT & OVERFLOW"
+        label="COUNT &amp; OVERFLOW"
         note="Numeric badges in nav and tables. Red only when the count is work waiting on you."
       >
         <DemoGap component="Chip variant=&quot;count&quot;" group="Chips" />

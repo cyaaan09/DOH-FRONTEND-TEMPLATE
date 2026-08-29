@@ -1,6 +1,26 @@
 <script setup>
 import DemoCard from '../chrome/DemoCard.vue'
 import DemoBlocks from '../chrome/DemoBlocks.vue'
+import DemoRules from '../chrome/DemoRules.vue'
+
+// Rule cards - spec Appendix D, typeRules. Missed by the original rule
+// extraction (its regex did not match this array's shape), so Appendix D
+// showed an empty "Rule cards:" heading under Type scale and this footer was
+// never built. Extracted since; render it exactly like every other section.
+const RULES = [
+  {
+    title: 'Three weights only',
+    body: "400 for prose, 500 for field labels and values, 700 for titles and figures. No 600 — DM Sans's 500 already reads as emphasis.",
+  },
+  {
+    title: 'Tighten as you scale up',
+    body: 'Anything above 20px takes -0.015em; anything under 12px takes +0.08em and uppercase. Body text stays at 0.',
+  },
+  {
+    title: 'Mono earns its place',
+    body: 'JetBrains Mono only for values a user might copy or compare digit by digit — LTO numbers, serials, dates in tables.',
+  },
+]
 
 const ROWS = [
   { cls: 'text-page-title', name: 'Page title', sample: 'Issued LTO' },
@@ -28,5 +48,7 @@ const ROWS = [
         </div>
       </div>
     </DemoBlocks>
+
+    <DemoRules :rules="RULES" />
   </DemoCard>
 </template>

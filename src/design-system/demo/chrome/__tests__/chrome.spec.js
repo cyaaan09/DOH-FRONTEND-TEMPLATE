@@ -21,6 +21,16 @@ describe('DemoCard', () => {
     expect(heading.classes()).toContain('text-section-title')
   })
 
+  it('pads the header at spec §17.1: 20px top, 24px sides, 4px bottom', () => {
+    // Redlined header pad "20px 24px 4px" (px-card-x=24, pt-5=20, pb-1=4).
+    // Unasserted before this: a later edit could silently shift pt-5 to
+    // pt-8, for example, and every existing test here would still pass.
+    const header = mount(DemoCard, { props: { title: 'Chips' } }).get('div')
+    expect(header.classes()).toContain('px-card-x')
+    expect(header.classes()).toContain('pt-5')
+    expect(header.classes()).toContain('pb-1')
+  })
+
   it('renders a description only when given one', () => {
     const withDesc = mount(DemoCard, {
       props: { title: 'Chips', description: 'Tone comes from the meaning.' },
@@ -45,6 +55,14 @@ describe('DemoBlocks', () => {
     expect(wrapper.classes()).toContain('demo-blocks')
     expect(wrapper.find('.block-probe').exists()).toBe(true)
   })
+
+  it('pads at spec §17.1: 18px top, 24px sides, 6px bottom', () => {
+    // Redlined pad "18px 24px 6px" (px-card-x=24, pt-4.5=18, pb-1.5=6).
+    const classes = mount(DemoBlocks, { slots: { default: '<span />' } }).classes()
+    expect(classes).toContain('px-card-x')
+    expect(classes).toContain('pt-4.5')
+    expect(classes).toContain('pb-1.5')
+  })
 })
 
 describe('DemoBlock', () => {
@@ -53,6 +71,16 @@ describe('DemoBlock', () => {
     expect(label.text()).toBe('STATUS')
     expect(label.classes()).toContain('text-column-header')
     expect(label.classes()).toContain('text-text-header')
+  })
+
+  it('spaces its label and note at spec §17.1: 4px and 10px margin-bottom', () => {
+    // Redlined "margin-bottom 4px" on the label, "margin-bottom 10px" on the
+    // note (mb-1=4, mb-2.5=10) — the DemoBlock analogue of DemoCard/
+    // DemoBlocks/DemoStrip's padding, since DemoBlock spaces its children
+    // with margin instead.
+    const wrapper = mount(DemoBlock, { props: { label: 'STATUS', note: 'A dot plus a word.' } })
+    expect(wrapper.get('[data-label]').classes()).toContain('mb-1')
+    expect(wrapper.get('[data-note]').classes()).toContain('mb-2.5')
   })
 
   it('renders a note only when given one', () => {
@@ -76,6 +104,14 @@ describe('DemoStrip', () => {
     const classes = mount(DemoStrip, { props: { label: 'INTERACTIVE — FILTER CHIPS' } }).classes()
     expect(classes).toContain('bg-surface-sunken')
     expect(classes).toContain('border-divider')
+  })
+
+  it('pads at spec §17.1: 18px top, 24px sides, 22px bottom', () => {
+    // Redlined pad "18px 24px 22px" (px-card-x=24, pt-4.5=18, pb-5.5=22).
+    const classes = mount(DemoStrip, { props: { label: 'INTERACTIVE — FILTER CHIPS' } }).classes()
+    expect(classes).toContain('px-card-x')
+    expect(classes).toContain('pt-4.5')
+    expect(classes).toContain('pb-5.5')
   })
 
   it('renders its label and slot', () => {
