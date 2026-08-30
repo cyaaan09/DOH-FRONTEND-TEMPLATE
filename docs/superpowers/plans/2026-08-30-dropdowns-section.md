@@ -1266,7 +1266,7 @@ const emit = defineEmits(['select'])
  * of space above its own text. */
 .rowmenu__separator {
   margin-top: 6px;
-  padding-top: 7px;
+  padding-top: 13px;
   border-top-width: 1px;
 }
 </style>
