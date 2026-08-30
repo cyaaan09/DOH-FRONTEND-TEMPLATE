@@ -375,6 +375,21 @@ Found while extracting the page structure; each is scheduled into the phase that
   children. This is the structural cost of putting the redlined filter and footer inside the panel.
   Recorded as a known limitation, not scheduled for a fix: `composite: false` (role `dialog`) is the
   escape hatch if screen-reader testing shows a real problem.
+- **2026-08-31 — the `Counts` ARIA row is deliberately unimplemented on `Tabs` and `StageTabs`.**
+  Appendix C's *ARIA & semantics* group specifies `Counts | badge text needs context:
+  aria-label='10 applications for checking'`. Both components carried exactly that and it was
+  **removed**, because the badge sits inside the element carrying `role="tab"`: when a browser
+  computes a name from content, a child with its own `aria-label` contributes that label instead
+  of its text, so each tab announced its own label twice — `"Active LTOs 211 Active LTOs"` and
+  `"Review 2 Review 2 returned"`. The redline row is written for a badge that stands alone; inside
+  a tab the surrounding label already supplies the context it asks for. The bare number is
+  therefore the correct contribution, and `StageTabs`' decorative step marker carries
+  `aria-hidden="true"` for the same reason.
+  Recorded as a deliberate deviation, not a gap: the row still stands for any future standalone
+  count badge (a sidebar nav item, a filter pill), and only the nested-inside-a-tab case is
+  exempt. Do not "restore" the labels — that reintroduces the defect. See the comments at
+  `Tabs.vue`'s count span and `StageTabs.vue`'s figure span, which state this at the call site.
+
 - **2026-08-30 — Appendix D.1's Dropdowns grid conflicts with §17.1's generic `DemoBlocks` chrome.**
   D.1 records `minmax(260px,1fr)`, `gap: 20px 24px`, padding `18px 24px 24px`; `DemoBlocks` (§17.1)
   implements `minmax(268px,1fr)`, `gap: 24px`, padding `18px 24px 6px`. The visible difference is the
