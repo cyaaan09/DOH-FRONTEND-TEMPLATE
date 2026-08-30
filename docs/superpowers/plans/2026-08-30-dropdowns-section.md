@@ -57,6 +57,14 @@ Radii and shadows: trigger 9px = `rounded-field`; panel 12px = `rounded-panel`; 
 
 Type steps: value 13.5/500 = `text-body font-medium`; placeholder and option 13.5/400 = `text-body`; selected option 13.5/700 = `text-body font-bold`; `✓` 12/700 = `text-hint font-bold`; inline variant and footer buttons 12.5/700 = `text-field-label font-bold`; field labels 12.5/500 = `text-field-label`; notes 12px = `text-hint`; empty state 12.5/400 = `text-caption`.
 
+
+**Panel offset — applies to every component in this phase.** Appendix C's `Panel` row says
+`top 44px` against a 38px trigger, and Appendix D.1 records the row menu's panel at `top: 40px`
+against a 34px trigger: both a **6px gap**. Zag defaults `positioning.gutter` to **8** for
+`select` and for `menu`, so leaving it unset renders every panel 2px lower than the artifact.
+Pass `:positioning="{ gutter: 6 }"` on each root. jsdom computes no layout, so assert it as a
+prop — `wrapper.findComponent(SelectRoot).props('positioning')` — not as a rendered offset.
+
 ## File Structure
 
 ```
@@ -632,6 +640,7 @@ const isOn = (option) => props.modelValue.includes(option)
     multiple
     :collection="collection"
     :model-value="modelValue"
+    :positioning="{ gutter: 6 }"
     @value-change="(details) => emit('update:modelValue', details.value)"
   >
     <SelectControl>
@@ -965,6 +974,7 @@ const collection = computed(() => createListCollection({ items: labels.value }))
   <SelectRoot
     :collection="collection"
     :model-value="[modelValue]"
+    :positioning="{ gutter: 6 }"
     @value-change="(details) => emit('update:modelValue', details.value[0] ?? modelValue)"
   >
     <SelectControl>
@@ -1178,7 +1188,7 @@ const emit = defineEmits(['select'])
 </script>
 
 <template>
-  <MenuRoot @select="(details) => emit('select', details.value)">
+  <MenuRoot :positioning="{ gutter: 6 }" @select="(details) => emit('select', details.value)">
     <!-- Appendix D.1 — 34x34 square, radius 8px, field border. -->
     <MenuTrigger
       data-trigger
