@@ -2,6 +2,12 @@ import { expect, test } from '@playwright/test'
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/design-system')
+  // page.goto resolves on the `load` event, which on a warm cache can fire
+  // before Vue finishes mounting -- leaving the DOM empty for anything that
+  // reads it next. page.evaluate and locator.count() below do not auto-wait
+  // the way Playwright's action/assertion APIs do, so every test in this file
+  // must first prove the app is mounted via an auto-waiting assertion.
+  await expect(page.locator('[data-section]')).toHaveCount(15)
 })
 
 test.describe('layout regressions caught by eye, not by jsdom', () => {
@@ -60,5 +66,52 @@ test.describe('layout regressions caught by eye, not by jsdom', () => {
     const panelBox = await panel.boundingBox()
 
     expect(Math.abs(panelBox.width - triggerBox.width), 'panel is not trigger width').toBeLessThanOrEqual(2)
+  })
+})
+
+test.describe('page-level layout guards', () => {
+  test('the page never scrolls horizontally', async ({ page }) => {
+    // Spec §12 — the page is the conformance surface; a horizontal scrollbar
+    // means something inside it is wider than its container.
+    const overflow = await page.evaluate(() => {
+      const el = document.documentElement
+      return el.scrollWidth - el.clientWidth
+    })
+    expect(overflow, 'document scrolls horizontally').toBeLessThanOrEqual(0)
+  })
+
+  test('no section card is overflowed by its own content', async ({ page }) => {
+    // Catches the class the Tabs underline row hit: a flex row with no wrap and
+    // whitespace-nowrap children spilling past the card, where DemoCard's
+    // overflow-hidden then clips it silently.
+    const offenders = await page.evaluate(() => {
+      const bad = []
+      for (const section of document.querySelectorAll('[data-section]')) {
+        const card = section.querySelector('section')
+        if (!card) continue
+        const limit = card.getBoundingClientRect().right
+        for (const child of card.querySelectorAll('*')) {
+          const rect = child.getBoundingClientRect()
+          // Portalled panels are positioned against the viewport, not the card,
+          // and are legitimately allowed outside it.
+          if (rect.width === 0 || child.closest('[role="listbox"],[role="menu"]')) continue
+          if (rect.right - limit > 2) {
+            bad.push(`${section.dataset.section}: ${child.tagName.toLowerCase()}.${child.className}`)
+            break
+          }
+        }
+      }
+      return bad
+    })
+    expect(offenders, `content overflows its card in: ${offenders.join(' | ')}`).toEqual([])
+  })
+
+  test('every section marked complete renders no gap markers', async ({ page }) => {
+    // The unit suite asserts this against the manifest; this asserts it against
+    // what a browser actually paints, which is the thing that matters.
+    for (const id of ['buttons', 'fields', 'type-scale', 'tabs', 'dropdowns']) {
+      const gaps = page.locator(`[data-section="${id}"] [data-gap]`)
+      await expect(gaps, `${id} is complete but shows a gap`).toHaveCount(0)
+    }
   })
 })

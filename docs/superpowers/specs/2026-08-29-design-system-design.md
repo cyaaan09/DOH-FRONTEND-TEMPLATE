@@ -280,6 +280,8 @@ The route is a single `src/pages/design-system.vue`; its section components live
 
 **Assumption:** the kitchen sink uses neutral placeholder content, not the source document's domain-specific facility names, licence numbers, or office footer. Reversible if the real samples are wanted.
 
+**Fourth gate:** `npm run test:e2e` runs a Playwright suite (`e2e/`) against the built page in a real Chromium layout, checked once per section rather than per edit because each run does a full production build. It exists because jsdom computes no layout, and three defects reached this branch that only a human eye on the rendered page caught: the stat block rendering flush to the card edge instead of inset by `px-card-x`, StageTabs' five cards collapsing into a vertical stack instead of one row at the page's real column width, and MultiSelect's panel sizing to its longest option instead of its trigger's width. Every assertion in the suite must wait on a locator (`toHaveCount`, `boundingBox`, `toBeVisible`, or equivalent) before reading the DOM, because `page.goto` resolves on the `load` event -- which on a warm cache can fire before Vue finishes mounting -- and neither `page.evaluate` nor `locator.count()` auto-wait the way those do; skipping that wait lets a guard pass while checking nothing.
+
 ## 13. Testing
 
 | Test | Asserts |

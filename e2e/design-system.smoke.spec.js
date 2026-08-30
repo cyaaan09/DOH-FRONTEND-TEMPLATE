@@ -1,9 +1,17 @@
 import { expect, test } from '@playwright/test'
 
 test.describe('design-system page', () => {
-  test('loads and renders every section in the manifest', async ({ page }) => {
+  test.beforeEach(async ({ page }) => {
     await page.goto('/design-system')
+    // page.goto resolves on the `load` event, which on a warm cache can fire
+    // before Vue finishes mounting -- leaving the DOM empty for anything that
+    // reads it next. locator.count() below does not auto-wait the way
+    // Playwright's action/assertion APIs do, so every test in this file must
+    // first prove the app is mounted via an auto-waiting assertion.
+    await expect(page.locator('[data-section]')).toHaveCount(15)
+  })
 
+  test('loads and renders every section in the manifest', async ({ page }) => {
     // Spec §17 — the page is a checklist of the whole system; a section that
     // fails to render is invisible rather than obviously broken.
     const sections = page.locator('[data-section]')
@@ -31,7 +39,6 @@ test.describe('design-system page', () => {
   test('still shows unbuilt work as visible gaps', async ({ page }) => {
     // Sanity: the page is a progress checklist. If gaps ever hit zero while
     // sections remain incomplete, the markers have been lost, not the work done.
-    await page.goto('/design-system')
     expect(await page.locator('[data-gap]').count()).toBeGreaterThan(0)
   })
 })
