@@ -432,7 +432,7 @@ git commit -m "feat(ds): add the single-select dropdown"
 
 Appendix C group **Dropdowns**, rows `Panel max-h` (214px with filter), `Checkbox in list`, `Panel filter`, `Panel footer`, plus the shared `Trigger`/`Panel`/`Option` rows. Appendix D.1 for the service list, the empty state and the footer buttons. Read both before starting.
 
-This is the most complex component in the phase. Build it after `Select`. Its trigger repeats `Select`'s shell markup and scoped rules deliberately — the two differ in what they display (a single value vs a count summary) and extracting a shared wrapper for two call sites would add indirection without removing much. This duplication is a recorded, accepted decision, not an oversight; do not refactor it, and do not flag it as a defect.
+This is the most complex component in the phase. Build it after `Select`. Its trigger repeats `Select`'s shell markup and scoped rules deliberately — the two differ in what they display (a single value vs a count summary) and extracting a shared wrapper for two call sites would add indirection without removing much. This duplication is a deliberate decision with reasoning recorded here, not an oversight — implement it as written rather than refactoring on your own initiative. If you or a reviewer judge the duplication worth removing anyway, say so and it will be adjudicated.
 
 **Files:**
 - Create: `src/design-system/components/selects/MultiSelect.vue`
