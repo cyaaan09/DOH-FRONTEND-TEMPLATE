@@ -30,9 +30,16 @@ const emit = defineEmits(['update:modelValue'])
         ]"
       >
         <span class="flex items-center gap-2">
-          <span data-step class="stage-tabs__step text-stat-hint font-bold text-text-meta">{{
-            stage.step
-          }}</span>
+          <span
+            data-step
+            class="stage-tabs__step flex items-center justify-center rounded-bar text-stat-hint font-bold"
+            :class="
+              stage.key === modelValue
+                ? 'bg-green-fill text-green-on-fill'
+                : 'bg-divider text-text-header'
+            "
+            >{{ stage.step }}</span
+          >
           <span class="text-field-label font-bold text-text-header">{{ stage.label }}</span>
         </span>
         <span data-figure class="stage-tabs__figure text-stage-figure text-text-header block">{{
@@ -76,6 +83,12 @@ const emit = defineEmits(['update:modelValue'])
 
 .stage-tabs__figure {
   margin-top: 6px;
+}
+
+/* Redline "Stage number" — 19x19px. No spacing token carries it. */
+.stage-tabs__step {
+  width: 19px;
+  height: 19px;
 }
 
 .stage-tabs__card:focus-visible {

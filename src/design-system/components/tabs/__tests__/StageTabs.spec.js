@@ -60,6 +60,21 @@ describe('StageTabs', () => {
     expect(cards[1].classes()).not.toContain('stage-tabs__card--active')
   })
 
+  it('gives the step marker the active fill or the idle divider tint', () => {
+    // Redline "Stage number" — bg/text is one branch each; rounded-bar
+    // carries the radius so that value cannot be silently deleted.
+    const steps = mountStages().findAll('[data-step]')
+    expect(steps[0].classes()).toContain('bg-green-fill')
+    expect(steps[0].classes()).toContain('text-green-on-fill')
+    expect(steps[0].classes()).toContain('rounded-bar')
+    expect(steps[0].classes()).not.toContain('bg-divider')
+    expect(steps[0].classes()).not.toContain('text-text-header')
+    expect(steps[1].classes()).toContain('bg-divider')
+    expect(steps[1].classes()).toContain('text-text-header')
+    expect(steps[1].classes()).not.toContain('bg-green-fill')
+    expect(steps[1].classes()).not.toContain('text-green-on-fill')
+  })
+
   it('renders the count at the stage-figure step', () => {
     // Redline "Stage figure"
     expect(mountStages().get('[data-figure]').classes()).toContain('text-stage-figure')
