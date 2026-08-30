@@ -27,6 +27,12 @@
   --text-card-figure--font-weight: 700;
   --text-card-figure--letter-spacing: -0.01em;
 
+  /* Redline "Stage figure" — larger and tighter than a card figure, because a
+   * stage card carries one number and nothing competes with it. */
+  --text-stage-figure: 25px;
+  --text-stage-figure--font-weight: 700;
+  --text-stage-figure--letter-spacing: -0.02em;
+
   --text-section-title: 17px;
   --text-section-title--font-weight: 700;
 
