@@ -9,6 +9,20 @@ test.describe('design-system page', () => {
     const sections = page.locator('[data-section]')
     await expect(sections).toHaveCount(15)
 
+    // The count above only proves 15 wrapper divs exist -- Vue's v-for keeps
+    // rendering siblings even when one child throws during render, replacing
+    // just that child with a Comment node, so a throwing section would not
+    // move the count. Every section renders through DemoCard, which always
+    // emits its own title as the section's first <h2> (a few sections also
+    // nest demo content with further h2s of their own -- e.g. Containers'
+    // Card example -- so .first() targets DemoCard's, which DOM order
+    // guarantees comes first). A section reduced to a Comment node would
+    // have no h2 at all.
+    const sectionCount = await sections.count()
+    for (let i = 0; i < sectionCount; i++) {
+      await expect(sections.nth(i).locator('h2').first()).toBeVisible()
+    }
+
     for (const id of ['foundations', 'tabs', 'dropdowns', 'buttons', 'tokens']) {
       await expect(page.locator(`[data-section="${id}"]`)).toBeVisible()
     }
