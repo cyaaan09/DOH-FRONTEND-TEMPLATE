@@ -84,7 +84,16 @@ describe('MultiSelect', () => {
     const boxes = [...document.querySelectorAll('[data-box]')]
     expect(boxes).toHaveLength(7)
     // Redline "Checkbox in list" — filled green when on, plain border when off.
-    expect(boxes[1].className).toContain('bg-green-fill')
+    // The "on" assertion below uses classList, not .className: .className is
+    // a plain string, and toContain() on a string is substring matching, not
+    // token matching — 'border-border-field'.includes('border-field') and
+    // 'bg-green-fill-hover'.includes('bg-green-fill') are both true (the
+    // latter a real bridged token in this codebase), so a string-based
+    // positive assertion would keep passing even if the component regressed
+    // to exactly the trap it exists to catch. The "off" assertion right
+    // after it is negative (not.toContain): substring matching only weakens
+    // a positive containment check, so string-based stays fine there.
+    expect([...boxes[1].classList]).toContain('bg-green-fill')
     expect(boxes[0].className).not.toContain('bg-green-fill')
     // The colour above is only half the redline ("white ✓"): the glyph is
     // drawn unconditionally in the template, so its visibility rides
@@ -92,10 +101,10 @@ describe('MultiSelect', () => {
     // could be deleted and every assertion above would still pass, leaving
     // an invisible checkmark on the "on" box — the same shape as the
     // colour-asserted/width-not gap this suite's own history warns about.
-    expect(boxes[1].className).toContain('border-green-fill')
-    expect(boxes[1].className).toContain('text-green-on-fill')
-    expect(boxes[0].className).toContain('border-field')
-    expect(boxes[0].className).toContain('text-transparent')
+    expect([...boxes[1].classList]).toContain('border-green-fill')
+    expect([...boxes[1].classList]).toContain('text-green-on-fill')
+    expect([...boxes[0].classList]).toContain('border-field')
+    expect([...boxes[0].classList]).toContain('text-transparent')
     wrapper.unmount()
   })
 
@@ -154,12 +163,14 @@ describe('MultiSelect', () => {
   })
 
   it('dresses the footer as a sunken strip under a rule', async () => {
-    // Redline "Panel footer" — sunken background, 1px top divider.
+    // Redline "Panel footer" — sunken background, 1px top divider. classList,
+    // not .className — see the checkbox test above for why a string-based
+    // toContain() would be a substring match, not a token match.
     const wrapper = mountMulti()
     await wrapper.get('[data-trigger]').trigger('click')
     const footer = document.querySelector('[data-footer]')
-    expect(footer.className).toContain('bg-surface-sunken')
-    expect(footer.className).toContain('border-divider')
+    expect([...footer.classList]).toContain('bg-surface-sunken')
+    expect([...footer.classList]).toContain('border-divider')
     wrapper.unmount()
   })
 
@@ -168,13 +179,14 @@ describe('MultiSelect', () => {
     // Apply is "#177236 on #FFF, 12.5/700". Only the click behaviour of
     // these buttons is exercised above; the redlined appearance needs its
     // own assertion or the fill/ink classes could be dropped unnoticed.
+    // classList, not .className — see the checkbox test above.
     const wrapper = mountMulti()
     await wrapper.get('[data-trigger]').trigger('click')
     const clear = document.querySelector('[data-clear]')
     const apply = document.querySelector('[data-apply]')
-    expect(clear.className).toContain('text-ink-500')
-    expect(apply.className).toContain('bg-green-fill')
-    expect(apply.className).toContain('text-green-on-fill')
+    expect([...clear.classList]).toContain('text-ink-500')
+    expect([...apply.classList]).toContain('bg-green-fill')
+    expect([...apply.classList]).toContain('text-green-on-fill')
     wrapper.unmount()
   })
 

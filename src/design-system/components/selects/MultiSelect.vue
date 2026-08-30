@@ -183,9 +183,16 @@ const isOn = (option) => props.modelValue.includes(option)
 }
 
 /* Redline "Panel shadow". The panel itself does not scroll — the list does,
- * so the footer stays stuck to the bottom. */
+ * so the footer stays stuck to the bottom. `overflow: hidden` clips the
+ * footer to the panel's own 12px radius: the footer sits flush to the
+ * panel's left, right and bottom edges with its own sunken background, and
+ * a parent's border-radius does not clip a flush child's background on its
+ * own — without this the footer would show square corners against the
+ * rounded panel. Clipping a descendant this way does not clip the panel's
+ * own box-shadow below, which paints outside the element's box. */
 .multiselect__panel {
   box-shadow: var(--sh-panel);
+  overflow: hidden;
 }
 
 /* Redline "Panel filter" — 32px tall, borderless on the input surface. */
