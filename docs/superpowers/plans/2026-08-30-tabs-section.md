@@ -173,7 +173,7 @@ Appendix C group **Tabs**, rows `Underline pad`, `Underline type`, `Marker`, `Ac
 
 **Interfaces:**
 - Consumes: `@ark-ui/vue` from Task 1.
-- Produces: `<Tabs v-model :tabs>` where `tabs` is `Array<{ key, label, count? }>` and `v-model` is the active key. Default slot receives `{ tab }` for the active tab's panel. Task 5's `TabsSection` uses it.
+- Produces: `<Tabs v-model :tabs>` where `tabs` is `Array<{ key, label, count? }>` and `v-model` is the active key. The default slot is a plain content slot for the active tab's panel — it passes no scoped data, because the consumer owns both the array and the selection ref and resolves its own content. Task 5's `TabsSection` uses it.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -599,7 +599,8 @@ identical either way, so a later change would swap the wrapper, not the CSS.
 - Produces: `<StageTabs v-model :stages>` where `stages` is
   `Array<{ key, step, label, count, hint, urgent?, muted? }>` — `step` is the
   displayed marker string (`'1'`…`'4'`, and `'·'` for Closed), `count` a number.
-  Default slot receives `{ stage }` for the active stage's panel.
+  The default slot is a plain content slot for the active stage's panel and passes no
+  scoped data, matching `Tabs` — the consumer resolves its own content.
 
 - [ ] **Step 1: Add the stage figure type step**
 
