@@ -131,9 +131,13 @@ const collection = computed(() => createListCollection({ items: labels.value }))
  * states & z-index" requires a visible indicator on every focusable. Zag
  * sets data-highlighted on the item under the cursor or arrow keys. The
  * :not() is load-bearing, not defensive: Zag also sets data-state="checked"
- * on the selected item, and this scoped selector's specificity (0,3,0)
- * beats the bg-green-tint utility (0,1,0) — without it, arrowing onto the
- * selected option would replace its redlined tint with grey. */
+ * on the selected item, and this rule wins over the bg-green-tint utility
+ * regardless of specificity — Vue's scoped styles are unlayered, Tailwind's
+ * utilities live in @layer utilities, and unlayered rules beat every named
+ * layer. Without the :not(), arrowing onto the selected option would replace
+ * its redlined tint with grey. Note the mechanism is cascade LAYERS, not
+ * specificity: if this rule were ever moved into a named layer, specificity
+ * would then decide it and the outcome could flip. */
 .inline-filter__option[data-highlighted]:not([data-state='checked']) {
   background: var(--surface-muted);
 }
