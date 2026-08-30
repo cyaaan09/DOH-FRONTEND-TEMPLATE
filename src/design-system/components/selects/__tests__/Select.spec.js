@@ -92,6 +92,11 @@ describe('Select', () => {
     const trigger = mountSelect().get('[data-trigger]')
     expect(trigger.classes()).toContain('rounded-field')
     expect(trigger.classes()).toContain('border-field')
+    // Appendix D calls this section "the same 38px shell as a text field" —
+    // `h-field` is the token TextField itself uses for that height, and
+    // without this assertion the utility could be dropped silently, same as
+    // the checkmark/tint gap on the selected-option test below.
+    expect(trigger.classes()).toContain('h-field')
   })
 
   it('renders a decorative caret that assistive technology ignores', () => {

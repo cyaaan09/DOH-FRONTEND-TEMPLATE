@@ -39,11 +39,11 @@ const selected = computed(() => (props.modelValue ? [props.modelValue] : []))
   >
     <SelectControl>
       <!-- Redline "Trigger" — 38px, radius 9px, 1px field border, gap 8px.
-           Height lives in scoped CSS; no spacing token carries 38px. -->
+           `h-field` supplies the height — see the style block below. -->
       <SelectTrigger
         data-trigger
         :aria-label="label"
-        class="select__trigger flex w-full items-center gap-2 rounded-field border border-field bg-surface px-3 text-left"
+        class="select__trigger flex h-field w-full items-center gap-2 rounded-field border border-field bg-surface px-3 text-left"
       >
         <!-- Redline "Value" vs "Placeholder" — one class per property per branch. -->
         <span
@@ -79,9 +79,10 @@ const selected = computed(() => (props.modelValue ? [props.modelValue] : []))
 </template>
 
 <style scoped>
-/* Redline "Trigger" — 38px tall. No spacing token carries it. */
+/* Height comes from the `h-field` utility on the element, matching
+ * TextField and SearchField — Appendix D calls this "the same 38px shell
+ * as a text field", so it must be the same token, not a repeated literal. */
 .select__trigger {
-  height: 38px;
   cursor: pointer;
 }
 
