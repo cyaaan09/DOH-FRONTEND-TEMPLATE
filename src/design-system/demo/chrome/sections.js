@@ -11,7 +11,7 @@ export const SECTIONS = [
   { id: 'foundations', title: 'Foundations', complete: false },
   { id: 'containers', title: 'Containers & surfaces', complete: false },
   { id: 'chips', title: 'Chips', complete: false },
-  { id: 'tabs', title: 'Tabs', complete: false },
+  { id: 'tabs', title: 'Tabs', complete: true },
   { id: 'fields', title: 'Text fields', complete: true },
   { id: 'dropdowns', title: 'Dropdowns', complete: false },
   { id: 'buttons', title: 'Buttons', complete: true },

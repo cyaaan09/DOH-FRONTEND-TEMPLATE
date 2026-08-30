@@ -140,18 +140,6 @@ describe('ContainersSection', () => {
 })
 
 describe('skeleton sections show their headings and mark their gaps', () => {
-  it('TabsSection renders the three variant headings', () => {
-    const text = mount(TabsSection).text()
-    for (const label of [
-      'UNDERLINE — PRIMARY, SITS ON A CARD EDGE',
-      'SEGMENTED — INLINE FILTER, 2–4 SHORT OPTIONS',
-      'STAGE TABS — A WORKFLOW WITH VOLUME PER STEP',
-    ]) {
-      expect(text, `missing: ${label}`).toContain(label)
-    }
-    expect(mount(TabsSection).findAll('[data-gap]')).toHaveLength(3)
-  })
-
   it('SelectionSection renders all six sub-blocks', () => {
     const text = mount(SelectionSection).text()
     for (const label of [
@@ -255,5 +243,37 @@ describe('SpecsSection hosts the components the artifact only redlines', () => {
     // The spec-table component itself is still unbuilt; hosting StatCard here
     // must not disturb that marker.
     expect(mount(SpecsSection).findAll('[data-gap]')).toHaveLength(1)
+  })
+})
+
+describe('TabsSection renders real components, not gaps', () => {
+  it('has no gap markers left', () => {
+    expect(mount(TabsSection).findAll('[data-gap]')).toHaveLength(0)
+  })
+
+  it('shows the underline tabs with the artifact data', () => {
+    const text = mount(TabsSection).text()
+    expect(text).toContain('Active LTOs')
+    expect(text).toContain('211')
+    expect(text).toContain('MOA services')
+  })
+
+  it('shows the panel body of whichever tab is active', () => {
+    // The three tab rows are independently stateful, so the section holds the
+    // selection; a static render must still show the default tab's body.
+    expect(mount(TabsSection).text()).toContain('211 licences currently valid')
+  })
+
+  it('shows the four segmented filter options', () => {
+    const text = mount(TabsSection).text()
+    expect(text).toContain('Initial')
+    expect(text).toContain('Add / Modify')
+  })
+
+  it('shows all five workflow stages', () => {
+    const text = mount(TabsSection).text()
+    expect(text).toContain('Inspection')
+    expect(text).toContain('Closed')
+    expect(text).toContain('rejected · forfeited')
   })
 })
