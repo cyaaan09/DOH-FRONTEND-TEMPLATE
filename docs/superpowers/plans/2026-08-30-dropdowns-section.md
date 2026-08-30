@@ -65,6 +65,16 @@ against a 34px trigger: both a **6px gap**. Zag defaults `positioning.gutter` to
 Pass `:positioning="{ gutter: 6 }"` on each root. jsdom computes no layout, so assert it as a
 prop — `wrapper.findComponent(SelectRoot).props('positioning')` — not as a rendered offset.
 
+
+**Asserting classes on portal DOM — use `classList`, never `className`.** Ark renders panels in
+a portal, so those nodes are raw DOM rather than Vue Test Utils wrappers. On a **string**
+receiver `toContain` is *substring* matching, so `expect(el.className).toContain('border-field')`
+passes even when the class is actually `border-border-field` — the exact trap this project has
+already shipped once. It cuts both ways: `bg-red-500` contains `bg-red-50`, and
+`bg-green-fill-hover` contains `bg-green-fill`, and both of those are real tokens here. Always
+spread to an array first — `expect([...el.classList]).toContain('border-field')` — which makes
+`toContain` an exact token match. Wrapper-based `.classes()` is already an array and is safe.
+
 ## File Structure
 
 ```
@@ -910,8 +920,8 @@ describe('InlineFilter', () => {
     await wrapper.get('[data-trigger]').trigger('click')
     const dots = [...document.querySelectorAll('[data-dot]')]
     expect(dots).toHaveLength(4)
-    expect(dots[0].className).toContain('bg-dot-green')
-    expect(dots[2].className).toContain('bg-red-500')
+    expect([...dots[0].classList]).toContain('bg-dot-green')
+    expect([...dots[2].classList]).toContain('bg-red-500')
     // The dot carries no meaning of its own; the label beside it does.
     expect(dots[0].getAttribute('aria-hidden')).toBe('true')
     wrapper.unmount()
@@ -1139,10 +1149,10 @@ describe('RowMenu', () => {
     const wrapper = mountMenu()
     await wrapper.get('[data-trigger]').trigger('click')
     const items = [...document.querySelectorAll('[role="menuitem"]')]
-    expect(items[3].className).toContain('text-red-700')
-    expect(items[3].className).toContain('font-bold')
-    expect(items[0].className).toContain('text-ink-700')
-    expect(items[0].className).not.toContain('text-red-700')
+    expect([...items[3].classList]).toContain('text-red-700')
+    expect([...items[3].classList]).toContain('font-bold')
+    expect([...items[0].classList]).toContain('text-ink-700')
+    expect([...items[0].classList]).not.toContain('text-red-700')
     wrapper.unmount()
   })
 
