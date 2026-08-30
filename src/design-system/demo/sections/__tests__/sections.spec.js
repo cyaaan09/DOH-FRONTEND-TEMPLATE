@@ -244,6 +244,25 @@ describe('SpecsSection hosts the components the artifact only redlines', () => {
     // must not disturb that marker.
     expect(mount(SpecsSection).findAll('[data-gap]')).toHaveLength(1)
   })
+
+  it('insets the stat block by the card padding, like every sibling block', () => {
+    // Regression: this block first shipped as a bare child of DemoCard's slot,
+    // so it rendered flush to the card edge while the header and DemoBlocks
+    // were inset by px-card-x. jsdom computes no layout, so the misalignment
+    // is only catchable as a class.
+    expect(mount(SpecsSection).get('[data-stat-block]').classes()).toContain('px-card-x')
+  })
+
+  it('names the two demos with field labels, not uppercase headings', () => {
+    // Appendix D.1 lists Component specs under "Sections with NO uppercase
+    // sub-blocks", so these take FilesSection's 12.5/500 field-label treatment.
+    // Without a name, neither demo is identifiable on the page.
+    const wrapper = mount(SpecsSection)
+    const labels = wrapper.findAll('.text-field-label').map((el) => el.text())
+    expect(labels).toContain('Stat cards')
+    expect(labels).toContain('Meter')
+    expect(wrapper.findAll('.text-column-header')).toHaveLength(0)
+  })
 })
 
 describe('TabsSection renders real components, not gaps', () => {
