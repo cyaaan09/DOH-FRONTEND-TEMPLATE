@@ -1101,6 +1101,50 @@ groups do not:
 | `SIZE & SPACING` | *(none)* |
 | `ELEVATION & BORDERS` | *(none)* |
 
+#### Dropdowns → the four inline demos
+
+Extracted from the artifact on 2026-08-30, per the Known limitation above: this section has no
+uppercase sub-blocks, so D.1 must carry its markup before the phase can be planned. The section
+body is a grid — `repeat(auto-fit, minmax(260px,1fr))`, `gap: 20px 24px`, `align-items: start`,
+padding `18px 24px 24px`.
+
+Each of the four demos is named by a **12.5px/500 `#344054` field label** carrying a muted
+`#667085` qualifier after a middot, and closed by a **12px `#667085` note** 5px below. These are
+field labels, not uppercase sub-block headings — the same treatment `File inputs` uses.
+
+| Demo | Field label | Qualifier | Note beneath |
+|---|---|---|---|
+| `Select` | `Facility type` | `· single select` | `Placeholder greys out until a value is picked.` |
+| `MultiSelect` | `Services` | `· multi select` | `Long lists get an inline filter and a sticky footer.` |
+| `InlineFilter` | `Inline filter` | `· table bar` | `34px variant for filter bars, with the field name inline.` |
+| `RowMenu` | `Row menu` | `· actions` | `Destructive item sits last, separated by a hairline.` |
+
+**Select** — placeholder `Select a facility type`, shown until a value is picked (initial state is
+empty). Options, in order: `Hospital · Level 1`, `Hospital · Level 2`, `Infirmary`,
+`Primary Care Facility`, `Birthing Home`, `Clinical Laboratory`, `X-ray Facility`. The selected
+option carries a `✓` at 12px/700 `#15803D`.
+
+**MultiSelect** — panel filter input placeholder `Filter services`, 12.5px, borderless on a
+transparent background inside the 32px filter field. Options, in order:
+`Ambulance Service — Type I`, `Birthing Home`, `Clinical Laboratory — Limited`,
+`Clinical Laboratory — Secondary`, `Dental Clinic`, `Pharmacy`, `X-ray Facility` — note the em
+dashes. `Pharmacy` and `Birthing Home` start checked. The scroll area is `max-height: 214px`.
+When the filter matches nothing, the list is replaced by `No service matches that.` at 12.5px
+`#667085`, padding `14px 10px`. The sticky footer is `padding: 9px 12px`, `border-top: 1px #EEF1F6`,
+background `#FAFBFD`, holding `Clear` (borderless, transparent, 12.5px/700 `#667085`) at the left
+and `Apply` (`padding: 7px 14px`, radius 8px, `#177236` on `#FFF`, 12.5px/700, hover `#125A2B`) at
+the right.
+
+**InlineFilter** — the trigger shows the field name inline as a `Status:` prefix followed by the
+value. Options carry a leading dot: `Active` `#17A34A`, `Expiring soon` `#D9A13B`, `Expired`
+`#E5484D`, `All` `#B9C1D1`.
+
+**RowMenu** — the trigger is a 34×34px square, radius 8px, `1px #D5DBE6`, glyph `⋯` at 14px/700
+`#667085`, hover background `#F4F6FA`. Its panel sits at `top: 40px`, `min-width: 196px`,
+padding 6px, radius 12px. Items, in order: `View LTO document`, `Facility details`, `View logs`,
+`Revoke licence`. The first three are 13.5px/400 `#344054`; the last is destructive and separated —
+`margin-top: 6px`, `padding-top: 13px`, `border-top: 1px #EEF1F6`, `#B42318`, weight 700.
+
 #### Containers & surfaces → INNER SURFACES
 
 A white card (radius 14, 1px hairline, card shadow, padding `16px 20px 18px`) holding four tint
