@@ -13,7 +13,7 @@ export const SECTIONS = [
   { id: 'chips', title: 'Chips', complete: false },
   { id: 'tabs', title: 'Tabs', complete: true },
   { id: 'fields', title: 'Text fields', complete: true },
-  { id: 'dropdowns', title: 'Dropdowns', complete: false },
+  { id: 'dropdowns', title: 'Dropdowns', complete: true },
   { id: 'buttons', title: 'Buttons', complete: true },
   { id: 'files', title: 'File inputs', complete: false },
   { id: 'notices', title: 'Toasts & inline notices', complete: false },

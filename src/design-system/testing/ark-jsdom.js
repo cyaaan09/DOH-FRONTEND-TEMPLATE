@@ -1,15 +1,36 @@
 /**
  * jsdom shims and portal-reset helper for tests that mount an Ark UI
- * select-family component (`@ark-ui/vue/select`, backed by `@zag-js/select`).
- * Extracted from `Select.spec.js` so `MultiSelect.spec.js` — and later
- * `InlineFilter.spec.js`, which mounts the same select machine — import one
- * shared module instead of a third copy of this block. `RowMenu` sits on
- * `@zag-js/menu` instead: it shares select's dependency on `@zag-js/popper`
- * (so `installArkJsdomShims`'s ResizeObserver half will apply there too),
- * but its own scroll-into-view effect is keyboard-only and goes through
- * `scrollIntoView`, not `Element.scrollTo` — confirm what that needs, if
- * anything, against the installed source rather than assuming this module's
- * current shims are a complete fit.
+ * select-family component (`@ark-ui/vue/select`, backed by `@zag-js/select`)
+ * or its menu component (`@ark-ui/vue/menu`, backed by `@zag-js/menu`).
+ * Extracted from `Select.spec.js` so `MultiSelect.spec.js` and
+ * `InlineFilter.spec.js` (which mount the same select machine) and
+ * `RowMenu.spec.js` (which mounts menu instead) import one shared module
+ * instead of a separate copy each.
+ *
+ * `menu`'s needs were an open question when this module was first written
+ * (Task 3); Task 5 settled them empirically, then confirmed each against the
+ * installed source — see `RowMenu.spec.js`'s header comment and
+ * `.superpowers/sdd/2026-08-30-dropdowns-section/task-5-report.md` ("Issues
+ * or concerns" #1) for the full trace:
+ * - **ResizeObserver is required by `menu` too.** `@zag-js/popper`'s
+ *   get-placement.mjs hardcodes `elementResize: true` in the autoUpdate
+ *   options it hands to floating-ui, bypassing floating-ui's own
+ *   feature-detect — this fires unconditionally for both machines, since
+ *   `menu.machine.mjs` calls the same shared `getPlacement()` popper export
+ *   that `select.machine.mjs` does.
+ * - **`Element.scrollTo` is a `select`-only need.** Grepping the installed
+ *   `@zag-js/menu` package (`menu.machine.mjs`, `menu.connect.mjs`,
+ *   `menu.dom.mjs`) for `scrollTo` turns up zero matches.
+ *   `installArkJsdomShims` still stubs it unconditionally, since one
+ *   function shims both machines' needs — harmless but inert when a spec
+ *   mounts only `menu`.
+ * - **No `scrollIntoView` shim is needed for `menu`, either.**
+ *   `menu.machine.mjs` does call it (`scrollToHighlightedItem`, a
+ *   keyboard-only action, via `@zag-js/dom-query`'s `scrollIntoView`
+ *   wrapper), but that wrapper gates on `isScrollable(rootEl)`, which reads
+ *   `scrollHeight`/`clientHeight`/`scrollWidth`/`clientWidth` — always 0
+ *   under jsdom's zero-layout metrics — so the gate is always false and the
+ *   native (jsdom-missing) method is never actually invoked.
  */
 
 /**

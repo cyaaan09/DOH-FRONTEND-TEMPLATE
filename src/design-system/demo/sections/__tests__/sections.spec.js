@@ -172,7 +172,6 @@ describe('skeleton sections show their headings and mark their gaps', () => {
   })
 
   it.each([
-    ['DropdownsSection', DropdownsSection],
     ['FoundationsSection', FoundationsSection],
   ])('%s marks its gaps', (_name, component) => {
     expect(mount(component).findAll('[data-gap]').length).toBeGreaterThan(0)
@@ -294,5 +293,38 @@ describe('TabsSection renders real components, not gaps', () => {
     expect(text).toContain('Inspection')
     expect(text).toContain('Closed')
     expect(text).toContain('rejected · forfeited')
+  })
+})
+
+describe('DropdownsSection renders real components, not gaps', () => {
+  it('has no gap markers left', () => {
+    expect(mount(DropdownsSection).findAll('[data-gap]')).toHaveLength(0)
+  })
+
+  it('still renders no uppercase headings', () => {
+    // Appendix D.1 — Dropdowns has none; the demos carry field labels instead.
+    expect(mount(DropdownsSection).findAll('.text-column-header')).toHaveLength(0)
+  })
+
+  it('names all four demos with their field label and qualifier', () => {
+    const text = mount(DropdownsSection).text()
+    for (const label of ['Facility type', 'Services', 'Inline filter', 'Row menu']) {
+      expect(text, `missing field label: ${label}`).toContain(label)
+    }
+    for (const qualifier of ['· single select', '· multi select', '· table bar', '· actions']) {
+      expect(text, `missing qualifier: ${qualifier}`).toContain(qualifier)
+    }
+  })
+
+  it('carries the four notes verbatim from Appendix D.1', () => {
+    const text = mount(DropdownsSection).text()
+    expect(text).toContain('Placeholder greys out until a value is picked.')
+    expect(text).toContain('Long lists get an inline filter and a sticky footer.')
+    expect(text).toContain('34px variant for filter bars, with the field name inline.')
+    expect(text).toContain('Destructive item sits last, separated by a hairline.')
+  })
+
+  it('shows the select placeholder from the artifact', () => {
+    expect(mount(DropdownsSection).text()).toContain('Select a facility type')
   })
 })
