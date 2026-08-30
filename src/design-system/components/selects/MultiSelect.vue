@@ -1,0 +1,242 @@
+<script setup>
+import { computed, ref } from 'vue'
+import {
+  SelectRoot,
+  SelectControl,
+  SelectTrigger,
+  SelectPositioner,
+  SelectContent,
+  SelectItem,
+  SelectItemText,
+} from '@ark-ui/vue/select'
+import { createListCollection } from '@ark-ui/vue/collection'
+
+const props = defineProps({
+  /** Every option, in display order. */
+  options: { type: Array, required: true },
+  /** The chosen options. */
+  modelValue: { type: Array, default: () => [] },
+  /** Shown in the trigger while nothing is chosen. */
+  placeholder: { type: String, required: true },
+  /** Names the control for assistive technology. NOT rendered on screen. */
+  label: { type: String, required: true },
+  /** Placeholder for the in-panel filter field. */
+  filterPlaceholder: { type: String, required: true },
+  /** Shown in place of the list when the filter matches nothing. */
+  emptyText: { type: String, required: true },
+})
+
+const emit = defineEmits(['update:modelValue', 'apply'])
+
+const query = ref('')
+
+const shown = computed(() => {
+  const q = query.value.trim().toLowerCase()
+  return q ? props.options.filter((o) => o.toLowerCase().includes(q)) : props.options
+})
+
+const collection = computed(() => createListCollection({ items: shown.value }))
+
+const summary = computed(() =>
+  props.modelValue.length ? `${props.modelValue.length} selected` : props.placeholder,
+)
+
+// Selection has ONE source: Ark's own multiple-select machine, surfaced through
+// @value-change. A parallel @click toggle would drift from Ark's aria-selected.
+const isOn = (option) => props.modelValue.includes(option)
+</script>
+
+<template>
+  <SelectRoot
+    multiple
+    :collection="collection"
+    :model-value="modelValue"
+    :positioning="{ gutter: 6 }"
+    @value-change="(details) => emit('update:modelValue', details.value)"
+  >
+    <!-- Redline "Panel" — top 44px against a 38px trigger, so a 6px gutter.
+         Zag defaults this to 8, which would render the panel 2px too low. -->
+    <SelectControl>
+      <!-- Redline "Trigger" — 38px, radius 9px, 1px field border, gap 8px.
+           `h-field` supplies the height — see the style block below. -->
+      <SelectTrigger
+        data-trigger
+        :aria-label="label"
+        class="multiselect__trigger flex h-field w-full items-center gap-2 rounded-field border border-field bg-surface px-3 text-left"
+      >
+        <!-- Redline "Value" vs "Placeholder" — one class per property per branch. -->
+        <span
+          data-value
+          class="min-w-0 flex-1 truncate text-body"
+          :class="modelValue.length ? 'text-ink-900 font-medium' : 'text-ink-500 font-normal'"
+          >{{ summary }}</span
+        >
+        <!-- Redline "Caret · decorative" — hidden from the accessible name. -->
+        <span data-caret aria-hidden="true" class="multiselect__caret text-ink-300">▾</span>
+      </SelectTrigger>
+    </SelectControl>
+
+    <SelectPositioner>
+      <SelectContent
+        class="multiselect__panel rounded-panel border border-hairline bg-surface"
+      >
+        <!-- Redline "Panel filter" — 32px field on the input surface. -->
+        <div class="p-1.5">
+          <input
+            v-model="query"
+            data-filter
+            type="text"
+            :placeholder="filterPlaceholder"
+            :aria-label="filterPlaceholder"
+            class="multiselect__filter w-full rounded-control bg-surface-input px-2.5 text-field-label text-ink-900"
+          />
+        </div>
+
+        <!-- Redline "Panel max-h" — 214px once a filter is present. -->
+        <div class="multiselect__list p-1.5">
+          <SelectItem
+            v-for="option in shown"
+            :key="option"
+            :item="option"
+            data-option
+            class="multiselect__option flex items-center gap-2 rounded-control text-body font-normal"
+          >
+            <!-- Redline "Checkbox in list" — 15px, filled green when on. -->
+            <span
+              data-box
+              aria-hidden="true"
+              class="multiselect__box grid flex-none place-items-center rounded-[4px] border"
+              :class="
+                isOn(option)
+                  ? 'bg-green-fill border-green-fill text-green-on-fill'
+                  : 'bg-surface border-field text-transparent'
+              "
+              >✓</span
+            >
+            <SelectItemText data-option-label class="min-w-0 flex-1 truncate">{{
+              option
+            }}</SelectItemText>
+          </SelectItem>
+          <p v-if="!shown.length" data-empty class="multiselect__empty text-caption text-ink-500">
+            {{ emptyText }}
+          </p>
+        </div>
+
+        <!-- Redline "Panel footer" — sunken strip under a 1px rule. -->
+        <div
+          data-footer
+          class="multiselect__footer flex items-center justify-between gap-3 border-t border-divider bg-surface-sunken"
+        >
+          <button
+            data-clear
+            type="button"
+            class="multiselect__clear text-field-label font-bold text-ink-500"
+            @click="emit('update:modelValue', [])"
+          >
+            Clear
+          </button>
+          <button
+            data-apply
+            type="button"
+            class="multiselect__apply rounded-control bg-green-fill text-field-label font-bold text-green-on-fill"
+            @click="emit('apply')"
+          >
+            Apply
+          </button>
+        </div>
+      </SelectContent>
+    </SelectPositioner>
+  </SelectRoot>
+</template>
+
+<style scoped>
+/* Height comes from the `h-field` utility on the element, matching TextField
+ * and SearchField — Appendix D calls this "the same 38px shell as a text
+ * field", so it must be the same token, not a repeated literal. */
+.multiselect__trigger {
+  cursor: pointer;
+}
+
+/* Redline "Open trigger" — green border plus the focus ring. Ark sets
+ * data-state="open" on the trigger, so one selector covers the whole state. */
+.multiselect__trigger[data-state='open'] {
+  border-color: var(--green-500);
+  box-shadow: var(--ring-focus);
+}
+
+.multiselect__trigger:focus-visible {
+  outline: none;
+  box-shadow: var(--ring-focus);
+}
+
+/* Redline "Caret" — 9px glyph. */
+.multiselect__caret {
+  font-size: 9px;
+}
+
+/* Redline "Panel shadow". The panel itself does not scroll — the list does,
+ * so the footer stays stuck to the bottom. */
+.multiselect__panel {
+  box-shadow: var(--sh-panel);
+}
+
+/* Redline "Panel filter" — 32px tall, borderless on the input surface. */
+.multiselect__filter {
+  height: 32px;
+  border: none;
+}
+
+.multiselect__filter:focus-visible {
+  outline: none;
+  box-shadow: var(--ring-focus);
+}
+
+/* Redline "Panel max-h" — 214px with a filter present. */
+.multiselect__list {
+  max-height: 214px;
+  overflow-y: auto;
+}
+
+/* Redline "Option" — pad 9px 10px. */
+.multiselect__option {
+  padding: 9px 10px;
+  cursor: pointer;
+}
+
+/* Redline "Checkbox in list" — 15px box, radius 4px. No token carries 4px:
+ * --r-check is 5px, so this is the arbitrary value the redline requires. */
+.multiselect__box {
+  width: 15px;
+  height: 15px;
+  font-size: 10px;
+  line-height: 1;
+}
+
+/* Appendix D.1 — empty state padding. */
+.multiselect__empty {
+  padding: 14px 10px;
+}
+
+/* Redline "Panel footer" — pad 9px 12px. */
+.multiselect__footer {
+  padding: 9px 12px;
+}
+
+.multiselect__clear {
+  padding: 4px;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+/* Appendix D.1 — Apply is 7px 14px on the fill green. */
+.multiselect__apply {
+  padding: 7px 14px;
+  border: none;
+  cursor: pointer;
+}
+
+.multiselect__apply:hover {
+  background: var(--green-fill-hover);
+}
+</style>

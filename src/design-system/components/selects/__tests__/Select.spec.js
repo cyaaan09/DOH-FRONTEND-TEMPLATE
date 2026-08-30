@@ -2,28 +2,14 @@ import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { SelectRoot } from '@ark-ui/vue/select'
 import Select from '../Select.vue'
+import { installArkJsdomShims, resetArkPortals } from '@/design-system/testing/ark-jsdom'
 
-// jsdom implements neither of these, and Zag's select machine calls both
-// during ordinary interaction, not anything specific to this component:
-// - ResizeObserver drives floating-ui's autoUpdate while the panel is open.
-// - Element.scrollTo runs unconditionally when the panel closes
-//   (select.machine.mjs, the "open" state's exit action scrollContentToTop),
-//   to reset scroll position for next time.
-// Unstubbed, the first rejects a promise jsdom can't fulfil; the second
-// throws synchronously inside the click handler and silently swallows the
-// value-change emit that should follow it. Verified against the installed
-// @zag-js/select source — this is a jsdom API gap, not a behaviour to
-// design around, so it is shimmed here rather than routed around in Select.vue.
-if (!globalThis.ResizeObserver) {
-  globalThis.ResizeObserver = class ResizeObserver {
-    observe() {}
-    unobserve() {}
-    disconnect() {}
-  }
-}
-if (!Element.prototype.scrollTo) {
-  Element.prototype.scrollTo = () => {}
-}
+// ResizeObserver and Element.scrollTo: jsdom implements neither, and Zag's
+// select machine calls both during ordinary interaction. See ark-jsdom.js
+// for the full explanation (verified against the installed @zag-js/select
+// and @zag-js/popper source) — shared here because MultiSelect needs the
+// identical shim.
+installArkJsdomShims()
 
 const OPTIONS = [
   'Hospital · Level 1',
@@ -49,17 +35,11 @@ const mountSelect = (props = {}) =>
 
 // Ark mounts SelectContent's portal into document.body as soon as the
 // select mounts, gated by a presence machine rather than by open/closed
-// state — verified against the installed package (select-content.vue,
-// select-positioner.vue): both render unconditionally once `present`, and
-// nothing in this suite ever drives them back to "unmounted". A wrapper left
-// attached (most tests here never call wrapper.unmount()) therefore leaves
-// its 7 `[role="option"]` nodes in document.body for every later test in
-// this file — an `it('opens on click...')` run right after another mount
-// sees 14, not 7. Reset the body so each test's document-level queries see
-// only its own instance.
-afterEach(() => {
-  document.body.innerHTML = ''
-})
+// state (see ark-jsdom.js). A wrapper left attached (most tests here never
+// call wrapper.unmount()) therefore leaves its 7 `[role="option"]` nodes in
+// document.body for every later test in this file — an `it('opens on
+// click...')` run right after another mount sees 14, not 7.
+afterEach(resetArkPortals)
 
 describe('Select', () => {
   it('shows the placeholder while nothing is chosen', () => {
