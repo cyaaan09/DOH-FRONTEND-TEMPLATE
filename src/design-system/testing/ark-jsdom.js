@@ -20,10 +20,12 @@
  *   that `select.machine.mjs` does.
  * - **`Element.scrollTo` is a `select`-only need.** Grepping the installed
  *   `@zag-js/menu` package (`menu.machine.mjs`, `menu.connect.mjs`,
- *   `menu.dom.mjs`) for `scrollTo` turns up zero matches.
- *   `installArkJsdomShims` still stubs it unconditionally, since one
- *   function shims both machines' needs — harmless but inert when a spec
- *   mounts only `menu`.
+ *   `menu.dom.mjs`) for the literal `.scrollTo(` call turns up zero matches
+ *   — the only bare-`scrollTo` hits are two unrelated occurrences of the
+ *   action name `scrollToHighlightedItem` in `menu.machine.mjs`, not a call
+ *   to the method. `installArkJsdomShims` still stubs it unconditionally,
+ *   since one function shims both machines' needs — harmless but inert when
+ *   a spec mounts only `menu`.
  * - **No `scrollIntoView` shim is needed for `menu`, either.**
  *   `menu.machine.mjs` does call it (`scrollToHighlightedItem`, a
  *   keyboard-only action, via `@zag-js/dom-query`'s `scrollIntoView`

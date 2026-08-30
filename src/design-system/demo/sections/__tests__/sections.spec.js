@@ -327,4 +327,51 @@ describe('DropdownsSection renders real components, not gaps', () => {
   it('shows the select placeholder from the artifact', () => {
     expect(mount(DropdownsSection).text()).toContain('Select a facility type')
   })
+
+  // The five tests above all read text that DropdownsSection's own template
+  // supplies (field labels, qualifiers, notes) or that only Select's own
+  // `{{ modelValue || placeholder }}` can produce. None of them would notice
+  // a wiring mistake inside MultiSelect, InlineFilter or RowMenu specifically
+  // (wrong array, a v-model pointed at the wrong ref, two components
+  // swapped) — each test below binds to output only that one child component
+  // can produce.
+
+  it("shows MultiSelect's own computed summary for the seeded selection", () => {
+    // MultiSelect.vue's `summary` computed: `${modelValue.length} selected`.
+    // `services` is seeded with two entries, so only MultiSelect renders
+    // this string — proves `services` (not some other array) reached it.
+    expect(mount(DropdownsSection).text()).toContain('2 selected')
+  })
+
+  it("shows InlineFilter's own name and value text, not the section's markup", () => {
+    // InlineFilter.vue renders `name` and `modelValue` as two sibling spans
+    // (`data-name`, immediately followed by `data-value`), not one
+    // interpolated string — confirmed empirically: the whitespace-only text
+    // node the template source has between them contains a newline, which
+    // Vue's compiler drops entirely, so the rendered text is "Status:Active"
+    // with no space. Checking `toContain('Status: Active')` would therefore
+    // fail against a correctly wired component. InlineFilter.spec.js's own
+    // "renders the field name inline before the value" test already checks
+    // the two spans as two separate exact strings for the same reason; this
+    // mirrors that precedent instead of guessing at concatenated whitespace.
+    // `data-name` is unique to InlineFilter among the four dropdown demos,
+    // so this is unambiguous even though `data-value` also appears on
+    // Select's and MultiSelect's triggers.
+    const wrapper = mount(DropdownsSection)
+    const nameSpan = wrapper.get('[data-name]')
+    expect(nameSpan.text()).toBe('Status:')
+    expect(nameSpan.element.nextElementSibling.textContent).toBe('Active')
+  })
+
+  it("names the row menu trigger from its own label prop", () => {
+    // RowMenu closed renders only its decorative `⋯` glyph (aria-hidden), so
+    // there is no visible text this test could bind to; its trigger's
+    // aria-label is the one output the `label` prop itself produces. All
+    // four dropdown demos share the `[data-trigger]` attribute, so this
+    // checks the full set rather than assuming which index is RowMenu's.
+    const ariaLabels = mount(DropdownsSection)
+      .findAll('[data-trigger]')
+      .map((trigger) => trigger.attributes('aria-label'))
+    expect(ariaLabels).toContain('Row actions')
+  })
 })
