@@ -1130,6 +1130,52 @@ groups do not:
 | `SIZE & SPACING` | *(none)* |
 | `ELEVATION & BORDERS` | *(none)* |
 
+#### Selection controls → the six sub-blocks' data
+
+Extracted from the artifact on 2026-08-31. Appendix D names this section's six uppercase
+sub-blocks but carries none of their content; this records it. Every label and hint below is
+verbatim, **including the em dashes** in `Clinical Laboratory — Limited` and
+`Enforced by policy — cannot be turned off`.
+
+**`CHECKBOX · STATES`** — four rows, one per state. The third is indeterminate, the fourth
+disabled:
+
+| Label | Hint | State |
+|---|---|---|
+| `Include legacy records` | `Migrated paper licences with no service list` | off |
+| `Only facilities I signed` | *(none)* | on |
+| `All Caraga provinces` | `3 of 5 provinces selected` | **indeterminate** |
+| `Archived facilities` | `Unavailable to signatories` | **disabled**, checked |
+
+**`RADIO · LIST`** — `As-plan`, `As-built`, `Not applicable` (disabled). No hints.
+
+**`SWITCH · TAKES EFFECT AT ONCE`** — three rows, the last disabled:
+
+| Label | Hint |
+|---|---|
+| `Email me on returns` | `Digest at 6 PM, weekdays only` |
+| `Maintenance mode` | `Blocks new online filings immediately` |
+| `Audit logging` | `Enforced by policy — cannot be turned off` *(disabled)* |
+
+**`CHECKBOX CARDS · MULTI`** — `Pharmacy` / `Requires a licensed pharmacist on duty`;
+`Clinical Laboratory — Limited` / `Routine chemistry and hematology only`; `X-ray Facility` /
+`Needs a separate FDA radiation permit`.
+
+**`RADIO CARDS · SINGLE`** — `Initial` / `First licence for a newly built facility`; `Renewal` /
+`Same services, new validity period`; `Add / Modify` / `Changes the services on an active
+licence`. The chosen card carries a `Selected` marker.
+
+**`BULK SELECTION — TABLE HEADER + ACTION BAR`** — a header row with a tri-state box whose label
+reads `Select all` at zero and `<n> selected` otherwise. Two action buttons appear **only when at
+least one row is selected**: `Send renewal notice` and `Export`. Three rows follow, each a
+checkbox, a facility name and a mono licence number:
+
+| Name | Number |
+|---|---|
+| `Trento Primary Care Facility` | `16-015-2527-PCF-1` |
+| `Hipol Family Hospital` | `16-19-26-I-2` |
+| `Socorro Birthing Clinic` | `16-72-26-BH-1` |
+
 #### Dropdowns → the four inline demos
 
 Extracted from the artifact on 2026-08-30, per the Known limitation above: this section has no
