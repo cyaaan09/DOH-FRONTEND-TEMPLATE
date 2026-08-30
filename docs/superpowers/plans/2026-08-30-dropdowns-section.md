@@ -432,7 +432,7 @@ git commit -m "feat(ds): add the single-select dropdown"
 
 Appendix C group **Dropdowns**, rows `Panel max-h` (214px with filter), `Checkbox in list`, `Panel filter`, `Panel footer`, plus the shared `Trigger`/`Panel`/`Option` rows. Appendix D.1 for the service list, the empty state and the footer buttons. Read both before starting.
 
-This is the most complex component in the phase. Build it after `Select` and reuse that component's trigger treatment rather than inventing a second one.
+This is the most complex component in the phase. Build it after `Select`. Its trigger repeats `Select`'s shell markup and scoped rules deliberately — the two differ in what they display (a single value vs a count summary) and extracting a shared wrapper for two call sites would add indirection without removing much. This duplication is a recorded, accepted decision, not an oversight; do not refactor it, and do not flag it as a defect.
 
 **Files:**
 - Create: `src/design-system/components/selects/MultiSelect.vue`
@@ -622,18 +622,18 @@ const summary = computed(() =>
   props.modelValue.length ? `${props.modelValue.length} selected` : props.placeholder,
 )
 
+// Selection has ONE source: Ark's own multiple-select machine, surfaced through
+// @value-change. A parallel @click toggle would drift from Ark's aria-selected.
 const isOn = (option) => props.modelValue.includes(option)
-
-const toggle = (option) => {
-  const next = isOn(option)
-    ? props.modelValue.filter((o) => o !== option)
-    : [...props.modelValue, option]
-  emit('update:modelValue', next)
-}
 </script>
 
 <template>
-  <SelectRoot multiple :collection="collection" :model-value="modelValue">
+  <SelectRoot
+    multiple
+    :collection="collection"
+    :model-value="modelValue"
+    @value-change="(details) => emit('update:modelValue', details.value)"
+  >
     <SelectControl>
       <SelectTrigger
         data-trigger
@@ -674,7 +674,6 @@ const toggle = (option) => {
             :item="option"
             data-option
             class="multiselect__option flex items-center gap-2 rounded-control text-body font-normal"
-            @click="toggle(option)"
           >
             <!-- Redline "Checkbox in list" — 15px, filled green when on. -->
             <span
