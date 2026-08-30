@@ -1147,6 +1147,26 @@ background `#FAFBFD`, holding `Clear` (borderless, transparent, 12.5px/700 `#667
 and `Apply` (`padding: 7px 14px`, radius 8px, `#177236` on `#FFF`, 12.5px/700, hover `#125A2B`) at
 the right.
 
+**MultiSelect trigger, extracted 2026-08-30 (second pass).** The trigger does **not** show a
+count sentence. It shows the **first two selected labels, comma-joined** — `picked.slice(0, 2)
+.join(", ")` — ellipsis-truncated by the value span (`flex:1; min-width:0; overflow:hidden;
+text-overflow:ellipsis; white-space:nowrap`), falling back to the placeholder `Select services`
+when nothing is picked. Beside it, and only when at least one option is picked, sits a **count
+badge**: `min-width: 20px`, `height: 20px`, `padding: 0 6px`, `border-radius: 10px`, background
+`#E8F6EC`, colour `#15803D`, `11px/700`, grid-centred, `flex: none`. The caret follows.
+
+**MultiSelect panel filter, same pass.** The filter is not a bare input. It sits in its own
+section — `padding: 8px 10px`, `border-bottom: 1px #EEF1F6` — holding a bordered field:
+`height: 32px`, `padding: 0 10px`, `border: 1px #E4E8EF`, `border-radius: 8px`, background
+`#F7F9FC`, `display:flex`, `gap: 8px`. Inside it, a decorative leading glyph — an 11×11px circle,
+`border: 1.8px solid #98A2B3`, `border-radius: 50%`, `flex: none` — precedes the input, which is
+borderless and transparent at `12.5px` `#1E2532`.
+
+**Option rows in all three select-based dropdowns** share one style function. Unselected:
+`#344054` at weight 400. Selected: background `#F2FAF4`, colour `#15803D`, weight 700 — and this
+applies to **MultiSelect's checked rows too**, not only to the single selects. The checkbox does
+not replace the row tint; both are present.
+
 **InlineFilter** — the trigger shows the field name inline as a `Status:` prefix followed by the
 value. Options carry a leading dot: `Active` `#17A34A`, `Expiring soon` `#D9A13B`, `Expired`
 `#E5484D`, `All` `#B9C1D1`.
