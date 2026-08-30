@@ -127,11 +127,17 @@ const isOn = (option) => props.modelValue.includes(option)
           data-footer
           class="multiselect__footer flex items-center justify-between gap-3 border-t border-divider bg-surface-sunken"
         >
+          <!-- Zag's content-level keydown handler intercepts Enter and Space for any
+               descendant and calls preventDefault, which would leave these buttons
+               reachable by Tab but impossible to activate (WCAG 2.1.1, Level A).
+               Stopping propagation here lets native button activation run. -->
           <button
             data-clear
             type="button"
             class="multiselect__clear text-field-label font-bold text-ink-500"
             @click="emit('update:modelValue', [])"
+            @keydown.enter.stop
+            @keydown.space.stop
           >
             Clear
           </button>
@@ -140,6 +146,8 @@ const isOn = (option) => props.modelValue.includes(option)
             type="button"
             class="multiselect__apply rounded-control bg-green-fill text-field-label font-bold text-green-on-fill"
             @click="emit('apply')"
+            @keydown.enter.stop
+            @keydown.space.stop
           >
             Apply
           </button>

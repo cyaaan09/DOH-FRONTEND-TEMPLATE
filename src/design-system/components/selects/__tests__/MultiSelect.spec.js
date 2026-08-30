@@ -183,4 +183,54 @@ describe('MultiSelect', () => {
     expect(wrapper.get('[data-trigger]').attributes('aria-label')).toBe('Services')
     expect(wrapper.text()).not.toContain('Services')
   })
+
+  it('keeps Enter and Space from being swallowed by the panel on the footer buttons', async () => {
+    // WCAG 2.1.1 (Level A) fix. Zag's content-level keydown handler
+    // (select.connect.mjs, getContentProps().onKeyDown) intercepts Enter and
+    // Space for ANY descendant of the panel and calls preventDefault before
+    // the isEditableElement escape hatch is reached — that escape hatch only
+    // protects the filter input's typeahead, never these buttons' own native
+    // activation. Without @keydown.enter.stop/@keydown.space.stop, a keyboard
+    // user could Tab to Clear/Apply but never activate them.
+    //
+    // jsdom does not synthesize a 'click' from a keyboard activation the way
+    // a real browser does (confirmed empirically: dispatching a real
+    // Enter/Space keydown at a bare <button> here never fires a 'click'
+    // listener), so `wrapper.emitted('apply')` can't be the assertion — it
+    // would never fire in this environment even with a correct fix. The
+    // observable, mutation-testable stand-in is whether the dispatched
+    // keydown's default action is still prevented once it finishes
+    // propagating: false is the exact condition a real browser requires
+    // before it will run the button's native Enter/Space activation.
+    const wrapper = mountMulti()
+    await wrapper.get('[data-trigger]').trigger('click')
+
+    const clear = document.querySelector('[data-clear]')
+    const clearEnter = new KeyboardEvent('keydown', {
+      key: 'Enter',
+      bubbles: true,
+      cancelable: true,
+    })
+    clear.dispatchEvent(clearEnter)
+    expect(clearEnter.defaultPrevented).toBe(false)
+
+    const clearSpace = new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true })
+    clear.dispatchEvent(clearSpace)
+    expect(clearSpace.defaultPrevented).toBe(false)
+
+    const apply = document.querySelector('[data-apply]')
+    const applyEnter = new KeyboardEvent('keydown', {
+      key: 'Enter',
+      bubbles: true,
+      cancelable: true,
+    })
+    apply.dispatchEvent(applyEnter)
+    expect(applyEnter.defaultPrevented).toBe(false)
+
+    const applySpace = new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true })
+    apply.dispatchEvent(applySpace)
+    expect(applySpace.defaultPrevented).toBe(false)
+
+    wrapper.unmount()
+  })
 })
