@@ -53,7 +53,7 @@ Every colour in this section maps to a real token; I checked each against `token
 | `#F4F6FA` row-menu hover | `--surface-muted` | `bg-surface-muted` |
 | dots: `#17A34A` / `#D9A13B` / `#E5484D` / `#B9C1D1` | `--dot-green` / `--amber-400` / `--red-500` / `--ink-200` | `bg-dot-green` / `bg-amber-400` / `bg-red-500` / `bg-ink-200` |
 
-Radii and shadows: trigger 9px = `rounded-field`; panel 12px = `rounded-panel`; option / filter field / inline / Apply / row-menu trigger 8px = `rounded-control`; panel shadow = `var(--sh-panel)`; open-trigger ring = `var(--ring-focus)`. **4px checkbox radius and the 38/34/32px heights have no token** — scoped CSS, commented with the redline row name.
+Radii and shadows: trigger 9px = `rounded-field`; panel 12px = `rounded-panel`; option / filter field / inline / Apply / row-menu trigger 8px = `rounded-control`; panel shadow = `var(--sh-panel)`; open-trigger ring = `var(--ring-focus)`. **Heights DO have tokens**: 38px is `--h-field` (utility `h-field`, used by `TextField`/`SearchField`/`Button`) and 34px is `--h-compact` (`h-compact`, and `w-compact` for a square — the pattern `Button`'s icon size uses). Use those utilities, never a literal. Only the **4px checkbox radius, the 32px panel-filter height and the 8px status dot** have no token — those go in scoped CSS, commented with the redline row name.
 
 Type steps: value 13.5/500 = `text-body font-medium`; placeholder and option 13.5/400 = `text-body`; selected option 13.5/700 = `text-body font-bold`; `✓` 12/700 = `text-hint font-bold`; inline variant and footer buttons 12.5/700 = `text-field-label font-bold`; field labels 12.5/500 = `text-field-label`; notes 12px = `text-hint`; empty state 12.5/400 = `text-caption`.
 
@@ -638,7 +638,7 @@ const isOn = (option) => props.modelValue.includes(option)
       <SelectTrigger
         data-trigger
         :aria-label="label"
-        class="multiselect__trigger flex w-full items-center gap-2 rounded-field border border-field bg-surface px-3 text-left"
+        class="multiselect__trigger flex h-field w-full items-center gap-2 rounded-field border border-field bg-surface px-3 text-left"
       >
         <span
           data-value
@@ -724,9 +724,10 @@ const isOn = (option) => props.modelValue.includes(option)
 </template>
 
 <style scoped>
-/* Redline "Trigger" — 38px, matching Select. */
+/* Height comes from the `h-field` utility on the element, matching TextField
+ * and SearchField — Appendix D calls this "the same 38px shell as a text
+ * field", so it must be the same token, not a repeated literal. */
 .multiselect__trigger {
-  height: 38px;
   cursor: pointer;
 }
 
@@ -971,7 +972,7 @@ const collection = computed(() => createListCollection({ items: labels.value }))
       <SelectTrigger
         data-trigger
         :aria-label="name"
-        class="inline-filter__trigger inline-flex items-center gap-2 rounded-control border border-soft bg-surface px-3 text-field-label font-bold text-ink-900"
+        class="inline-filter__trigger inline-flex h-compact items-center gap-2 rounded-control border border-soft bg-surface px-3 text-field-label font-bold text-ink-900"
       >
         <span data-name class="text-ink-500">{{ name }}:</span>
         <span data-value class="truncate">{{ modelValue }}</span>
@@ -1002,9 +1003,9 @@ const collection = computed(() => createListCollection({ items: labels.value }))
 </template>
 
 <style scoped>
-/* Redline "Inline variant" — 34px tall. */
+/* Height comes from the `h-compact` utility (--h-compact is 34px), the same
+ * token Button's compact size uses. */
 .inline-filter__trigger {
-  height: 34px;
   cursor: pointer;
 }
 
@@ -1182,7 +1183,7 @@ const emit = defineEmits(['select'])
     <MenuTrigger
       data-trigger
       :aria-label="label"
-      class="rowmenu__trigger grid place-items-center rounded-control border border-field bg-surface text-ink-500"
+      class="rowmenu__trigger grid h-compact w-compact place-items-center rounded-control border border-field bg-surface text-ink-500"
     >
       <span data-glyph aria-hidden="true" class="rowmenu__glyph font-bold">⋯</span>
     </MenuTrigger>
@@ -1209,10 +1210,9 @@ const emit = defineEmits(['select'])
 </template>
 
 <style scoped>
-/* Appendix D.1 — 34x34 trigger with a 14px glyph. */
+/* Size comes from `h-compact w-compact` on the element — exactly the pattern
+ * Button's icon size already uses for a 34x34 square control. */
 .rowmenu__trigger {
-  width: 34px;
-  height: 34px;
   cursor: pointer;
 }
 
