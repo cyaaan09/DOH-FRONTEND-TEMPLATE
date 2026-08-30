@@ -72,13 +72,13 @@ describe('Tabs', () => {
     expect(count.classes()).toContain('font-medium')
   })
 
-  it('gives each count badge an aria-label for context', () => {
-    // Redline "Counts" (ARIA & semantics, spec line 938) — a bare digit has
-    // no context for assistive tech; derived from the tab's own data, no new
-    // prop needed.
-    const counts = mountTabs().findAll('[data-count]')
-    expect(counts[0].attributes('aria-label')).toBe('211 Active LTOs')
-    expect(counts[1].attributes('aria-label')).toBe('215 All applications')
+  it('does not repeat the tab label inside its own accessible name', () => {
+    // The count sits inside role="tab", so an aria-label on it REPLACES its text
+    // in the tab's name-from-content computation, producing "Active LTOs 211
+    // Active LTOs". The visible label already gives the number its context.
+    const count = mountTabs().get('[data-count]')
+    expect(count.attributes('aria-label')).toBeUndefined()
+    expect(count.text()).toBe('211')
   })
 
   it('omits the count element for a tab with no count', () => {

@@ -89,15 +89,6 @@ describe('StageTabs', () => {
     expect(mountStages().get('[data-figure]').classes()).toContain('text-stage-figure')
   })
 
-  it('gives each stage figure an aria-label for context', () => {
-    // Redline "Counts" (ARIA & semantics, spec line 938) — a bare digit has
-    // no context for assistive tech; derived from the stage's own data, no
-    // new prop needed.
-    const figures = mountStages().findAll('[data-figure]')
-    expect(figures[0].attributes('aria-label')).toBe('2 Review')
-    expect(figures[2].attributes('aria-label')).toBe('8 Inspection')
-  })
-
   it('hides the decorative step marker from assistive tech', () => {
     // Mirrors StatCard's dot precedent for the same job: the marker repeats
     // information already in the label/hint (and for Closed, its "·" would
@@ -141,6 +132,18 @@ describe('StageTabs', () => {
     expect(figures[4].classes()).not.toContain('text-ink-900')
     expect(figures[0].classes()).toContain('text-ink-900')
     expect(figures[0].classes()).not.toContain('text-text-header')
+  })
+
+  it('does not repeat the stage label inside its own accessible name', () => {
+    // Same defect as Tabs: an aria-label on the figure replaced its text in the
+    // card's name-from-content computation, giving "Review 2 Review 2 returned".
+    const figure = mountStages().get('[data-figure]')
+    expect(figure.attributes('aria-label')).toBeUndefined()
+    expect(figure.text()).toBe('2')
+  })
+
+  it('keeps the decorative step marker out of the accessible name', () => {
+    expect(mountStages().get('[data-step]').attributes('aria-hidden')).toBe('true')
   })
 
   it('renders the active stage panel through the default slot', () => {

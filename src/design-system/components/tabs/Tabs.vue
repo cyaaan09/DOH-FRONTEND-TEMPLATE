@@ -31,7 +31,10 @@ const emit = defineEmits(['update:modelValue'])
         "
       >
         {{ tab.label }}
-        <!-- Redline "Tab count" — mono, and "Count active"/"Count idle" for the tint. -->
+        <!-- Redline "Tab count" — mono, and "Count active"/"Count idle" for the tint.
+             No aria-label here: this span is inside role="tab", so a label would
+             replace its text in the tab's name-from-content computation and repeat
+             the tab label. The visible label already gives the number context. -->
         <span
           v-if="tab.count"
           data-count
@@ -41,7 +44,6 @@ const emit = defineEmits(['update:modelValue'])
               ? 'bg-green-100 text-green-text'
               : 'bg-surface-muted text-text-header'
           "
-          :aria-label="`${tab.count} ${tab.label}`"
           >{{ tab.count }}</span
         >
       </TabTrigger>

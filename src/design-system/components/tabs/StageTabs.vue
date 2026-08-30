@@ -43,11 +43,13 @@ const emit = defineEmits(['update:modelValue'])
           >
           <span class="text-field-label font-bold text-text-header">{{ stage.label }}</span>
         </span>
+        <!-- No aria-label here: this span is inside role="tab", so a label would
+             replace its text in the card's name-from-content computation and repeat
+             the stage label. The visible label already gives the number context. -->
         <span
           data-figure
           class="stage-tabs__figure text-stage-figure block"
           :class="stage.muted ? 'text-text-header' : 'text-ink-900'"
-          :aria-label="`${stage.count} ${stage.label}`"
           >{{ stage.count }}</span
         >
         <!-- Redline "Stage urgent" — red at 700; every other hint is meta grey
