@@ -677,8 +677,8 @@ describe('StageTabs', () => {
     const cards = mountStages().findAll('[role="tab"]')
     expect(cards[0].classes()).toContain('stage-tabs__card--active')
     expect(cards[0].classes()).toContain('border-green-500')
-    expect(cards[0].classes()).not.toContain('border-border-card')
-    expect(cards[1].classes()).toContain('border-border-card')
+    expect(cards[0].classes()).not.toContain('border-hairline')
+    expect(cards[1].classes()).toContain('border-hairline')
     expect(cards[1].classes()).not.toContain('border-green-500')
     expect(cards[1].classes()).not.toContain('stage-tabs__card--active')
   })
@@ -754,7 +754,7 @@ const emit = defineEmits(['update:modelValue'])
         :class="[
           stage.key === modelValue
             ? 'stage-tabs__card--active border-green-500'
-            : 'border-border-card',
+            : 'border-hairline',
           stage.muted ? 'bg-surface-sunken' : 'bg-surface',
         ]"
       >
@@ -1008,7 +1008,7 @@ Checked against the spec after writing:
 **Values verified against the repo, not assumed:** `--r-panel` is 12px,
 `--r-field` 9px, `--r-tile` 7px; `--color-green-fill`, `--color-green-500`,
 `--color-green-100`, `--color-green-text`, `--color-red-700`,
-`--color-border-card`, `--color-surface-muted` and `--color-text-meta` are all
+`--color-hairline`, `--color-surface-muted` and `--color-text-meta` are all
 bridged, so the plan's utilities resolve. `--text-stat-hint` is 11.5/400 and
 `--text-field-label` 12.5/500, so the count, segment and urgent-hint sizes
 compose from existing steps plus a weight utility — only the 25px stage figure
