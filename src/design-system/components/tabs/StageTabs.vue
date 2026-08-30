@@ -26,7 +26,7 @@ const emit = defineEmits(['update:modelValue'])
           stage.key === modelValue
             ? 'stage-tabs__card--active border-green-500'
             : 'border-hairline',
-          stage.muted ? 'bg-surface-sunken' : 'bg-surface',
+          stage.muted ? 'bg-surface-card-muted' : 'bg-surface',
         ]"
       >
         <span class="flex items-center gap-2">
@@ -38,13 +38,18 @@ const emit = defineEmits(['update:modelValue'])
                 ? 'bg-green-fill text-green-on-fill'
                 : 'bg-divider text-text-header'
             "
+            aria-hidden="true"
             >{{ stage.step }}</span
           >
           <span class="text-field-label font-bold text-text-header">{{ stage.label }}</span>
         </span>
-        <span data-figure class="stage-tabs__figure text-stage-figure text-text-header block">{{
-          stage.count
-        }}</span>
+        <span
+          data-figure
+          class="stage-tabs__figure text-stage-figure block"
+          :class="stage.muted ? 'text-text-header' : 'text-ink-900'"
+          :aria-label="`${stage.count} ${stage.label}`"
+          >{{ stage.count }}</span
+        >
         <!-- Redline "Stage urgent" — red at 700; every other hint is meta grey
              at 400, so colour and weight each have exactly one source. -->
         <span
@@ -63,8 +68,11 @@ const emit = defineEmits(['update:modelValue'])
 </template>
 
 <style scoped>
-/* Appendix C "Stat cards & meters" sets the same auto-fit grid for card rows;
- * stage cards use it so a five-stage row wraps instead of scrolling. */
+/* No "Stage grid" row exists in Appendix C to govern this list. The nearest
+ * row is "Stat cards & meters" > Grid — auto-fit minmax(190px,1fr) gap 12px —
+ * and this is NOT that: minmax(150px,1fr) gap 10px is this component's own,
+ * chosen so five stage cards keep fitting a row at the section's real width
+ * (review Finding 1) instead of collapsing to one column. */
 .stage-tabs__list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));

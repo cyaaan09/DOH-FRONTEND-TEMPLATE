@@ -604,7 +604,7 @@ identical either way, so a later change would swap the wrapper, not the CSS.
 
 - [ ] **Step 1: Add the stage figure type step**
 
-The figure is 25px/700/-0.02em. Nothing in the scale carries it — `--text-card-figure` is 23px at -0.01em. Add to the plain `@theme` block in `src/design-system/styles/theme.css`, directly after the `--text-card-figure` group so the scale stays in descending size order:
+The figure is 25px/700/-0.02em. Nothing in the scale carries it — `--text-card-figure` is 23px at -0.01em. Add to the plain `@theme` block in `src/design-system/styles/theme.css`, directly after the `--text-card-figure` group — the two figure styles are siblings in purpose, not size: the resulting sequence (26 → 23 → 25 → 17) is not in descending size order:
 
 ```css
   /* Redline "Stage figure" — larger and tighter than a card figure, because a

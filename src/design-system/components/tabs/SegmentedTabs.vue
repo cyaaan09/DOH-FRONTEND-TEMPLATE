@@ -66,7 +66,16 @@ const emit = defineEmits(['update:modelValue'])
   box-shadow: 0 1px 2px rgba(16, 24, 40, 0.08);
 }
 
-.segments__item:focus-within {
+/* Redline "Focus ring" targets :focus-visible everywhere else in the system,
+ * but the real focus target here is the hidden <input> inside this <label>,
+ * so the browser pseudo-class never matches the label itself. `:focus-within`
+ * matched instead, which also paints on a plain mouse click — this control
+ * was the only one in the system with that behaviour. @zag-js/radio-group
+ * sets `data-focus-visible` on this same element for exactly this case
+ * (verified in the installed package's radio-group.connect.mjs), so that
+ * attribute carries the keyboard-only distinction :focus-visible can't
+ * express here. */
+.segments__item[data-focus-visible] {
   outline: none;
   box-shadow: var(--ring-focus);
 }

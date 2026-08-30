@@ -34,8 +34,13 @@ describe('Tabs', () => {
   it('colours the 2.5px marker only under the active tab', () => {
     // Redline "Marker". Asserted through classes rather than left to scoped
     // CSS: a marker that never paints is invisible to a DOM test otherwise.
+    // The width is asserted too (review Finding 3): border-b-green-fill sets
+    // only border-bottom-color, so a 9-test suite could stay green even if
+    // border-b-[2.5px] were deleted and the marker never painted at all.
     const triggers = mountTabs().findAll('[role="tab"]')
+    expect(triggers[0].classes()).toContain('border-b-[2.5px]')
     expect(triggers[0].classes()).toContain('border-b-green-fill')
+    expect(triggers[1].classes()).toContain('border-b-[2.5px]')
     expect(triggers[1].classes()).toContain('border-b-transparent')
     expect(triggers[1].classes()).not.toContain('border-b-green-fill')
   })
@@ -65,6 +70,15 @@ describe('Tabs', () => {
     expect(count.classes()).toContain('font-mono')
     expect(count.classes()).toContain('text-stat-hint')
     expect(count.classes()).toContain('font-medium')
+  })
+
+  it('gives each count badge an aria-label for context', () => {
+    // Redline "Counts" (ARIA & semantics, spec line 938) — a bare digit has
+    // no context for assistive tech; derived from the tab's own data, no new
+    // prop needed.
+    const counts = mountTabs().findAll('[data-count]')
+    expect(counts[0].attributes('aria-label')).toBe('211 Active LTOs')
+    expect(counts[1].attributes('aria-label')).toBe('215 All applications')
   })
 
   it('omits the count element for a tab with no count', () => {

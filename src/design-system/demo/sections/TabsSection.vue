@@ -1,8 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import DemoCard from '../chrome/DemoCard.vue'
-import DemoBlocks from '../chrome/DemoBlocks.vue'
-import DemoBlock from '../chrome/DemoBlock.vue'
+import DemoStrip from '../chrome/DemoStrip.vue'
 import DemoRules from '../chrome/DemoRules.vue'
 import { Tabs, SegmentedTabs, StageTabs } from '@/design-system'
 
@@ -13,7 +12,8 @@ const RULES = [
   { title: 'Never nest two tab rows', body: 'If a view needs a second axis, that axis is a filter — put it in the bar below.' },
 ]
 
-// Demo data - spec Appendix D
+// Demo data - plan docs/superpowers/plans/2026-08-30-tabs-section.md, Task 5
+// (not Appendix D - these values don't appear in the spec itself)
 const UNDERLINE_TABS = [
   {
     key: 'active',
@@ -55,30 +55,36 @@ const activeStage = ref('review')
     title="Tabs"
     description="Three variants, one rule: the active item is the only green thing in the row."
   >
-    <DemoBlocks>
-      <DemoBlock label="UNDERLINE — PRIMARY, SITS ON A CARD EDGE">
-        <Tabs v-model="activeTab" :tabs="UNDERLINE_TABS">
-          <p class="text-body text-text-meta">
-            {{ UNDERLINE_TABS.find((tab) => tab.key === activeTab)?.body }}
-          </p>
-        </Tabs>
-      </DemoBlock>
-      <DemoBlock label="SEGMENTED — INLINE FILTER, 2–4 SHORT OPTIONS">
-        <SegmentedTabs
-          v-model="activeSegment"
-          :options="SEGMENT_OPTIONS"
-          label="Application type"
-        />
-      </DemoBlock>
-      <DemoBlock label="STAGE TABS — A WORKFLOW WITH VOLUME PER STEP">
-        <StageTabs v-model="activeStage" :stages="STAGES">
-          <p class="text-body text-text-meta">
-            Showing {{ STAGES.find((stage) => stage.key === activeStage)?.count }} application(s) in
-            {{ STAGES.find((stage) => stage.key === activeStage)?.label }}.
-          </p>
-        </StageTabs>
-      </DemoBlock>
-    </DemoBlocks>
+    <!-- These three sit in full-width DemoStrips rather than the DemoBlocks
+         grid (review Finding 1): at the page's real width DemoBlocks gives
+         each block ~293px, which collapses StageTabs' own two-column grid to
+         one column and clips the underline Tabs row against DemoCard's
+         overflow-hidden. ChipsSection's INTERACTIVE/DISMISSIBLE strips are
+         the precedent for this pattern. -->
+    <DemoStrip label="UNDERLINE — PRIMARY, SITS ON A CARD EDGE">
+      <Tabs v-model="activeTab" :tabs="UNDERLINE_TABS">
+        <p class="text-body text-text-meta">
+          {{ UNDERLINE_TABS.find((tab) => tab.key === activeTab)?.body }}
+        </p>
+      </Tabs>
+    </DemoStrip>
+
+    <DemoStrip label="SEGMENTED — INLINE FILTER, 2–4 SHORT OPTIONS">
+      <SegmentedTabs
+        v-model="activeSegment"
+        :options="SEGMENT_OPTIONS"
+        label="Application type"
+      />
+    </DemoStrip>
+
+    <DemoStrip label="STAGE TABS — A WORKFLOW WITH VOLUME PER STEP">
+      <StageTabs v-model="activeStage" :stages="STAGES">
+        <p class="text-body text-text-meta">
+          Showing {{ STAGES.find((stage) => stage.key === activeStage)?.count }} application(s) in
+          {{ STAGES.find((stage) => stage.key === activeStage)?.label }}.
+        </p>
+      </StageTabs>
+    </DemoStrip>
 
     <DemoRules :rules="RULES" />
   </DemoCard>

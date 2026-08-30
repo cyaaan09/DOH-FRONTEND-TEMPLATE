@@ -22,6 +22,22 @@ describe('SegmentedTabs', () => {
     expect(group.attributes('aria-label')).toBe('Application type')
   })
 
+  it('checks the selected segment and leaves the others unchecked', () => {
+    // Selection semantics guard (review Finding 7). NOT an aria-checked
+    // assertion, despite the finding naming that attribute by analogy with
+    // Tabs.spec.js's aria-selected guard: verified against the installed
+    // @zag-js/radio-group (radio-group.connect.mjs) that connect() never
+    // sets aria-checked anywhere, on the item or the hidden input. This
+    // control renders a real <input type="radio">, and ARIA authoring
+    // practice is to let the browser expose a native control's checked state
+    // rather than mirror it into an aria-* attribute. What a future
+    // primitive swap could actually drop silently is the native `checked`
+    // state itself, so that is what this guards.
+    const inputs = mountSegments().findAll('[data-segment] input')
+    expect(inputs[0].element.checked).toBe(true)
+    expect(inputs[1].element.checked).toBe(false)
+  })
+
   it('emits update:modelValue when a segment is chosen', async () => {
     // Ark's radio-group wires selection through the hidden input's `click`
     // handler (it reads `event.currentTarget.checked`), not a `change`

@@ -41,6 +41,7 @@ const emit = defineEmits(['update:modelValue'])
               ? 'bg-green-100 text-green-text'
               : 'bg-surface-muted text-text-header'
           "
+          :aria-label="`${tab.count} ${tab.label}`"
           >{{ tab.count }}</span
         >
       </TabTrigger>

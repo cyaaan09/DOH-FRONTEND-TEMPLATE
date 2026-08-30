@@ -48,6 +48,15 @@ describe('StageTabs', () => {
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['inspection'])
   })
 
+  it('marks the model value selected and the others not', () => {
+    // Selection semantics guard (review Finding 7) — Ark exposes this through
+    // aria-selected the same way it does for the underline Tabs variant; a
+    // future swap of the underlying primitive could silently drop it.
+    const cards = mountStages().findAll('[role="tab"]')
+    expect(cards[0].attributes('aria-selected')).toBe('true')
+    expect(cards[1].attributes('aria-selected')).toBe('false')
+  })
+
   it('rings only the active stage card', () => {
     // Redline "Stage active" — green border plus the select ring. Idle cards
     // keep the hairline border, so exactly one border colour applies to each.
@@ -80,6 +89,24 @@ describe('StageTabs', () => {
     expect(mountStages().get('[data-figure]').classes()).toContain('text-stage-figure')
   })
 
+  it('gives each stage figure an aria-label for context', () => {
+    // Redline "Counts" (ARIA & semantics, spec line 938) — a bare digit has
+    // no context for assistive tech; derived from the stage's own data, no
+    // new prop needed.
+    const figures = mountStages().findAll('[data-figure]')
+    expect(figures[0].attributes('aria-label')).toBe('2 Review')
+    expect(figures[2].attributes('aria-label')).toBe('8 Inspection')
+  })
+
+  it('hides the decorative step marker from assistive tech', () => {
+    // Mirrors StatCard's dot precedent for the same job: the marker repeats
+    // information already in the label/hint (and for Closed, its "·" would
+    // otherwise be announced as content).
+    const steps = mountStages().findAll('[data-step]')
+    expect(steps[0].attributes('aria-hidden')).toBe('true')
+    expect(steps[4].attributes('aria-hidden')).toBe('true')
+  })
+
   it('colours an urgent hint red and bold, leaving the others meta grey', () => {
     // Redline "Stage urgent" — 11.5/700. Every hint sets colour and weight, so
     // neither is left to emit order.
@@ -91,12 +118,29 @@ describe('StageTabs', () => {
     expect(hints[0].classes()).not.toContain('text-red-700')
   })
 
-  it('mutes the Closed stage', () => {
+  it('mutes the Closed stage background, leaving the others on the plain surface', () => {
+    // Redline "Muted card" (Stat cards & meters, spec line 861) — #FBFCFE is
+    // --surface-card-muted, NOT --surface-sunken (#FAFBFD, "expanded row,
+    // footer" per Appendix D and *lighter* than --surface in dark mode, which
+    // would invert the Closed card's elevation relative to the active ones).
     // Background has exactly one source: both branches of the same binding.
     const cards = mountStages().findAll('[role="tab"]')
-    expect(cards[4].classes()).toContain('bg-surface-sunken')
+    expect(cards[4].classes()).toContain('bg-surface-card-muted')
+    expect(cards[4].classes()).not.toContain('bg-surface')
     expect(cards[0].classes()).toContain('bg-surface')
-    expect(cards[0].classes()).not.toContain('bg-surface-sunken')
+    expect(cards[0].classes()).not.toContain('bg-surface-card-muted')
+  })
+
+  it('colours the muted figure the accessible header grey, leaving others ink-900', () => {
+    // Redline "Muted card" (Stat cards & meters, spec line 861) — figure
+    // #5A6577, the same "Stat cards & meters" group whose "Stage number" row
+    // already governs this component. Mirrors StatCard's figure binding for
+    // the same redline row, so both components express it the same way.
+    const figures = mountStages().findAll('[data-figure]')
+    expect(figures[4].classes()).toContain('text-text-header')
+    expect(figures[4].classes()).not.toContain('text-ink-900')
+    expect(figures[0].classes()).toContain('text-ink-900')
+    expect(figures[0].classes()).not.toContain('text-text-header')
   })
 
   it('renders the active stage panel through the default slot', () => {
