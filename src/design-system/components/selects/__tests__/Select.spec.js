@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
+import { SelectRoot } from '@ark-ui/vue/select'
 import Select from '../Select.vue'
 
 // jsdom implements neither of these, and Zag's select machine calls both
@@ -97,6 +98,14 @@ describe('Select', () => {
     // without this assertion the utility could be dropped silently, same as
     // the checkmark/tint gap on the selected-option test below.
     expect(trigger.classes()).toContain('h-field')
+  })
+
+  it("sets the panel gutter to the redlined 6px, not Zag's 8px default", () => {
+    // Redline "Panel" — top 44px against a 38px trigger, so a 6px gutter.
+    // jsdom computes no layout, so the rendered offset is not assertable —
+    // but the prop that produces it is.
+    const wrapper = mountSelect()
+    expect(wrapper.findComponent(SelectRoot).props('positioning')).toEqual({ gutter: 6 })
   })
 
   it('renders a decorative caret that assistive technology ignores', () => {

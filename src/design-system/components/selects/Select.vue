@@ -35,8 +35,11 @@ const selected = computed(() => (props.modelValue ? [props.modelValue] : []))
   <SelectRoot
     :collection="collection"
     :model-value="selected"
+    :positioning="{ gutter: 6 }"
     @value-change="(details) => emit('update:modelValue', details.value[0] ?? '')"
   >
+    <!-- Redline "Panel" — top 44px against a 38px trigger, so a 6px gutter.
+         Zag defaults this to 8, which would render the panel 2px too low. -->
     <SelectControl>
       <!-- Redline "Trigger" — 38px, radius 9px, 1px field border, gap 8px.
            `h-field` supplies the height — see the style block below. -->
