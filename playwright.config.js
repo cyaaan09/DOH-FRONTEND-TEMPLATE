@@ -9,7 +9,12 @@ const HOST = `http://localhost:${PORT}`
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
-  forbidOnly: !!process.env.CI,
+  // Unconditional, not `!!process.env.CI`: this repo has no CI workflow, so
+  // that condition was always false in practice (the same reasoning as the
+  // reuseExistingServer comment below) -- meaning a stray `test.only` would
+  // never actually be forbidden, and would silently narrow the suite to one
+  // test while still exiting 0. That is this plan's own thesis failure.
+  forbidOnly: true,
   retries: 0,
   reporter: 'list',
   use: {
@@ -28,6 +33,10 @@ export default defineConfig({
         // size. 1280 is wide enough that the page's own max-w-5xl cap
         // (1024px) is what constrains content, matching real use.
         viewport: { width: 1280, height: 900 },
+        // Explicit rather than left to whatever Playwright currently defaults
+        // to: this suite does not yet cover the dark theme, so light-only is
+        // a recorded decision, not an accident.
+        colorScheme: 'light',
       },
     },
   ],

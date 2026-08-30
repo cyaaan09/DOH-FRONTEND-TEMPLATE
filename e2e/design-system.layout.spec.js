@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { SECTIONS } from '../src/design-system/demo/chrome/sections.js'
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/design-system')
@@ -7,7 +8,13 @@ test.beforeEach(async ({ page }) => {
   // reads it next. page.evaluate and locator.count() below do not auto-wait
   // the way Playwright's action/assertion APIs do, so every test in this file
   // must first prove the app is mounted via an auto-waiting assertion.
-  await expect(page.locator('[data-section]')).toHaveCount(15)
+  await expect(page.locator('[data-section]')).toHaveCount(SECTIONS.length)
+  // Neither webfont (src/design-system/styles/fonts.css loads two
+  // @fontsource-variable faces) is guaranteed ready by `load`. Without this,
+  // every boundingBox()/getBoundingClientRect() below could measure fallback-
+  // font layout instead -- a flake source, and a coverage hole (a nowrap row
+  // that overflows in DM Sans may not overflow in the fallback).
+  await page.evaluate(() => document.fonts.ready)
 })
 
 test.describe('layout regressions caught by eye, not by jsdom', () => {
@@ -16,7 +23,10 @@ test.describe('layout regressions caught by eye, not by jsdom', () => {
     // rendered flush to the card edge while the header and DemoBlocks were
     // inset by px-card-x. Compares two live elements rather than a magic number.
     const section = page.locator('[data-section="specs"]')
-    const heading = section.locator('h2')
+    // .first(): a section can nest further h2s of its own (e.g. Containers'
+    // Card example), so this must not assume only DemoCard's h2 exists --
+    // the smoke spec's own h2 check already handles this the same way.
+    const heading = section.locator('h2').first()
     // NOTE: deviates from the brief's `[data-stat-block] [data-figure]` selector.
     // That selector measures the data-figure span, which sits a further 17px
     // right of the card edge (StatCard's own 1px border + 16px px-4 padding) --
@@ -63,9 +73,17 @@ test.describe('layout regressions caught by eye, not by jsdom', () => {
 
     const panel = page.locator('[role="listbox"]:visible')
     await expect(panel).toBeVisible()
-    const panelBox = await panel.boundingBox()
 
-    expect(Math.abs(panelBox.width - triggerBox.width), 'panel is not trigger width').toBeLessThanOrEqual(2)
+    // toBeVisible() proves the panel exists, not that its width has settled:
+    // Zag/Floating-UI applies `sameWidth` through an autoUpdate cycle that can
+    // land a frame later. Poll the measurement instead of taking it once, same
+    // 2px tolerance as before.
+    await expect
+      .poll(
+        async () => Math.abs((await panel.boundingBox()).width - triggerBox.width),
+        { message: 'panel is not trigger width' },
+      )
+      .toBeLessThanOrEqual(2)
   })
 })
 
@@ -84,11 +102,15 @@ test.describe('page-level layout guards', () => {
     // Catches the class the Tabs underline row hit: a flex row with no wrap and
     // whitespace-nowrap children spilling past the card, where DemoCard's
     // overflow-hidden then clips it silently.
-    const offenders = await page.evaluate(() => {
-      const bad = []
+    const { offenders, noSectionRoot } = await page.evaluate(() => {
+      const offenders = []
+      const noSectionRoot = []
       for (const section of document.querySelectorAll('[data-section]')) {
         const card = section.querySelector('section')
-        if (!card) continue
+        if (!card) {
+          noSectionRoot.push(section.dataset.section)
+          continue
+        }
         const limit = card.getBoundingClientRect().right
         for (const child of card.querySelectorAll('*')) {
           const rect = child.getBoundingClientRect()
@@ -96,22 +118,43 @@ test.describe('page-level layout guards', () => {
           // and are legitimately allowed outside it.
           if (rect.width === 0 || child.closest('[role="listbox"],[role="menu"]')) continue
           if (rect.right - limit > 2) {
-            bad.push(`${section.dataset.section}: ${child.tagName.toLowerCase()}.${child.className}`)
+            // getAttribute('class'), not .className: on an SVG child,
+            // .className is an SVGAnimatedString, not a string, and stringifies
+            // uselessly (e.g. "svg.[object SVGAnimatedString]") in the message.
+            offenders.push(
+              `${section.dataset.section}: ${child.tagName.toLowerCase()}.${child.getAttribute('class')}`,
+            )
             break
           }
         }
       }
-      return bad
+      return { offenders, noSectionRoot }
     })
+    // A section with no <section> root falls out of the loop above with zero
+    // overflow coverage and would otherwise stay silently unchecked forever --
+    // fail loudly instead of passing vacuously.
+    expect(
+      noSectionRoot,
+      `sections with no <section> root, so no overflow coverage: ${noSectionRoot.join(', ')}`,
+    ).toEqual([])
     expect(offenders, `content overflows its card in: ${offenders.join(' | ')}`).toEqual([])
   })
 
-  test('every section marked complete renders no gap markers', async ({ page }) => {
-    // The unit suite asserts this against the manifest; this asserts it against
-    // what a browser actually paints, which is the thing that matters.
-    for (const id of ['buttons', 'fields', 'type-scale', 'tabs', 'dropdowns']) {
-      const gaps = page.locator(`[data-section="${id}"] [data-gap]`)
-      await expect(gaps, `${id} is complete but shows a gap`).toHaveCount(0)
+  test('every section marked complete renders no visible gap markers', async ({ page }) => {
+    for (const { id } of SECTIONS.filter((s) => s.complete)) {
+      await expect(
+        page.locator(`[data-section="${id}"] [data-gap]:visible`),
+        `${id} is complete but shows a gap`,
+      ).toHaveCount(0)
+    }
+    // Positive counterpart: on an unmounted or blank page every count above is
+    // trivially zero. Asserting the incomplete sections DO show gaps means the
+    // zero-counts cannot be satisfied by absence.
+    for (const { id } of SECTIONS.filter((s) => !s.complete)) {
+      await expect(
+        page.locator(`[data-section="${id}"] [data-gap]:visible`),
+        `${id} is incomplete but shows no gap`,
+      ).not.toHaveCount(0)
     }
   })
 })

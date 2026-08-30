@@ -75,9 +75,14 @@ npm run dev          # start dev server
 npm run build        # production build
 npm run preview      # preview the production build
 npm run test:unit    # run unit tests
+npm run test:e2e     # browser layout tests (Chromium, real rendering)
 npm run lint         # oxlint + eslint (autofix)
 npm run format       # prettier
 ```
+
+`test:e2e` needs a one-time `npx playwright install chromium` before its first
+run. Each run does a full production build, so it's checked once per section
+rather than after every edit.
 
 ## Recommended IDE Setup
 

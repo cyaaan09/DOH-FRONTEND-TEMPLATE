@@ -4,6 +4,7 @@ import js from '@eslint/js'
 import pluginVue from 'eslint-plugin-vue'
 import pluginVitest from '@vitest/eslint-plugin'
 import pluginOxlint from 'eslint-plugin-oxlint'
+import pluginPlaywright from 'eslint-plugin-playwright'
 import skipFormatting from 'eslint-config-prettier/flat'
 
 export default defineConfig([
@@ -33,6 +34,20 @@ export default defineConfig([
   {
     ...pluginVitest.configs.recommended,
     files: ['src/**/__tests__/*'],
+  },
+
+  {
+    // e2e/** already matches the top-level files-to-lint glob above; this
+    // block layers one Playwright-aware rule on top rather than widening what
+    // gets linted. An un-awaited `expect(locator).toHaveCount(...)` resolves
+    // to a floating promise and passes vacuously -- the exact failure class
+    // this e2e suite exists to catch -- so it is an error, not a warning.
+    name: 'e2e/playwright',
+    files: ['e2e/**'],
+    plugins: { playwright: pluginPlaywright },
+    rules: {
+      'playwright/missing-playwright-await': 'error',
+    },
   },
 
   {
