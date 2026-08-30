@@ -340,7 +340,12 @@ describe('DropdownsSection renders real components, not gaps', () => {
     // MultiSelect.vue's `summary` computed: `${modelValue.length} selected`.
     // `services` is seeded with two entries, so only MultiSelect renders
     // this string — proves `services` (not some other array) reached it.
-    expect(mount(DropdownsSection).text()).toContain('2 selected')
+    // Appendix D.1 — the trigger names the picked options and puts the total in
+    // a badge; it does not render a count sentence. Both halves are asserted so
+    // this still binds to MultiSelect's own output rather than the section's.
+    const wrapper = mount(DropdownsSection)
+    expect(wrapper.text()).toContain('Pharmacy, Birthing Home')
+    expect(wrapper.get('[data-count]').text()).toBe('2')
   })
 
   it("shows InlineFilter's own name and value text, not the section's markup", () => {

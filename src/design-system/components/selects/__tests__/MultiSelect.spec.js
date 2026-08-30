@@ -50,8 +50,39 @@ const mountMulti = (props = {}) =>
 afterEach(resetMountedDom)
 
 describe('MultiSelect', () => {
-  it('summarises the chosen options in the trigger', () => {
-    expect(mountMulti().get('[data-value]').text()).toContain('2')
+  it('names the picked options in the trigger rather than counting them', () => {
+    // Appendix D.1 "MultiSelect trigger" — the value is the first two picked
+    // labels, comma-joined. An earlier build showed the invented string
+    // "2 selected" here, which the artifact does not contain anywhere.
+    expect(mountMulti().get('[data-value]').text()).toBe('Pharmacy, Birthing Home')
+  })
+
+  it('shows only the first two picked labels, leaving the rest to the count', () => {
+    const wrapper = mountMulti({ modelValue: ['Pharmacy', 'Birthing Home', 'Dental Clinic'] })
+    expect(wrapper.get('[data-value]').text()).toBe('Pharmacy, Birthing Home')
+    expect(wrapper.get('[data-count]').text()).toBe('3')
+  })
+
+  it('puts the total in a green count badge beside the value', () => {
+    // Appendix D.1 — pill in the tint green, shown only when something is picked.
+    const badge = mountMulti().get('[data-count]')
+    expect(badge.text()).toBe('2')
+    expect(badge.classes()).toContain('bg-green-100')
+    expect(badge.classes()).toContain('text-green-text')
+    expect(badge.classes()).toContain('rounded-pill')
+  })
+
+  it('hides the count badge when nothing is picked', () => {
+    expect(mountMulti({ modelValue: [] }).find('[data-count]').exists()).toBe(false)
+  })
+
+  it('gives the filter field its border and decorative glyph', () => {
+    // Appendix D.1 — the filter is a bordered field in a ruled section, not a
+    // bare input, and carries an 11px ring glyph before the input.
+    const wrapper = mountMulti()
+    const glyph = wrapper.get('[data-filter-glyph]')
+    expect(glyph.attributes('aria-hidden')).toBe('true')
+    expect(wrapper.get('[data-filter]').classes()).toContain('bg-transparent')
   })
 
   it('falls back to the placeholder when nothing is chosen', () => {
@@ -130,6 +161,21 @@ describe('MultiSelect', () => {
     expect([...boxes[1].classList]).toContain('text-green-on-fill')
     expect([...boxes[0].classList]).toContain('border-field')
     expect([...boxes[0].classList]).toContain('text-transparent')
+    wrapper.unmount()
+  })
+
+  it('tints a checked row, not only its checkbox', async () => {
+    // Appendix D.1 — the shared option style applies to MultiSelect's checked
+    // rows too: #F2FAF4 background, #15803D text, weight 700. An earlier build
+    // styled only the checkbox and left the row untinted.
+    const wrapper = mountMulti()
+    await wrapper.get('[data-trigger]').trigger('click')
+    const rows = [...document.querySelectorAll('[data-option]')]
+    expect([...rows[1].classList]).toContain('bg-green-tint')
+    expect([...rows[1].classList]).toContain('text-green-text')
+    expect([...rows[1].classList]).toContain('font-bold')
+    expect([...rows[0].classList]).toContain('text-ink-700')
+    expect([...rows[0].classList]).not.toContain('bg-green-tint')
     wrapper.unmount()
   })
 

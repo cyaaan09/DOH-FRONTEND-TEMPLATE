@@ -37,8 +37,11 @@ const shown = computed(() => {
 
 const collection = computed(() => createListCollection({ items: shown.value }))
 
+// Appendix D.1 "MultiSelect trigger" — the first two picked labels, comma-joined,
+// ellipsis-truncated by the value span; the placeholder when nothing is picked.
+// The total goes in the count badge beside it, never in this string.
 const summary = computed(() =>
-  props.modelValue.length ? `${props.modelValue.length} selected` : props.placeholder,
+  props.modelValue.length ? props.modelValue.slice(0, 2).join(', ') : props.placeholder,
 )
 
 // Selection has ONE source: Ark's own multiple-select machine, surfaced through
@@ -75,6 +78,14 @@ const isOn = (option) => props.modelValue.includes(option)
           :class="modelValue.length ? 'text-ink-900 font-medium' : 'text-ink-500 font-normal'"
           >{{ summary }}</span
         >
+        <!-- Appendix D.1 "MultiSelect trigger" — count badge, shown only when
+             something is picked. Carries the total the value string omits. -->
+        <span
+          v-if="modelValue.length"
+          data-count
+          class="multiselect__count grid flex-none place-items-center rounded-pill bg-green-100 text-chip text-green-text"
+          >{{ modelValue.length }}</span
+        >
         <!-- Redline "Caret · decorative" — hidden from the accessible name. -->
         <span data-caret aria-hidden="true" class="multiselect__caret text-ink-300">▾</span>
       </SelectTrigger>
@@ -84,16 +95,23 @@ const isOn = (option) => props.modelValue.includes(option)
       <SelectContent
         class="multiselect__panel rounded-panel border border-hairline bg-surface"
       >
-        <!-- Redline "Panel filter" — 32px field on the input surface. -->
-        <div class="p-1.5">
-          <input
-            v-model="query"
-            data-filter
-            type="text"
-            :placeholder="filterPlaceholder"
-            :aria-label="filterPlaceholder"
-            class="multiselect__filter w-full rounded-control bg-surface-input px-2.5 text-field-label text-ink-900"
-          />
+        <!-- Redline "Panel filter" (32px field on the input surface) plus Appendix
+             D.1: the field sits in its own section under a hairline rule, and
+             carries a decorative leading glyph before the input. -->
+        <div class="multiselect__filter-section border-b border-divider">
+          <div
+            class="multiselect__filter-field flex items-center gap-2 rounded-control border border-hairline bg-surface-input"
+          >
+            <span data-filter-glyph aria-hidden="true" class="multiselect__filter-glyph flex-none" />
+            <input
+              v-model="query"
+              data-filter
+              type="text"
+              :placeholder="filterPlaceholder"
+              :aria-label="filterPlaceholder"
+              class="multiselect__filter min-w-0 flex-1 bg-transparent text-field-label text-ink-900"
+            />
+          </div>
         </div>
 
         <!-- Redline "Panel max-h" — 214px once a filter is present. -->
@@ -103,7 +121,10 @@ const isOn = (option) => props.modelValue.includes(option)
             :key="option"
             :item="option"
             data-option
-            class="multiselect__option flex items-center gap-2 rounded-control text-body font-normal"
+            class="multiselect__option flex items-center gap-2 rounded-control text-body"
+            :class="
+              isOn(option) ? 'bg-green-tint text-green-text font-bold' : 'text-ink-700 font-normal'
+            "
           >
             <!-- Redline "Checkbox in list" — 15px, filled green when on. -->
             <span
@@ -181,6 +202,15 @@ const isOn = (option) => props.modelValue.includes(option)
   box-shadow: var(--ring-focus);
 }
 
+/* Appendix D.1 "MultiSelect trigger" — the count badge is a 20px pill. Its
+ * colours come from the bg-green-100 / text-green-text utilities on the
+ * element, so this rule sets geometry only. */
+.multiselect__count {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+}
+
 /* Redline "Caret" — 9px glyph. */
 .multiselect__caret {
   font-size: 9px;
@@ -207,9 +237,28 @@ const isOn = (option) => props.modelValue.includes(option)
   --z-index: var(--z-popover);
 }
 
-/* Redline "Panel filter" — 32px tall, borderless on the input surface. */
-.multiselect__filter {
+/* Appendix D.1 — the filter sits in a section padded 8px 10px under a rule. */
+.multiselect__filter-section {
+  padding: 8px 10px;
+}
+
+/* Redline "Panel filter" — 32px tall on the input surface. Appendix D.1 adds
+ * the 1px hairline border and 0 10px inset that the redline row omits. */
+.multiselect__filter-field {
   height: 32px;
+  padding: 0 10px;
+}
+
+/* Appendix D.1 — decorative 11px ring before the input. Purely a glyph: it has
+ * no accessible role and the input beside it carries the label. */
+.multiselect__filter-glyph {
+  width: 11px;
+  height: 11px;
+  border: 1.8px solid var(--ink-300);
+  border-radius: 50%;
+}
+
+.multiselect__filter {
   border: none;
 }
 
