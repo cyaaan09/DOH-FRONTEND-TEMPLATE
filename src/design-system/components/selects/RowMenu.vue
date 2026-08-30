@@ -22,7 +22,7 @@ const emit = defineEmits(['select'])
       <span data-glyph aria-hidden="true" class="rowmenu__glyph font-bold">⋯</span>
     </MenuTrigger>
 
-    <MenuPositioner>
+    <MenuPositioner class="rowmenu__positioner">
       <MenuContent class="rowmenu__panel rounded-panel border border-hairline bg-surface p-1.5">
         <template v-for="item in items" :key="item.value">
           <!-- Redline "Menu item" — the destructive item is preceded by a rule. -->
@@ -33,6 +33,7 @@ const emit = defineEmits(['select'])
           />
           <MenuItem
             :value="item.value"
+            :data-destructive="item.destructive ? true : undefined"
             class="rowmenu__item flex items-center rounded-control text-body"
             :class="item.destructive ? 'text-red-700 font-bold' : 'text-ink-700 font-normal'"
             >{{ item.label }}</MenuItem
@@ -64,6 +65,14 @@ const emit = defineEmits(['select'])
   line-height: 1;
 }
 
+/* Redline "Motion, states & z-index" — Dropdown / menu z-index 12. Zag's
+ * positioner sets zIndex: var(--z-index) inline; undefined, that declaration
+ * is invalid and falls back to auto, which only paints correctly by
+ * accident while nothing else on the page is positioned. */
+.rowmenu__positioner {
+  --z-index: var(--z-popover);
+}
+
 /* Appendix D.1 — panel min-width 196px, on the panel shadow. */
 .rowmenu__panel {
   min-width: 196px;
@@ -76,11 +85,30 @@ const emit = defineEmits(['select'])
   cursor: pointer;
 }
 
-/* Appendix D.1 — the destructive item sits 6px below a hairline, with 13px
- * of space above its own text. */
+/* Appendix C "Keyboard & focus" mandates arrow navigation, and "Motion,
+ * states & z-index" requires a visible indicator on every focusable. Zag
+ * sets data-highlighted on the item under the cursor or arrow keys. No
+ * :not() guard is needed here, unlike Select and InlineFilter: RowMenu has
+ * no selected state to protect. */
+.rowmenu__item[data-highlighted] {
+  background: var(--surface-muted);
+}
+
+/* Redline "Menu item" — the destructive item's own 13px top padding
+ * replaces its share of the standard item's 9px, so total space above its
+ * text is margin-top 6 + hairline 1 + padding-top 13 = 20px, matching
+ * Appendix D.1's destructive-item spacing instead of the 29px two competing
+ * paddings previously produced. */
+.rowmenu__item[data-destructive] {
+  padding-top: 13px;
+}
+
+/* Appendix D.1 — the destructive item sits 6px below a hairline. Only
+ * margin-top lives here: border-top-width comes from Tailwind's preflight
+ * `hr` rule (Ark's MenuSeparator renders an actual <hr> — confirmed against
+ * the installed package), and padding-top comes from the destructive item
+ * itself, not the separator — see .rowmenu__item[data-destructive] above. */
 .rowmenu__separator {
   margin-top: 6px;
-  padding-top: 13px;
-  border-top-width: 1px;
 }
 </style>

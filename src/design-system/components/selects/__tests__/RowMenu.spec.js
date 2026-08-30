@@ -1,8 +1,8 @@
-import { mount } from '@vue/test-utils'
+import { enableAutoUnmount, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { MenuRoot } from '@ark-ui/vue/menu'
 import RowMenu from '../RowMenu.vue'
-import { installArkJsdomShims, resetArkPortals } from '@/design-system/testing/ark-jsdom'
+import { installArkJsdomShims, resetMountedDom } from '@/design-system/testing/ark-jsdom'
 
 // Empirically confirmed (not assumed): running this file with neither shim
 // throws "ResizeObserver is not defined" from @zag-js/popper's autoUpdate
@@ -18,6 +18,13 @@ import { installArkJsdomShims, resetArkPortals } from '@/design-system/testing/a
 // the (jsdom-missing) native method.
 installArkJsdomShims()
 
+// Properly unmounts every wrapper through Vue's own lifecycle after each
+// test. See ark-jsdom.js's resetMountedDom docblock: wrapper.unmount() is
+// what actually stops a still-open RowMenu's Zag machine actor, including
+// any document-level listeners it attached — the blunter reset below
+// cannot do that on its own, since it only deletes DOM nodes.
+enableAutoUnmount(afterEach)
+
 const ITEMS = [
   { value: 'lto', label: 'View LTO document' },
   { value: 'facility', label: 'Facility details' },
@@ -31,12 +38,15 @@ const mountMenu = (props = {}) =>
     attachTo: document.body,
   })
 
-// MenuContent/MenuPositioner mount as soon as RowMenu mounts, gated by a
-// presence machine rather than open/closed state — the same structure
-// ark-jsdom.js documents for Select. Confirmed empirically: without this
-// reset, "separates the destructive item with a hairline" saw 4 leaked
-// separators from earlier un-unmounted tests instead of 1.
-afterEach(resetArkPortals)
+// MenuContent/MenuPositioner mount as soon as RowMenu mounts, as an
+// ordinary descendant of the component (not a document.body portal — see
+// ark-jsdom.js), gated by a presence machine rather than open/closed state.
+// enableAutoUnmount above now unmounts every wrapper, which removes this
+// subtree too; this reset stays as a backstop. Confirmed empirically before
+// enableAutoUnmount existed: without some reset here, "separates the
+// destructive item with a hairline" saw 4 leaked separators from earlier
+// un-unmounted tests instead of 1.
+afterEach(resetMountedDom)
 
 describe('RowMenu', () => {
   it('names the trigger and hides its decorative glyph', () => {
@@ -46,10 +56,15 @@ describe('RowMenu', () => {
   })
 
   it('gives the trigger the 8px control radius and the field border', () => {
-    // Appendix D.1 — 34x34, radius 8px, 1px field border.
+    // Appendix D.1 — 34x34, radius 8px, 1px field border. `h-compact` and
+    // `w-compact` are the 34px square itself — without asserting both, the
+    // utilities could be dropped from the template with the suite staying
+    // green, same as the InlineFilter shell-height gap this mirrors.
     const trigger = mountMenu().get('[data-trigger]')
     expect(trigger.classes()).toContain('rounded-control')
     expect(trigger.classes()).toContain('border-field')
+    expect(trigger.classes()).toContain('h-compact')
+    expect(trigger.classes()).toContain('w-compact')
   })
 
   it("sets the panel gutter to the redlined 6px, not Zag's 8px default", () => {

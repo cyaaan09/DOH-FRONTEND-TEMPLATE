@@ -1,11 +1,22 @@
 /**
- * jsdom shims and portal-reset helper for tests that mount an Ark UI
+ * jsdom shims and DOM-reset helper for tests that mount an Ark UI
  * select-family component (`@ark-ui/vue/select`, backed by `@zag-js/select`)
  * or its menu component (`@ark-ui/vue/menu`, backed by `@zag-js/menu`).
  * Extracted from `Select.spec.js` so `MultiSelect.spec.js` and
  * `InlineFilter.spec.js` (which mount the same select machine) and
  * `RowMenu.spec.js` (which mounts menu instead) import one shared module
  * instead of a separate copy each.
+ *
+ * Nothing here is portaled. An earlier version of this module and its
+ * `resetArkPortals` export claimed Ark mounts select/menu content into a
+ * `document.body` portal — false. Ark UI only portals when the caller
+ * explicitly wraps content in its own `<Portal>` component; verified
+ * against every file in `../components/selects/`, none imports or renders
+ * one. Independently verified against the installed package: the compiled
+ * `select-content.vue`, `select-positioner.vue`, `menu-content.vue` and
+ * `menu-positioner.vue` each render a plain `ark.div` with no `Portal` or
+ * `Teleport` anywhere in their own implementation. See `resetMountedDom`
+ * below for what the reset actually does and why it is still needed.
  *
  * `menu`'s needs were an open question when this module was first written
  * (Task 3); Task 5 settled them empirically, then confirmed each against the
@@ -67,18 +78,33 @@ export function installArkJsdomShims() {
 }
 
 /**
- * Ark mounts a select/menu content's portal into document.body as soon as
- * the component mounts, gated by a presence machine rather than by
- * open/closed state — verified against the installed package
- * (select-content.vue, select-positioner.vue): both render unconditionally
- * once `present`, and nothing in a typical suite ever drives them back to
- * "unmounted". A wrapper left attached (most tests never call
- * wrapper.unmount()) therefore leaves its portaled nodes in document.body
- * for every later test in the file — an assertion right after another
- * mount would see two instances' worth of nodes, not one. Call this in an
- * `afterEach` so each test's document-level queries see only its own
- * instance.
+ * Wipes document.body between tests. NOT a portal reset, despite this
+ * module's former name for it (`resetArkPortals`) — see the file-level
+ * docblock above: nothing here is portaled. SelectPositioner/MenuPositioner
+ * render as an ordinary descendant of the component's own subtree, mounted
+ * wherever the test attaches the wrapper (here, document.body via
+ * `attachTo`), not into a separate portal target.
+ *
+ * The reset is still needed, for an ordinary reason: that content renders
+ * unconditionally once Zag's presence machine reports `present`, gated by
+ * presence rather than open/closed state — verified against the installed
+ * package (select-content.vue, select-positioner.vue, menu-content.vue,
+ * menu-positioner.vue): all four render unconditionally once `present`, and
+ * nothing in a typical suite ever drives them back to "unmounted". A
+ * wrapper left mounted (most tests in these files never call
+ * wrapper.unmount()) therefore leaves its nodes in document.body for every
+ * later test in the file — an assertion right after another mount would see
+ * two instances' worth of nodes, not one.
+ *
+ * But because this works by deleting document.body's children directly
+ * rather than through Vue's own unmount lifecycle, it does NOT stop
+ * whatever a still-mounted wrapper's Zag machine actor is doing —
+ * including any document-level listeners the machine attached (e.g. for
+ * outside-click or Esc handling). Each spec file importing this also calls
+ * `enableAutoUnmount(afterEach)` (from `@vue/test-utils`) so every wrapper
+ * is properly unmounted through Vue's own lifecycle first; keep both — this
+ * function alone does not replace that.
  */
-export function resetArkPortals() {
+export function resetMountedDom() {
   document.body.innerHTML = ''
 }

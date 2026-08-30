@@ -67,7 +67,7 @@ const status = ref('Active')
           placeholder="Select a facility type"
           label="Facility type"
         />
-        <p class="text-hint text-text-meta mt-1.5">
+        <p class="text-hint text-text-meta mt-1.25">
           Placeholder greys out until a value is picked.
         </p>
       </div>
@@ -84,7 +84,7 @@ const status = ref('Active')
           filter-placeholder="Filter services"
           empty-text="No service matches that."
         />
-        <p class="text-hint text-text-meta mt-1.5">
+        <p class="text-hint text-text-meta mt-1.25">
           Long lists get an inline filter and a sticky footer.
         </p>
       </div>
@@ -94,7 +94,7 @@ const status = ref('Active')
           Inline filter <span class="text-ink-500">· table bar</span>
         </div>
         <InlineFilter v-model="status" :options="STATUSES" name="Status" />
-        <p class="text-hint text-text-meta mt-1.5">
+        <p class="text-hint text-text-meta mt-1.25">
           34px variant for filter bars, with the field name inline.
         </p>
       </div>
@@ -104,7 +104,7 @@ const status = ref('Active')
           Row menu <span class="text-ink-500">· actions</span>
         </div>
         <RowMenu :items="ROW_ACTIONS" label="Row actions" />
-        <p class="text-hint text-text-meta mt-1.5">
+        <p class="text-hint text-text-meta mt-1.25">
           Destructive item sits last, separated by a hairline.
         </p>
       </div>

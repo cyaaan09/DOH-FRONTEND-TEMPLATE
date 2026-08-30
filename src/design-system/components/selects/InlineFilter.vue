@@ -33,6 +33,13 @@ const collection = computed(() => createListCollection({ items: labels.value }))
     :positioning="{ gutter: 6 }"
     @value-change="(details) => emit('update:modelValue', details.value[0] ?? modelValue)"
   >
+    <!-- Deliberately NOT sameWidth: true, unlike Select and MultiSelect —
+         this trigger is content-width (inline-flex) and its width changes
+         with the selected value: "Status: All" reads narrower than the
+         longest option, "Expiring soon". Forcing sameWidth would truncate
+         options depending on which value happens to be selected;
+         max-content (Zag's default here) is correct for a content-width
+         trigger. -->
     <SelectControl>
       <!-- Redline "Inline variant" — 34px, radius 8px, soft border, 12.5/700. -->
       <SelectTrigger
@@ -46,7 +53,7 @@ const collection = computed(() => createListCollection({ items: labels.value }))
       </SelectTrigger>
     </SelectControl>
 
-    <SelectPositioner>
+    <SelectPositioner class="inline-filter__positioner">
       <!-- Redline "Panel" and "Panel shadow" — radius 12, pad 6, hairline, 246px. -->
       <SelectContent
         class="inline-filter__panel rounded-panel border border-hairline bg-surface p-1.5"
@@ -104,10 +111,29 @@ const collection = computed(() => createListCollection({ items: labels.value }))
   overflow-y: auto;
 }
 
+/* Redline "Motion, states & z-index" — Dropdown / menu z-index 12. Zag's
+ * positioner sets zIndex: var(--z-index) inline; undefined, that declaration
+ * is invalid and falls back to auto, which only paints correctly by
+ * accident while nothing else on the page is positioned. */
+.inline-filter__positioner {
+  --z-index: var(--z-popover);
+}
+
 /* Redline "Option" — pad 9px 10px. */
 .inline-filter__option {
   padding: 9px 10px;
   cursor: pointer;
+}
+
+/* Appendix C "Keyboard & focus" mandates arrow navigation, and "Motion,
+ * states & z-index" requires a visible indicator on every focusable. Zag
+ * sets data-highlighted on the item under the cursor or arrow keys. The
+ * :not() is load-bearing, not defensive: Zag also sets data-state="checked"
+ * on the selected item, and this scoped selector's specificity (0,3,0)
+ * beats the bg-green-tint utility (0,1,0) — without it, arrowing onto the
+ * selected option would replace its redlined tint with grey. */
+.inline-filter__option[data-highlighted]:not([data-state='checked']) {
+  background: var(--surface-muted);
 }
 
 /* Appendix D.1 — the status dot. Sized here; no spacing token is 8px square. */

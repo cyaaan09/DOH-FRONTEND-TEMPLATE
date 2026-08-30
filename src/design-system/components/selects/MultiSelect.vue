@@ -51,11 +51,15 @@ const isOn = (option) => props.modelValue.includes(option)
     multiple
     :collection="collection"
     :model-value="modelValue"
-    :positioning="{ gutter: 6 }"
+    :positioning="{ gutter: 6, sameWidth: true }"
     @value-change="(details) => emit('update:modelValue', details.value)"
   >
     <!-- Redline "Panel" — top 44px against a 38px trigger, so a 6px gutter.
-         Zag defaults this to 8, which would render the panel 2px too low. -->
+         Zag defaults this to 8, which would render the panel 2px too low.
+         sameWidth: true sizes the panel to the trigger's own width rather
+         than its longest option's — the redline "Value" row is ellipsis,
+         which only ever engages against a trigger-width panel, and every
+         option label's min-w-0 flex-1 truncate is otherwise dead code. -->
     <SelectControl>
       <!-- Redline "Trigger" — 38px, radius 9px, 1px field border, gap 8px.
            `h-field` supplies the height — see the style block below. -->
@@ -76,7 +80,7 @@ const isOn = (option) => props.modelValue.includes(option)
       </SelectTrigger>
     </SelectControl>
 
-    <SelectPositioner>
+    <SelectPositioner class="multiselect__positioner">
       <SelectContent
         class="multiselect__panel rounded-panel border border-hairline bg-surface"
       >
@@ -195,6 +199,14 @@ const isOn = (option) => props.modelValue.includes(option)
   overflow: hidden;
 }
 
+/* Redline "Motion, states & z-index" — Dropdown / menu z-index 12. Zag's
+ * positioner sets zIndex: var(--z-index) inline; undefined, that declaration
+ * is invalid and falls back to auto, which only paints correctly by
+ * accident while nothing else on the page is positioned. */
+.multiselect__positioner {
+  --z-index: var(--z-popover);
+}
+
 /* Redline "Panel filter" — 32px tall, borderless on the input surface. */
 .multiselect__filter {
   height: 32px;
@@ -216,6 +228,16 @@ const isOn = (option) => props.modelValue.includes(option)
 .multiselect__option {
   padding: 9px 10px;
   cursor: pointer;
+}
+
+/* Appendix C "Keyboard & focus" mandates arrow navigation, and "Motion,
+ * states & z-index" requires a visible indicator on every focusable. Zag
+ * sets data-highlighted on the item under the cursor or arrow keys. No
+ * :not([data-state='checked']) guard is needed here, unlike Select and
+ * InlineFilter: selection is carried by the checkbox (.multiselect__box),
+ * not by a tint on the row itself, so there is nothing for this to clobber. */
+.multiselect__option[data-highlighted] {
+  background: var(--surface-muted);
 }
 
 /* Redline "Checkbox in list" — 15px box, radius 4px. No token carries 4px:
@@ -244,6 +266,14 @@ const isOn = (option) => props.modelValue.includes(option)
   border: none;
 }
 
+/* Redline "Focus ring" — every focusable gets one; never outline:none
+ * without replacing it. Clear and Apply are otherwise the only two
+ * interactive controls in the design system without this rule. */
+.multiselect__clear:focus-visible {
+  outline: none;
+  box-shadow: var(--ring-focus);
+}
+
 /* Appendix D.1 — Apply is 7px 14px on the fill green. */
 .multiselect__apply {
   padding: 7px 14px;
@@ -253,5 +283,13 @@ const isOn = (option) => props.modelValue.includes(option)
 
 .multiselect__apply:hover {
   background: var(--green-fill-hover);
+}
+
+/* Redline "Focus ring" — every focusable gets one; never outline:none
+ * without replacing it. Clear and Apply are otherwise the only two
+ * interactive controls in the design system without this rule. */
+.multiselect__apply:focus-visible {
+  outline: none;
+  box-shadow: var(--ring-focus);
 }
 </style>

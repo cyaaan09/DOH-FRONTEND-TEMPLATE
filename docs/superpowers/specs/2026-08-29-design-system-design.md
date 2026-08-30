@@ -367,6 +367,18 @@ Found while extracting the page structure; each is scheduled into the phase that
   the chip; ours renders the label alone.
 - **Two Chip variants are missing** that the artifact shows: count badges (`13`, `8`, `+4 more`) and
   overflow/expiry pills (`128 days left`, `36 days left`).
+- **2026-08-30 — `MultiSelect`'s filter input and footer buttons are children of `role="listbox"`.**
+  Zag's `getContentProps()` sets `role: "listbox"` when `composite` (the default, verified against
+  the installed `@zag-js/select` source), and ARIA 1.2 allows only `option`/`group` as listbox
+  children. This is the structural cost of putting the redlined filter and footer inside the panel.
+  Recorded as a known limitation, not scheduled for a fix: `composite: false` (role `dialog`) is the
+  escape hatch if screen-reader testing shows a real problem.
+- **2026-08-30 — Appendix D.1's Dropdowns grid conflicts with §17.1's generic `DemoBlocks` chrome.**
+  D.1 records `minmax(260px,1fr)`, `gap: 20px 24px`, padding `18px 24px 24px`; `DemoBlocks` (§17.1)
+  implements `minmax(268px,1fr)`, `gap: 24px`, padding `18px 24px 6px`. The visible difference is the
+  card's bottom edge, 6px vs 24px. The shared chrome deliberately wins for now — `DemoBlocks` is
+  reused across every section, so changing it to match Dropdowns exactly would move every other
+  section's grid too. D.1 is the more specific authority if this is revisited.
 
 ## Appendix A — `tokens.css`
 

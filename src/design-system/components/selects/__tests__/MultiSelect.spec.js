@@ -1,13 +1,21 @@
-import { mount } from '@vue/test-utils'
+import { enableAutoUnmount, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
+import { SelectRoot } from '@ark-ui/vue/select'
 import MultiSelect from '../MultiSelect.vue'
-import { installArkJsdomShims, resetArkPortals } from '@/design-system/testing/ark-jsdom'
+import { installArkJsdomShims, resetMountedDom } from '@/design-system/testing/ark-jsdom'
 
 // ResizeObserver and Element.scrollTo: jsdom implements neither, and Zag's
 // select machine calls both during ordinary interaction. See ark-jsdom.js
 // for the full explanation, verified against the installed @zag-js/select
 // and @zag-js/popper source.
 installArkJsdomShims()
+
+// Properly unmounts every wrapper through Vue's own lifecycle after each
+// test. See ark-jsdom.js's resetMountedDom docblock: wrapper.unmount() is
+// what actually stops a still-open MultiSelect's Zag machine actor,
+// including any document-level listeners it attached — the blunter reset
+// below cannot do that on its own, since it only deletes DOM nodes.
+enableAutoUnmount(afterEach)
 
 const SERVICES = [
   'Ambulance Service — Type I',
@@ -33,11 +41,13 @@ const mountMulti = (props = {}) =>
     attachTo: document.body,
   })
 
-// Ark mounts SelectContent's portal into document.body gated by a presence
-// machine rather than by open/closed state (see ark-jsdom.js). Most tests
-// below call wrapper.unmount() themselves, but reset defensively so a test
-// that forgets to, or a future one added here, can't leak into the next.
-afterEach(resetArkPortals)
+// SelectContent renders as an ordinary descendant of the mounted component,
+// not into a document.body portal (see ark-jsdom.js), gated by a presence
+// machine rather than by open/closed state. Most tests below call
+// wrapper.unmount() themselves, and enableAutoUnmount above covers the
+// rest — this reset stays as a defensive backstop so a test that forgets
+// to, or a future one added here, still can't leak into the next.
+afterEach(resetMountedDom)
 
 describe('MultiSelect', () => {
   it('summarises the chosen options in the trigger', () => {
@@ -76,6 +86,21 @@ describe('MultiSelect', () => {
     const caret = mountMulti().get('[data-caret]')
     expect(caret.attributes('aria-hidden')).toBe('true')
     expect(caret.classes()).toContain('text-ink-300')
+  })
+
+  it("sets the panel gutter to the redlined 6px, not Zag's 8px default, and matches the trigger's width", () => {
+    // Redline "Panel" — top 44px against a 38px trigger, so a 6px gutter.
+    // jsdom computes no layout, so the rendered offset is not assertable —
+    // but the prop that produces it is. sameWidth: true is asserted here
+    // too: it makes the panel match the trigger's own width instead of its
+    // longest option's — see MultiSelect.vue's comment at the positioning
+    // prop for the full reasoning. Mirrors Select.spec.js's assertion; this
+    // one did not previously exist, leaving the positioning prop unguarded.
+    const wrapper = mountMulti()
+    expect(wrapper.findComponent(SelectRoot).props('positioning')).toEqual({
+      gutter: 6,
+      sameWidth: true,
+    })
   })
 
   it('renders a checkbox per option and checks the chosen ones', async () => {

@@ -1,8 +1,8 @@
-import { mount } from '@vue/test-utils'
+import { enableAutoUnmount, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { SelectRoot } from '@ark-ui/vue/select'
 import Select from '../Select.vue'
-import { installArkJsdomShims, resetArkPortals } from '@/design-system/testing/ark-jsdom'
+import { installArkJsdomShims, resetMountedDom } from '@/design-system/testing/ark-jsdom'
 
 // ResizeObserver and Element.scrollTo: jsdom implements neither, and Zag's
 // select machine calls both during ordinary interaction. See ark-jsdom.js
@@ -10,6 +10,13 @@ import { installArkJsdomShims, resetArkPortals } from '@/design-system/testing/a
 // and @zag-js/popper source) — shared here because MultiSelect needs the
 // identical shim.
 installArkJsdomShims()
+
+// Properly unmounts every wrapper through Vue's own lifecycle after each
+// test. See ark-jsdom.js's resetMountedDom docblock: wrapper.unmount() is
+// what actually stops a still-open Select's Zag machine actor, including
+// any document-level listeners it attached — the blunter reset below
+// cannot do that on its own, since it only deletes DOM nodes.
+enableAutoUnmount(afterEach)
 
 const OPTIONS = [
   'Hospital · Level 1',
@@ -33,13 +40,15 @@ const mountSelect = (props = {}) =>
     attachTo: document.body,
   })
 
-// Ark mounts SelectContent's portal into document.body as soon as the
-// select mounts, gated by a presence machine rather than by open/closed
-// state (see ark-jsdom.js). A wrapper left attached (most tests here never
-// call wrapper.unmount()) therefore leaves its 7 `[role="option"]` nodes in
-// document.body for every later test in this file — an `it('opens on
-// click...')` run right after another mount sees 14, not 7.
-afterEach(resetArkPortals)
+// SelectContent renders as an ordinary descendant of the mounted component,
+// not into a document.body portal (see ark-jsdom.js), gated by a presence
+// machine rather than by open/closed state. enableAutoUnmount above already
+// unmounts every wrapper, which removes this subtree too; this reset is a
+// backstop for document-level queries — most tests here never call
+// wrapper.unmount() themselves mid-test, and without either cleanup an
+// `it('opens on click...')` run right after another mount would see 14
+// `[role="option"]` nodes, not 7.
+afterEach(resetMountedDom)
 
 describe('Select', () => {
   it('shows the placeholder while nothing is chosen', () => {
@@ -83,9 +92,15 @@ describe('Select', () => {
   it("sets the panel gutter to the redlined 6px, not Zag's 8px default", () => {
     // Redline "Panel" — top 44px against a 38px trigger, so a 6px gutter.
     // jsdom computes no layout, so the rendered offset is not assertable —
-    // but the prop that produces it is.
+    // but the prop that produces it is. sameWidth: true is asserted here
+    // too — it's the same positioning object — and makes the panel match
+    // the trigger's width instead of its longest option's; see
+    // Select.vue's comment at the positioning prop for the full reasoning.
     const wrapper = mountSelect()
-    expect(wrapper.findComponent(SelectRoot).props('positioning')).toEqual({ gutter: 6 })
+    expect(wrapper.findComponent(SelectRoot).props('positioning')).toEqual({
+      gutter: 6,
+      sameWidth: true,
+    })
   })
 
   it('renders a decorative caret that assistive technology ignores', () => {

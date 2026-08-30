@@ -35,11 +35,15 @@ const selected = computed(() => (props.modelValue ? [props.modelValue] : []))
   <SelectRoot
     :collection="collection"
     :model-value="selected"
-    :positioning="{ gutter: 6 }"
+    :positioning="{ gutter: 6, sameWidth: true }"
     @value-change="(details) => emit('update:modelValue', details.value[0] ?? '')"
   >
     <!-- Redline "Panel" — top 44px against a 38px trigger, so a 6px gutter.
-         Zag defaults this to 8, which would render the panel 2px too low. -->
+         Zag defaults this to 8, which would render the panel 2px too low.
+         sameWidth: true sizes the panel to the trigger's own width rather
+         than its longest option's — the redline "Value" row is ellipsis,
+         which only ever engages against a trigger-width panel, and every
+         option label's min-w-0 flex-1 truncate is otherwise dead code. -->
     <SelectControl>
       <!-- Redline "Trigger" — 38px, radius 9px, 1px field border, gap 8px.
            `h-field` supplies the height — see the style block below. -->
@@ -60,7 +64,7 @@ const selected = computed(() => (props.modelValue ? [props.modelValue] : []))
       </SelectTrigger>
     </SelectControl>
 
-    <SelectPositioner>
+    <SelectPositioner class="select__positioner">
       <!-- Redline "Panel" and "Panel max-h" — radius 12, pad 6, hairline, 246px. -->
       <SelectContent
         class="select__panel rounded-panel border border-hairline bg-surface p-1.5"
@@ -113,9 +117,28 @@ const selected = computed(() => (props.modelValue ? [props.modelValue] : []))
   overflow-y: auto;
 }
 
+/* Redline "Motion, states & z-index" — Dropdown / menu z-index 12. Zag's
+ * positioner sets zIndex: var(--z-index) inline; undefined, that declaration
+ * is invalid and falls back to auto, which only paints correctly by
+ * accident while nothing else on the page is positioned. */
+.select__positioner {
+  --z-index: var(--z-popover);
+}
+
 /* Redline "Option" — pad 9px 10px. */
 .select__option {
   padding: 9px 10px;
   cursor: pointer;
+}
+
+/* Appendix C "Keyboard & focus" mandates arrow navigation, and "Motion,
+ * states & z-index" requires a visible indicator on every focusable. Zag
+ * sets data-highlighted on the item under the cursor or arrow keys. The
+ * :not() is load-bearing, not defensive: Zag also sets data-state="checked"
+ * on the selected item, and this scoped selector's specificity (0,3,0)
+ * beats the bg-green-tint utility (0,1,0) — without it, arrowing onto the
+ * selected option would replace its redlined tint with grey. */
+.select__option[data-highlighted]:not([data-state='checked']) {
+  background: var(--surface-muted);
 }
 </style>

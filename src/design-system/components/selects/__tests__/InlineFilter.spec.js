@@ -1,8 +1,8 @@
-import { mount } from '@vue/test-utils'
+import { enableAutoUnmount, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { SelectRoot } from '@ark-ui/vue/select'
 import InlineFilter from '../InlineFilter.vue'
-import { installArkJsdomShims, resetArkPortals } from '@/design-system/testing/ark-jsdom'
+import { installArkJsdomShims, resetMountedDom } from '@/design-system/testing/ark-jsdom'
 
 // ResizeObserver and Element.scrollTo: jsdom implements neither, and Zag's
 // select machine calls both during ordinary interaction. See ark-jsdom.js
@@ -10,6 +10,13 @@ import { installArkJsdomShims, resetArkPortals } from '@/design-system/testing/a
 // and @zag-js/popper source — shared here because InlineFilter mounts the
 // same select machine as Select and MultiSelect.
 installArkJsdomShims()
+
+// Properly unmounts every wrapper through Vue's own lifecycle after each
+// test. See ark-jsdom.js's resetMountedDom docblock: wrapper.unmount() is
+// what actually stops a still-open InlineFilter's Zag machine actor,
+// including any document-level listeners it attached — the blunter reset
+// below cannot do that on its own, since it only deletes DOM nodes.
+enableAutoUnmount(afterEach)
 
 const STATUSES = [
   { label: 'Active', dot: 'bg-dot-green' },
@@ -24,12 +31,13 @@ const mountFilter = (props = {}) =>
     attachTo: document.body,
   })
 
-// Ark mounts SelectContent's portal into document.body as soon as the select
-// mounts, gated by a presence machine rather than by open/closed state (see
-// ark-jsdom.js). Most tests below never call wrapper.unmount(), so a wrapper
-// left attached would leak its portaled nodes into the next test's
-// document-level queries — reset defensively between every test.
-afterEach(resetArkPortals)
+// SelectContent renders as an ordinary descendant of the mounted component,
+// not into a document.body portal (see ark-jsdom.js), gated by a presence
+// machine rather than by open/closed state. Most tests below never call
+// wrapper.unmount() themselves; enableAutoUnmount above now covers that,
+// and this reset stays as a defensive backstop for document-level queries
+// between every test.
+afterEach(resetMountedDom)
 
 describe('InlineFilter', () => {
   it('renders the field name inline before the value', () => {
@@ -39,11 +47,15 @@ describe('InlineFilter', () => {
   })
 
   it('wears the soft-bordered 34px shell, not the 38px field shell', () => {
-    // Redline "Inline variant" — radius 8px and the soft border, which the
-    // bridge exposes as `border-soft`; `border-border-soft` emits nothing.
+    // Redline "Inline variant" — 34px, radius 8px and the soft border, which
+    // the bridge exposes as `border-soft`; `border-border-soft` emits
+    // nothing. `h-compact` is the same token RowMenu's trigger uses for its
+    // 34px side — without asserting it, the utility could be dropped and
+    // this test's own title would keep claiming a height nothing checks.
     const trigger = mountFilter().get('[data-trigger]')
     expect(trigger.classes()).toContain('rounded-control')
     expect(trigger.classes()).toContain('border-soft')
+    expect(trigger.classes()).toContain('h-compact')
     expect(trigger.classes()).not.toContain('rounded-field')
     expect(trigger.classes()).not.toContain('border-field')
   })
