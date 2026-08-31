@@ -140,10 +140,6 @@ describe('ContainersSection', () => {
 })
 
 describe('skeleton sections show their headings and mark their gaps', () => {
-  it('FilesSection renders its file-list heading and marks both gaps', () => {
-    expect(mount(FilesSection).text()).toContain('FILE LIST — UPLOADING, DONE, FAILED')
-    expect(mount(FilesSection).findAll('[data-gap]').length).toBeGreaterThan(0)
-  })
 
   it('DialogSection shows Skeleton for real and marks the other two', () => {
     const wrapper = mount(DialogSection)
@@ -623,5 +619,49 @@ describe('carry-forward audit: arrangement the earlier sections were built witho
     expect(rows[0].findAll('div')[2].text()).toBe('26px / 700 / -0.015em')
     expect(wrapper.text()).toContain('Buenavista Primary Health Care Center')
     expect(wrapper.text()).toContain('Your PNPKI certificate and its password are stored encrypted.')
+  })
+})
+
+describe('FilesSection carries the artifact\'s three demos', () => {
+  it('renders both inputs and the spanning file list, with no gaps left', () => {
+    const wrapper = mount(FilesSection)
+    expect(wrapper.findAll('[data-gap]')).toHaveLength(0)
+    expect(wrapper.text()).toContain('PNPKI certificate')
+    expect(wrapper.text()).toContain('Compact · inside a form row')
+    expect(wrapper.text()).toContain('FILE LIST — UPLOADING, DONE, FAILED')
+    expect(wrapper.get('[data-dropzone]').text()).toContain('Drop a file or click to browse')
+    expect(wrapper.text()).toContain('.p12 · up to 5 MB')
+    expect(wrapper.get('[data-row]').text()).toContain('No file selected')
+    // Appendix D.1 — the list spans the grid rather than sitting in a strip;
+    // the artifact gives this section no tinted strip at all.
+    expect(wrapper.findAll('.demo-strip')).toHaveLength(0)
+    expect(wrapper.find('.files-section__wide').exists()).toBe(true)
+    expect(wrapper.get('.demo-blocks').attributes('style')).toContain('--db-min: 320px')
+  })
+
+  it('shows one row per file, each in its own state', () => {
+    const wrapper = mount(FilesSection)
+    const rows = wrapper.findAll('[data-file-row]')
+    expect(rows).toHaveLength(3)
+    expect(rows.map((r) => r.get('[data-name]').text())).toEqual([
+      'matangcas-pnpki.p12',
+      'floorplan-carmen-rhu.pdf',
+      'annex-b2-equipment.xlsx',
+    ])
+    // done -> success note, uploading -> a bar and no note, failed -> red row
+    expect(rows[0].get('[data-note]').text()).toBe('Uploaded · virus scan passed')
+    expect(rows[1].find('[data-note]').exists()).toBe(false)
+    expect(rows[1].get('[data-bar]').attributes('aria-valuenow')).toBe('62')
+    expect(rows[2].classes()).toContain('bg-red-50')
+    expect(rows[2].get('[data-note]').text()).toBe(
+      'Over the 10 MB limit — compress or split the file.',
+    )
+  })
+
+  it('removes a row through the destructive action', async () => {
+    const wrapper = mount(FilesSection)
+    await wrapper.findAll('[data-remove]')[1].trigger('click')
+    expect(wrapper.findAll('[data-file-row]')).toHaveLength(2)
+    expect(wrapper.text()).not.toContain('floorplan-carmen-rhu.pdf')
   })
 })
