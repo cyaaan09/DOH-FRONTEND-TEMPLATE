@@ -1,15 +1,43 @@
 <script setup>
+import { ref } from 'vue'
+import { Accordion } from '@/design-system'
 import DemoCard from '../chrome/DemoCard.vue'
-import DemoBlocks from '../chrome/DemoBlocks.vue'
-import DemoBlock from '../chrome/DemoBlock.vue'
-import DemoGap from '../chrome/DemoGap.vue'
 import DemoRules from '../chrome/DemoRules.vue'
 
-// Added by the second 2026-08-31 artifact update. Spec §17.2 — the slot is
-// visible from the start, so the page stays a live checklist. Everything
-// here is generated from Appendix D: the rule cards are CONTENT the artifact
-// shows, so a skeleton renders them for real even while its component slot
-// is still a gap.
+// Appendix D.1, "Accordion" — one record read top to bottom. Redline
+// "Default state · first section open, rest collapsed".
+const open = ref(['profile'])
+
+const ITEMS = [
+  { value: 'profile', title: 'Facility profile', summary: 'Type, address, contact' },
+  {
+    value: 'services',
+    title: 'Services offered',
+    summary: 'Pharmacy, Birthing Home',
+    badge: { label: '2', tone: 'neutral' },
+  },
+  {
+    value: 'inspection',
+    title: 'Inspection history',
+    summary: 'Last passed 12 Jun 2026',
+    badge: { label: '4', tone: 'done' },
+  },
+  {
+    value: 'documents',
+    title: 'Documents',
+    summary: '2 files rejected — action needed',
+    badge: { label: '2', tone: 'action' },
+  },
+  { value: 'audit', title: 'Audit trail', summary: '18 events since 2019' },
+]
+
+const PROFILE = [
+  { label: 'TYPE', value: 'Primary Care Facility' },
+  { label: 'ADDRESS', value: 'Purok 3, Carmen' },
+  { label: 'CONTACT', value: 'Dr. A. Salcedo' },
+  { label: 'TELEPHONE', value: '(085) 343 1120' },
+]
+
 const RULES = [
   {
     title: 'Headers summarise, not tease',
@@ -35,24 +63,31 @@ const RULES = [
     title="Accordion"
     description="For a long record read top to bottom — not for switching views, which is what tabs are. One section open by default, the rest collapsed with enough summary in the header to decide whether to open them."
   >
-    <DemoBlocks>
-      <DemoBlock label="TYPE">
-        <DemoGap component="Accordion" group="Accordion" />
-      </DemoBlock>
-
-      <DemoBlock label="ADDRESS">
-        <DemoGap component="Accordion" group="Accordion" />
-      </DemoBlock>
-
-      <DemoBlock label="CONTACT">
-        <DemoGap component="Accordion" group="Accordion" />
-      </DemoBlock>
-
-      <DemoBlock label="TELEPHONE">
-        <DemoGap component="Accordion" group="Accordion" />
-      </DemoBlock>
-    </DemoBlocks>
+    <div class="px-card-x pt-4.5 pb-6">
+      <Accordion v-model="open" :items="ITEMS" title="Carmen Rural Health Unit">
+        <template #profile>
+          <div v-for="fact in PROFILE" :key="fact.label">
+            <div class="accordion-section__label text-text-header">{{ fact.label }}</div>
+            <div class="accordion-section__value text-ink-900">{{ fact.value }}</div>
+          </div>
+        </template>
+      </Accordion>
+    </div>
 
     <DemoRules :rules="RULES" />
   </DemoCard>
 </template>
+
+<style scoped>
+/* Appendix D.1 — body labels are the column-header step at a 5px gap. */
+.accordion-section__label {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 5px;
+}
+
+.accordion-section__value {
+  font-size: 13px;
+}
+</style>

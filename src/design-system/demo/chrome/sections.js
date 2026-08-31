@@ -24,7 +24,7 @@ export const SECTIONS = [
   { id: 'stepper', title: 'Stepper', complete: true },
   { id: 'date-picker', title: 'Date picker', complete: false },
   { id: 'tooltip', title: 'Tooltip & popover', complete: true },
-  { id: 'accordion', title: 'Accordion', complete: false },
+  { id: 'accordion', title: 'Accordion', complete: true },
   { id: 'search', title: 'Search with results', complete: false },
   { id: 'notifications', title: 'Notification centre & activity feed', complete: false },
   { id: 'destructive', title: 'Destructive confirmation', complete: false },
