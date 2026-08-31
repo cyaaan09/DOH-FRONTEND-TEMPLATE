@@ -44,13 +44,7 @@ const showDot = computed(() => TONES.includes(props.dot))
   >
     <!-- Redline "Label" — 12px/500, dot 8px, gap 7px, no uppercase. -->
     <span data-label class="flex items-center text-hint font-medium text-text-meta">
-      <span
-        v-if="showDot"
-        data-dot
-        class="statcard__dot"
-        :class="dotClass"
-        aria-hidden="true"
-      />
+      <span v-if="showDot" data-dot class="statcard__dot" :class="dotClass" aria-hidden="true" />
       {{ label }}
     </span>
 

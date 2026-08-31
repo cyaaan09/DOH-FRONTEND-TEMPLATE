@@ -9,7 +9,7 @@
  */
 export const SECTIONS = [
   { id: 'foundations', title: 'Foundations', complete: false },
-  { id: 'containers', title: 'Containers & surfaces', complete: false },
+  { id: 'containers', title: 'Containers & surfaces', complete: true },
   { id: 'chips', title: 'Chips', complete: true },
   { id: 'tabs', title: 'Tabs', complete: true },
   { id: 'fields', title: 'Text fields', complete: true },

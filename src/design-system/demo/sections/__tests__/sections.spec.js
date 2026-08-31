@@ -117,9 +117,6 @@ describe('ContainersSection', () => {
     }
   })
 
-  it('marks the page shell as not built', () => {
-    expect(mount(ContainersSection).findAll('[data-gap]').length).toBeGreaterThan(0)
-  })
 
   it('renders the INNER SURFACES captions and closing line verbatim (Appendix D.1)', () => {
     const text = mount(ContainersSection).text()
@@ -751,5 +748,58 @@ describe('ChipsSection is complete', () => {
     expect(strips).toHaveLength(2)
     expect(strips[0].classes()).toContain('bg-surface-sunken')
     expect(strips[1].classes()).not.toContain('bg-surface-sunken')
+  })
+})
+
+describe('ContainersSection is complete', () => {
+  it('draws the page shell as a schematic, not a live AppShell', () => {
+    // Appendix D.1 — the artifact draws a 172px miniature with its own
+    // measurements on it. The skeleton had marked this slot as a missing
+    // AppShell component; nothing on this page renders one.
+    const wrapper = mount(ContainersSection)
+    expect(wrapper.findAll('[data-gap]')).toHaveLength(0)
+    const shell = wrapper.get('[data-shell-schematic]')
+    expect(shell.text()).toContain('244px')
+    expect(shell.text()).toContain('STICKY HEADER · z 6')
+    expect(shell.text()).toContain('cards · 22px apart · max-w 1320 / 1560px')
+  })
+
+  it('renders the divided card as four ruled cells, no nesting', () => {
+    const card = mount(ContainersSection).get('[data-divided-card]')
+    const cells = card.findAll('[data-cell]')
+    expect(cells).toHaveLength(4)
+    expect(cells.map((c) => c.get('[data-cell-label]').text())).toEqual([
+      'HOLDER',
+      'TYPE',
+      'VALID FROM',
+      'EXPIRES',
+    ])
+    // Inside edges only: the card's own border closes the outside, so the
+    // right-hand cells draw no right rule and the bottom row no bottom rule.
+    expect(cells[0].classes()).toContain('border-r')
+    expect(cells[1].classes()).not.toContain('border-r')
+    expect(cells[0].classes()).toContain('border-b')
+    expect(cells[2].classes()).not.toContain('border-b')
+    // The dates are mono, the words are not.
+    expect(cells[2].get('[data-cell-value]').classes()).toContain('font-mono')
+    expect(cells[0].get('[data-cell-value]').classes()).not.toContain('font-mono')
+  })
+
+  it('uses the narrow card gutter and a spread footer', () => {
+    // Appendix C allows 20px "on cards under ~360px"; this is a 300px cell.
+    const wrapper = mount(ContainersSection)
+    expect(wrapper.get('[data-card-header]').classes()).toContain('card-header--narrow')
+    const footer = wrapper.get('[data-card-footer]')
+    expect(footer.classes()).toContain('card-footer--narrow')
+    expect(footer.classes()).toContain('justify-between')
+    expect(footer.text()).toContain('Footer on the sunken tint')
+  })
+
+  it('closes each of the three grid blocks with its note', () => {
+    expect(mount(ContainersSection).findAll('[data-footnote]').map((n) => n.text())).toEqual([
+      'Radius 14px · 1px #E4E8EF · shadow 0 1px 2px rgba(16,24,40,.04).',
+      'Facts split by 1px #EEF1F6 rules — never by inner cards.',
+      'Four tints, each with one job. No new greys.',
+    ])
   })
 })
