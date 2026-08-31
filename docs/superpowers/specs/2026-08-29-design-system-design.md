@@ -1480,6 +1480,18 @@ _DM Sans 400/500/700 · JetBrains Mono for copyable values_
   summary. The first pass at this reported `Keyboard shortcuts` as 241 rows and `Responsive & touch`
   as 68; both were absorbing their successors.
 
+- **2026-08-31 — Zag's date-picker `min`/`max` are `DateValue`s, and a string fails misleadingly.**
+  Passing `min="2026-09-03"` leaves the machine's setup throwing, and Vue then reports
+  `date-picker-root` as **"Component is missing template or render function"** — a message that
+  points at the component rather than at the prop. The picker mounted clean in isolation and only
+  broke in the section that passed a `min`, which is what finally located it. `DatePicker` parses
+  both with Ark's re-exported `parseDate`, and a test asserts it.
+- **2026-08-31 — `@zag-js/date-picker` has no `getWeeks`.** The api exposes `weeks` for the current
+  month and `getOffset({ months: n })` for any other, each carrying its own `weeks` AND
+  `visibleRange`. Passing the root's `visibleRange` to an offset month marks the wrong days as
+  outside it. Reaching for a `getWeeks` that does not exist threw `RangeError: Invalid array
+  length`.
+
 ## Appendix D — demo page content
 
 Extracted verbatim from the source artifact. This is the content authority for the

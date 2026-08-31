@@ -22,7 +22,7 @@ export const SECTIONS = [
   // Added by the 2026-08-31 artifact update — five new sections.
   { id: 'layout', title: 'Layout primitives — Row, Column & containers', complete: true },
   { id: 'stepper', title: 'Stepper', complete: true },
-  { id: 'date-picker', title: 'Date picker', complete: false },
+  { id: 'date-picker', title: 'Date picker', complete: true },
   { id: 'tooltip', title: 'Tooltip & popover', complete: true },
   { id: 'accordion', title: 'Accordion', complete: true },
   { id: 'search', title: 'Search with results', complete: false },
