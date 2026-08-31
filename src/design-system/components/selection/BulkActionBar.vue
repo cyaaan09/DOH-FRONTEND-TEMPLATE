@@ -70,25 +70,24 @@ function toggleRow(id, checked) {
   <div class="bulk-action-bar flex flex-col">
     <!-- Redline "Bulk bar" — pad 11px 16px, sunken idle / green tint active. -->
     <div data-bulk-bar class="bulk-bar flex items-center justify-between" :class="barClass">
-      <span class="bulk-bar__select flex items-center">
-        <!-- The header box composes Checkbox for its tri-state glyph and
-             native input, exactly like every row below — label is left
-             blank here because Checkbox always renders it visibly (no
-             "hidden label" option) and the count/"Select all" text is the
-             separate data-bulk-label span next to it; passing the same
-             text to both would show it twice. Checkbox's own "Label" gap
-             (10px, reused unmodified) still lands between the box and that
-             span because .checkbox__text's margin applies to the empty
-             label too. -->
-        <Checkbox
-          data-bulk-box
-          :model-value="allSelected"
-          :indeterminate="isIndeterminate"
-          label=""
-          @update:model-value="toggleAll"
-        />
-        <span data-bulk-label class="text-body text-ink-700">{{ headerLabel }}</span>
-      </span>
+      <!-- The header box composes Checkbox exactly like every row below,
+           passing the live count straight through as its label: Checkbox
+           renders it via its own data-label hook (Task 1), so Ark's
+           aria-labelledby resolves to real, non-empty text and the native
+           input has a genuine accessible name (WCAG 4.1.2, spec §18
+           baseline 2.1 AA). An earlier version kept this box unlabelled and
+           read the visible text from a separate sibling span to avoid
+           rendering it twice — unneeded, since Checkbox has exactly one
+           label slot and one call site here, so nothing competes with it.
+           See this component's spec, "gives the header checkbox a real
+           accessible name". -->
+      <Checkbox
+        data-bulk-box
+        :model-value="allSelected"
+        :indeterminate="isIndeterminate"
+        :label="headerLabel"
+        @update:model-value="toggleAll"
+      />
 
       <div v-if="hasSelection" class="bulk-bar__actions flex items-center gap-2">
         <Button

@@ -25,9 +25,31 @@ describe('BulkActionBar', () => {
   })
 
   it('reads "Select all" at zero and a count once something is chosen', () => {
-    // Appendix D.1 — the header label is a count, not a static string.
-    expect(mountBar().get('[data-bulk-label]').text()).toBe('Select all')
-    expect(mountBar({ modelValue: ['r1', 'r2'] }).get('[data-bulk-label]').text()).toBe('2 selected')
+    // Appendix D.1 — the header label is a count, not a static string. Read
+    // through the box: the count is Checkbox's own label (see "gives the
+    // header checkbox a real accessible name" below), found via its
+    // data-label hook from Task 1.
+    expect(mountBar().get('[data-bulk-box] [data-label]').text()).toBe('Select all')
+    expect(
+      mountBar({ modelValue: ['r1', 'r2'] }).get('[data-bulk-box] [data-label]').text(),
+    ).toBe('2 selected')
+  })
+
+  it('gives the header checkbox a real accessible name', () => {
+    // WCAG 4.1.2 — an interactive control needs a non-empty accessible
+    // name. Ark names the native input via aria-labelledby, pointing at
+    // Checkbox's own label element; read through that exact mechanism
+    // rather than trusting the visible text happens to be wired up right.
+    // Queried on the wrapper, not the global `document`: mount() attaches
+    // to a detached element by default, which document.getElementById
+    // cannot see. The id contains colons (Ark mints "checkbox:v-0:label"),
+    // so it is matched as an attribute value rather than a `#id` selector,
+    // which would parse the colons as pseudo-class syntax.
+    const wrapper = mountBar()
+    const input = wrapper.get('[data-bulk-box] input[type="checkbox"]')
+    const labelId = input.attributes('aria-labelledby')
+    expect(labelId).toBeTruthy()
+    expect(wrapper.get(`[id="${labelId}"]`).text()).toBe('Select all')
   })
 
   it('hides the actions until at least one row is chosen', () => {
