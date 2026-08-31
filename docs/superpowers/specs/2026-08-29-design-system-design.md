@@ -1274,6 +1274,16 @@ _DM Sans 400/500/700 · JetBrains Mono for copyable values_
   and therefore measured the LIGHT theme while reporting on the dark one; it now clicks the real
   toggle and polls for the attribute. Any future dark test must do the same.
 
+- **2026-08-31 — the compact Stepper's meter uses `--grad-meter`, not the artifact's literal.** The
+  redline names the token ("Compact · 5px meter --grad-meter"); the artifact renders
+  `linear-gradient(90deg, --green-fill, --green-500)`, a different pair. Spec §2 gives Appendix C
+  the casting vote where the two disagree, and the token also keeps this meter identical to every
+  other one on the page.
+- **2026-08-31 — the error Stepper's container tint is `--red-border` on `--red-50`.** Appendix D.1
+  draws it `1px #F7D6D1` on `#FFF6F5`, neither of which is tokenised and both of which sit within
+  two or three digits of the existing pair. Adding two tokens for one container is worse than the
+  difference.
+
 ## Appendix D — demo page content
 
 Extracted verbatim from the source artifact. This is the content authority for the
@@ -1867,6 +1877,13 @@ demo folder is exempt from the raw-hex guard precisely so blocks like this can q
 - `VERTICAL — A RECORD WITH HISTORY`
 - `COMPACT — INSIDE A CARD HEADER`
 - `ERROR STATE`
+
+**Rule cards:**
+
+- **Reached steps only** — A completed or current step is a button; an upcoming step is plain text. Jumping forward past validation is how half-filled records get created.
+- **The connector carries progress** — 2px, green behind reached steps and #EEF1F6 ahead of them. The current step keeps a 4px rgba(23,114,54,.12) halo so it reads at a glance.
+- **Sub-labels do work** — Completed shows the date and who did it, current shows what is left, upcoming shows the requirement. Never a repeat of the step title.
+- **Four steps horizontal, five plus vertical** — Above four, horizontal labels start truncating — switch to the vertical form, or the compact meter if the header has no room.
 
 
 #### Form layout
