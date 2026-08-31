@@ -23,6 +23,7 @@ import {
   parseDate,
 } from '@ark-ui/vue/date-picker'
 import { computed } from 'vue'
+import { applyMask } from './mask.js'
 
 /**
  * Redline "Input parsing · accepts 04/09/2026, 4 Sep 26, 2026-09-04 ·
@@ -70,14 +71,31 @@ const maxValue = computed(() => (props.max ? parseDate(props.max) : undefined))
     :positioning="{ gutter: 6 }"
     @value-change="(details) => $emit('valueChange', details)"
   >
+    <!-- The mask listens in the CAPTURE phase on the control, not on the input.
+         Zag owns this input: its own onInput reads event.target.value and
+         writes it into the machine, and Vue then patches the element's value
+         back from that state. A listener on the input itself is registered
+         after Zag's and loses both ways — it sees the value too late and its
+         edit is overwritten on the next patch. Capture runs ancestor-first, so
+         by the time Zag reads the event the value is already masked and the
+         machine adopts it. -->
     <DatePickerControl
       data-dp-control
       class="dp__control flex items-center rounded-field border border-field bg-surface"
+      @input.capture="(event) => applyMask(event.target, event.inputType)"
     >
+      <!-- The mask runs on the element, not through a ref: this input belongs
+           to Zag's machine, which reads whatever value is on the element when
+           it parses. maxlength 10 fits every format the redline names —
+           04/09/2026 and 2026-09-26 are both 10, 4 Sep 26 is 8 — and is what
+           stops a non-numeric value running past the mask's own 8-digit cap.
+           No inputmode="numeric": it would give a numeric keypad on touch and
+           make `Sep` untypable, deleting a redlined format on phones only. -->
       <DatePickerInput
         data-dp-input
         class="dp__input min-w-0 flex-1 font-mono"
         :aria-label="label"
+        maxlength="10"
       />
       <!-- Redline "Field · 13px glyph --text-meta right". The glyph OPENS the
            calendar; it is a control, so it is named. -->

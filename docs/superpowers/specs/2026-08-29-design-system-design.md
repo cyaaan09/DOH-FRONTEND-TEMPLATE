@@ -2400,6 +2400,20 @@ panel labels inside the expanded row, not section sub-blocks.
   600ms. Now `--t-spin: 700ms`, the only duration in the system that had bypassed the motion
   tokens.
 
+- **2026-09-01 — the date field accepts only digits and slashes; `4 Sep 26` and `2026-09-26` never worked, and nothing normalises on blur.**
+  Appendix C's *Date picker* row says `Input parsing | accepts 04/09/2026, 4 Sep 26, 2026-09-04 ·
+  normalised on blur`. Measured against the built page with no mask in place, Zag's date-picker
+  input strips letters and dashes as they are typed and does no blur normalisation at all:
+  `4 Sep 26` becomes `426`, `2026-09-26` becomes `20260926`, and both stay that way on blur. Only
+  the slash form survives. This is a PRE-EXISTING gap — it predates the input mask added the same
+  day, which was verified against this baseline before being restored.
+  Two consequences a future reader needs: the demo section's own body copy advertises all three
+  formats, so the page currently promises behaviour the component does not have; and the mask's
+  `isMaskable` branch, which exists to step aside for letters and dashes, is unreachable in
+  practice until this is fixed. Closing it means supplying Zag's `parse` prop (and `format` for
+  the return trip) — deliberately not done here, because it is a change to what the field accepts
+  rather than to how it is punctuated.
+
 #### chipRules
 
 - **One tone per meaning** — Green = good or issued, amber = waiting or legacy, red = blocked or overdue, grey = neutral, purple = modification.

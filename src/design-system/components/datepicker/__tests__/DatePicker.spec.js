@@ -33,9 +33,7 @@ describe('DatePicker', () => {
   })
 
   it('accepts a range over two months', () => {
-    expect(() =>
-      mountDP({ selectionMode: 'range', numOfMonths: 2 }),
-    ).not.toThrow()
+    expect(() => mountDP({ selectionMode: 'range', numOfMonths: 2 })).not.toThrow()
   })
 
   it('validates its selection mode', () => {
