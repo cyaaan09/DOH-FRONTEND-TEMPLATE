@@ -375,6 +375,18 @@ Found while extracting the page structure; each is scheduled into the phase that
   children. This is the structural cost of putting the redlined filter and footer inside the panel.
   Recorded as a known limitation, not scheduled for a fix: `composite: false` (role `dialog`) is the
   escape hatch if screen-reader testing shows a real problem.
+- **2026-08-31 — "aria-checked=mixed" is expressed as an IDL property, not an attribute.**
+  Appendix C's *Keyboard & focus* group says `Bulk select | header checkbox is aria-checked=mixed
+  when partial`. Ark's checkbox exposes semantics through a hidden native `<input
+  type="checkbox">` and never emits an `aria-checked` attribute anywhere — the mixed state lives
+  on that input's `indeterminate` IDL property, which is how native checkboxes convey it and what
+  assistive technology reads. The same applies to `Switch`: `role` appears nowhere in
+  `@zag-js/switch`, whose hidden input is a plain checkbox with `defaultChecked`.
+  Recorded as wording, not a gap: the requirement — a partial selection must announce as mixed —
+  **is** met, and tests assert `input.element.indeterminate`. A future reader should not "fix"
+  this by adding an `aria-checked` attribute onto a native input, which would conflict with its
+  implicit state rather than clarify it.
+
 - **2026-08-31 — the `Counts` ARIA row is deliberately unimplemented on `Tabs` and `StageTabs`.**
   Appendix C's *ARIA & semantics* group specifies `Counts | badge text needs context:
   aria-label='10 applications for checking'`. Both components carried exactly that and it was

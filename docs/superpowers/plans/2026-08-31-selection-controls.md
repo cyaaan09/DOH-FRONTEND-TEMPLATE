@@ -492,19 +492,23 @@ describe('Switch', () => {
     expect(knob.classes()).toContain('rounded-pill')
   })
 
-  it('exposes switch semantics with its state', () => {
-    expect(mountSwitch({ modelValue: true }).get('[role="switch"]').attributes('aria-checked')).toBe(
-      'true',
-    )
+  it('exposes its state through the native input', () => {
+    // Verified against @zag-js/switch: `role` appears NOWHERE in that package,
+    // and getHiddenInputProps renders a plain <input type="checkbox"> with
+    // defaultChecked and no aria-checked. State therefore lives on the input's
+    // own `checked` IDL property, exactly as it does for Checkbox.
+    const input = mountSwitch({ modelValue: true }).get('input[type="checkbox"]')
+    expect(input.element.checked).toBe(true)
+    expect(mountSwitch().get('input[type="checkbox"]').element.checked).toBe(false)
   })
 
   it('emits update:modelValue when toggled, and not when disabled', async () => {
     const on = mountSwitch()
-    await on.get('[role="switch"]').trigger('click')
+    await on.get('input[type="checkbox"]').trigger('click')
     expect(on.emitted('update:modelValue')?.[0]).toEqual([true])
 
     const off = mountSwitch({ disabled: true })
-    await off.get('[role="switch"]').trigger('click')
+    await off.get('input[type="checkbox"]').trigger('click')
     expect(off.emitted('update:modelValue')).toBeUndefined()
   })
 })
@@ -767,21 +771,26 @@ describe('BulkActionBar', () => {
 
   it('shows the header box mixed when some but not all rows are chosen', () => {
     // Redline "Indeterminate" — the tri-state is the point of this control.
-    expect(mountBar({ modelValue: ['r1'] }).get('[data-bulk-box]').attributes('aria-checked')).toBe(
-      'mixed',
+    // Appendix C's Keyboard row says "aria-checked=mixed", but Task 1 proved
+    // Ark exposes mixed through the native input's `indeterminate` IDL
+    // PROPERTY, with no aria-checked attribute anywhere. Assert the property.
+    const partial = mountBar({ modelValue: ['r1'] }).get('[data-bulk-box] input[type="checkbox"]')
+    expect(partial.element.indeterminate).toBe(true)
+
+    const all = mountBar({ modelValue: ['r1', 'r2', 'r3'] }).get(
+      '[data-bulk-box] input[type="checkbox"]',
     )
-    expect(
-      mountBar({ modelValue: ['r1', 'r2', 'r3'] }).get('[data-bulk-box]').attributes('aria-checked'),
-    ).toBe('true')
+    expect(all.element.indeterminate).toBe(false)
+    expect(all.element.checked).toBe(true)
   })
 
   it('selects every row from the header, and clears them all again', async () => {
     const wrapper = mountBar()
-    await wrapper.get('[data-bulk-box]').trigger('click')
+    await wrapper.get('[data-bulk-box] input[type="checkbox"]').trigger('click')
     expect(wrapper.emitted('update:modelValue')?.[0][0]).toEqual(['r1', 'r2', 'r3'])
 
     const full = mountBar({ modelValue: ['r1', 'r2', 'r3'] })
-    await full.get('[data-bulk-box]').trigger('click')
+    await full.get('[data-bulk-box] input[type="checkbox"]').trigger('click')
     expect(full.emitted('update:modelValue')?.[0][0]).toEqual([])
   })
 
