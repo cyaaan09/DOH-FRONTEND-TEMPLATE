@@ -8,6 +8,10 @@ import {
   RadioGroupItemHiddenInput,
 } from '@ark-ui/vue/radio-group'
 
+/**
+ * A radio group presented as selectable cards, for a small set of choices that each
+ * need explaining.
+ */
 const props = defineProps({
   /** Array<{ value, label, hint?, disabled? }>, in display order. Same option
    *  shape as Radio. */

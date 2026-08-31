@@ -2,6 +2,10 @@
 import { Toaster } from '@ark-ui/vue/toast'
 import Toast from './Toast.vue'
 
+/**
+ * The live region that positions the toast stack. Takes the store from Ark's
+ * `createToaster` — the artifact's settings are bottom-end, gap 10, 5s, three at most.
+ */
 defineProps({
   /**
    * The store from Ark's `createToaster`. The artifact's numbers are

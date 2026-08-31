@@ -8,6 +8,10 @@ import {
   CheckboxHiddenInput,
 } from '@ark-ui/vue/checkbox'
 
+/**
+ * A 17px box with its label and optional hint. Supports the indeterminate state a
+ * partial bulk selection needs.
+ */
 const props = defineProps({
   /** Whether the box is checked. Ignored while `indeterminate` is true. */
   modelValue: { type: Boolean, default: false },

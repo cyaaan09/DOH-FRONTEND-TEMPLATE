@@ -6,6 +6,9 @@ import {
   FileUploadTrigger,
 } from '@ark-ui/vue/file-upload'
 
+/**
+ * The same upload in a 38px field row, for forms too dense for a dropzone.
+ */
 defineProps({
   /** Field name above the row — Appendix D.1's `Compact · inside a form row`. */
   label: { type: String, required: true },

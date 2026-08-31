@@ -4,6 +4,10 @@ import { DEFAULT_TONE, TONE_TEXT, TONES } from '../tones'
 
 const VARIANTS = ['tint', 'filled', 'service', 'count']
 
+/**
+ * A status or category pill. The TONE carries the meaning and the word repeats it —
+ * colour is never the only signal, and no row shows two chips of the same tone.
+ */
 const props = defineProps({
   tone: {
     type: String,

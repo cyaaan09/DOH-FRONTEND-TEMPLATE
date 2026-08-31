@@ -8,6 +8,10 @@ import {
   SwitchHiddenInput,
 } from '@ark-ui/vue/switch'
 
+/**
+ * An on/off control whose label sits to its LEFT — the artifact's own footnote for this
+ * sub-block, and the opposite of the checkbox order.
+ */
 const props = defineProps({
   /** Whether the switch is on. */
   modelValue: { type: Boolean, default: false },

@@ -2,13 +2,17 @@
 
 A fresh, opinionated Vue 3 base template for building frontends.
 
+**It ships a complete design system** — 69 components, one token palette, light
+and dark. Start at [docs/design-system/README.md](docs/design-system/README.md),
+or run `npm run dev` and open `/design-system` to see every component rendered.
+
 ## Stack
 
 - **[Vue 3](https://vuejs.org/)** + **[Vite](https://vite.dev/)** (JavaScript)
 - **File-based routing** — [unplugin-vue-router](https://uvr.esm.is/) (routes generated from `src/pages/`)
 - **Layouts** — [vite-plugin-vue-layouts-next](https://github.com/loicduong/vite-plugin-vue-layouts-next) (`src/layouts/`)
 - **[Pinia](https://pinia.vuejs.org/)** state management
-- **[Tailwind CSS v4](https://tailwindcss.com/)** with class-based dark mode
+- **[Tailwind CSS v4](https://tailwindcss.com/)** with `data-theme` dark mode
 - **[VueUse](https://vueuse.org/)** composables
 - **[Vitest](https://vitest.dev/)** unit testing
 - **ESLint + Prettier + oxlint**

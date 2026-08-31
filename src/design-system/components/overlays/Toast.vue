@@ -8,6 +8,10 @@ import {
   ToastCloseTrigger,
 } from '@ark-ui/vue/toast'
 
+/**
+ * One toast in the stack: a tone-coloured icon, the message, an optional action, and a
+ * timer bar. Rendered by ToastRegion, not mounted directly.
+ */
 const props = defineProps({
   /** The toast object Ark's <Toaster> hands to its default slot. */
   toast: { type: Object, required: true },

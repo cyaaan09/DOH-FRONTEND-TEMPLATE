@@ -1,4 +1,8 @@
 <script setup>
+/**
+ * A card's action row. `spread` pushes the primary action to the far edge; `narrow`
+ * tightens the gutter for dense cards.
+ */
 defineProps({
   /** The 20px gutter Appendix C allows for "cards under ~360px". */
   narrow: { type: Boolean, default: false },

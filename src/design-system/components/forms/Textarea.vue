@@ -1,6 +1,10 @@
 <script setup>
 import { computed, useId } from 'vue'
 
+/**
+ * A multi-line field carrying the same label, hint and error contract as TextField,
+ * plus an optional character counter.
+ */
 const props = defineProps({
   modelValue: { type: String, default: '' },
   label: { type: String, required: true },

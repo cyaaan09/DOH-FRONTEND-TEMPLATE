@@ -11,6 +11,10 @@ import {
 } from '@ark-ui/vue/select'
 import { createListCollection } from '@ark-ui/vue/collection'
 
+/**
+ * A single-choice dropdown. The panel matches the trigger's width and opens 6px below
+ * it.
+ */
 const props = defineProps({
   /** The options to choose between, in display order. */
   options: { type: Array, required: true },

@@ -1,4 +1,8 @@
 <script setup>
+/**
+ * A toggle chip with a checkbox-style mark. Both states carry a border, so selecting
+ * one does not change its width and reflow the row.
+ */
 defineProps({
   selected: { type: Boolean, default: false },
 })

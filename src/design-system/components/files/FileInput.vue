@@ -6,6 +6,10 @@ import {
   FileUploadLabel,
 } from '@ark-ui/vue/file-upload'
 
+/**
+ * The dashed dropzone: drag or browse, with the accepted types and size limit stated up
+ * front rather than discovered on rejection.
+ */
 const props = defineProps({
   /** Field name above the dropzone — Appendix D.1's `PNPKI certificate`. */
   label: { type: String, required: true },

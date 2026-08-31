@@ -8,6 +8,10 @@ import {
   MenuSeparator,
 } from '@ark-ui/vue/menu'
 
+/**
+ * The ⋯ menu for a table row. Esc and click-outside both close it and return focus to
+ * the trigger.
+ */
 defineProps({
   /** Items as `{ value, label, destructive? }`, destructive last. */
   items: { type: Array, required: true },

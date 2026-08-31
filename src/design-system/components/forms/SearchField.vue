@@ -1,4 +1,8 @@
 <script setup>
+/**
+ * A text field with a leading search glyph. The clear action appears only once there is
+ * a value.
+ */
 defineProps({
   modelValue: { type: String, default: '' },
   placeholder: { type: String, default: 'Search' },

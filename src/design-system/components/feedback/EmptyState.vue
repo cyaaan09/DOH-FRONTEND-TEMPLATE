@@ -1,4 +1,8 @@
 <script setup>
+/**
+ * The dashed panel shown where content would be. It states what is missing and what to
+ * do about it — an empty region with no explanation reads as a broken one.
+ */
 defineProps({
   /** What is absent, in the user's terms. */
   title: { type: String, required: true },

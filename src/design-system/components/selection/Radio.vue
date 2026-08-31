@@ -8,6 +8,10 @@ import {
   RadioGroupItemHiddenInput,
 } from '@ark-ui/vue/radio-group'
 
+/**
+ * A radio group built from an options array — one control, not one per option, so the
+ * group's name and semantics stay in one place.
+ */
 const props = defineProps({
   /** Array<{ value, label, hint?, disabled? }>, in display order. */
   options: { type: Array, required: true },

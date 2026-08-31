@@ -1,6 +1,10 @@
 <script setup>
 import { computed, useId } from 'vue'
 
+/**
+ * The single-line field. One shared slot holds either the hint or the error, never
+ * both, so validating a form never changes its height.
+ */
 const props = defineProps({
   modelValue: { type: String, default: '' },
   label: { type: String, required: true },

@@ -1,4 +1,9 @@
 <script setup>
+/**
+ * An applied-filter chip whose × is a real <button> with its own aria-label, not a
+ * glyph. Emits the filter's key so the caller removes it by identity rather than by
+ * index.
+ */
 defineProps({
   chipKey: { type: String, required: true },
   value: { type: String, required: true },

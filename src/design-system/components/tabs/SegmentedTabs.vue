@@ -6,6 +6,10 @@ import {
   SegmentGroupItemHiddenInput,
 } from '@ark-ui/vue/segment-group'
 
+/**
+ * The segmented control used to narrow what is already on screen. Radiogroup semantics
+ * — this filters a view, it does not swap one.
+ */
 defineProps({
   /** The options to choose between, in display order. */
   options: { type: Array, required: true },

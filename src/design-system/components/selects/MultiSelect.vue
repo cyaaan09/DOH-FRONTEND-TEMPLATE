@@ -11,6 +11,10 @@ import {
 } from '@ark-ui/vue/select'
 import { createListCollection } from '@ark-ui/vue/collection'
 
+/**
+ * A dropdown of checkboxes with its own filter input and Clear/Apply footer. Space
+ * toggles without closing, so several choices take one visit.
+ */
 const props = defineProps({
   /** Every option, in display order. */
   options: { type: Array, required: true },

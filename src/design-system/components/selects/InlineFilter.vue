@@ -11,6 +11,10 @@ import {
 } from '@ark-ui/vue/select'
 import { createListCollection } from '@ark-ui/vue/collection'
 
+/**
+ * The compact 34px dropdown used inside filter bars, where a 38px field would break the
+ * row's rhythm.
+ */
 const props = defineProps({
   /** Options as `{ label, dot }`, where `dot` is a background utility class. */
   options: { type: Array, required: true },

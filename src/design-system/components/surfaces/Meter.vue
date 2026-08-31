@@ -1,6 +1,10 @@
 <script setup>
 import { computed } from 'vue'
 
+/**
+ * A labelled progress bar with an optional caption. role=progressbar, so the value is
+ * available without reading the pixels.
+ */
 const props = defineProps({
   value: { type: Number, required: true },
   max: { type: Number, default: 100 },

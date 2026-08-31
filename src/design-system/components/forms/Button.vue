@@ -1,6 +1,10 @@
 <script setup>
 import { computed } from 'vue'
 
+/**
+ * The system's only button. Five variants and three sizes; `busy` shows a spinner and
+ * disables the control so a slow submit cannot be double-fired.
+ */
 const props = defineProps({
   // The validator only warns on a typo in dev; it must not change runtime
   // behaviour, so the `?? DEFAULT` fallbacks below are unchanged. A

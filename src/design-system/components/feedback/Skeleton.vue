@@ -1,6 +1,10 @@
 <script setup>
 import { computed } from 'vue'
 
+/**
+ * Loading placeholder bars, three rows at most. The bars are hidden from assistive tech
+ * inside an aria-busy region, so the wait is announced once instead of read as content.
+ */
 const props = defineProps({
   rows: { type: Number, default: 3 },
   /**

@@ -3,6 +3,10 @@ import { computed } from 'vue'
 import Checkbox from './Checkbox.vue'
 import Button from '../forms/Button.vue'
 
+/**
+ * The bar that appears once rows are selected, holding the count and the actions that
+ * apply to the selection.
+ */
 const props = defineProps({
   /** Selectable rows, in display order: { id, name, number }. */
   rows: { type: Array, required: true },

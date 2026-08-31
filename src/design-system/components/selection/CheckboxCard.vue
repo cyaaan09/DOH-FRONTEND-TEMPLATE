@@ -2,6 +2,10 @@
 import { computed } from 'vue'
 import Checkbox from './Checkbox.vue'
 
+/**
+ * A checkbox presented as a selectable card, for choices that need a description rather
+ * than a single line.
+ */
 const props = defineProps({
   /** Whether the card is chosen. Same prop shape as Checkbox. */
   modelValue: { type: Boolean, default: false },

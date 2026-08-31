@@ -1,4 +1,8 @@
 <script setup>
+/**
+ * A wrapping row of chips at the redlined 7px gap. Chips never wrap mid-phrase, so
+ * overflow collapses into a "+n more" rather than breaking a label across lines.
+ */
 defineProps({
   /**
    * Appendix C's Chips group says 7px, and that governs the tone rows; the

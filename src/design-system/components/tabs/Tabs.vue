@@ -1,6 +1,10 @@
 <script setup>
 import { TabsRoot, TabList, TabTrigger, TabContent } from '@ark-ui/vue/tabs'
 
+/**
+ * Underline tabs that swap what the panel shows. Counts ride inside the tab so the
+ * label does not shift when a number changes.
+ */
 defineProps({
   /** Tabs to render: `{ key, label, count? }`. */
   tabs: { type: Array, required: true },

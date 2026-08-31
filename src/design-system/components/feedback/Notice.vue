@@ -2,6 +2,10 @@
 import { computed } from 'vue'
 import { DEFAULT_TONE, TONE_TEXT, TONES } from '../tones'
 
+/**
+ * An inline banner carrying a tone label and a message. role=status, or role=alert when
+ * the tone is error, so a failure interrupts rather than waits.
+ */
 const props = defineProps({
   tone: {
     type: String,

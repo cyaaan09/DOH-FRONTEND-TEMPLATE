@@ -2,6 +2,10 @@
 import { computed } from 'vue'
 import { DEFAULT_TONE, TONES } from '../tones'
 
+/**
+ * A single figure with its label and hint. `urgent` and `dot` mark a number that needs
+ * attention; `muted` retires one that does not.
+ */
 const props = defineProps({
   label: { type: String, required: true },
   value: { type: String, required: true },

@@ -1,4 +1,8 @@
 <script setup>
+/**
+ * A card's title block, with an optional subtitle and a slot for actions that belong to
+ * the whole card.
+ */
 defineProps({
   title: { type: String, required: true },
   subtitle: { type: String, default: '' },

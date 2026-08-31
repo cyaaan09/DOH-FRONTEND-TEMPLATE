@@ -10,6 +10,10 @@ import {
 } from '@ark-ui/vue/dialog'
 import Button from '../forms/Button.vue'
 
+/**
+ * A modal over a scrim. Focus moves in on open, is trapped while open, and returns to
+ * the trigger on close; Esc cancels and never confirms.
+ */
 defineProps({
   /** v-model — whether the dialog is open. */
   modelValue: { type: Boolean, default: false },

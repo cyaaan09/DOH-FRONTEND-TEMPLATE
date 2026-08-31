@@ -1,6 +1,10 @@
 <script setup>
 import { TabsRoot, TabList, TabTrigger, TabContent } from '@ark-ui/vue/tabs'
 
+/**
+ * The pipeline stage cards. Each carries its count and what is waiting, and only a
+ * genuinely urgent stage is red.
+ */
 defineProps({
   /** Stages: `{ key, step, label, count, hint, urgent?, muted? }`. */
   stages: { type: Array, required: true },
