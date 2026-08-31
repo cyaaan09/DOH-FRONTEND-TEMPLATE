@@ -202,22 +202,6 @@ const maxValue = computed(() => (props.max ? parseDate(props.max) : undefined))
                     </DatePickerTableBody>
                   </DatePickerTable>
                 </div>
-
-                <!-- Redline "Footer · Today link left · constraint note right". -->
-                <div data-dp-footer class="dp__footer flex items-center border-t border-divider">
-                  <button
-                    data-dp-today
-                    type="button"
-                    class="dp__today text-hint font-medium text-green-text"
-                    @click="api.setValue([api.today])"
-                  >
-                    {{ todayLabel }}
-                  </button>
-                  <span v-if="constraint" data-dp-constraint class="dp__constraint text-ink-300">{{
-                    constraint
-                  }}</span>
-                  <slot name="actions" />
-                </div>
               </DatePickerContext>
             </DatePickerView>
 
@@ -329,6 +313,32 @@ const maxValue = computed(() => (props.max ? parseDate(props.max) : undefined))
                 </DatePickerTable>
               </DatePickerContext>
             </DatePickerView>
+
+            <!-- The footer is a SIBLING of the three views, not a child of the
+                 day view. Appendix D.1's rule card is "Unavailable, not hidden
+                 — out-of-range days stay visible with a strike, with the reason
+                 spelled out in the footer". Adding the month and year views put
+                 struck cells on two screens the footer did not reach, so the
+                 strike appeared with nothing to explain it — which is the half
+                 of that rule the card actually cares about. It also keeps Today
+                 reachable from every view. -->
+            <DatePickerContext v-slot="api">
+              <!-- Redline "Footer · Today link left · constraint note right". -->
+              <div data-dp-footer class="dp__footer flex items-center border-t border-divider">
+                <button
+                  data-dp-today
+                  type="button"
+                  class="dp__today text-hint font-medium text-green-text"
+                  @click="api.setValue([api.today])"
+                >
+                  {{ todayLabel }}
+                </button>
+                <span v-if="constraint" data-dp-constraint class="dp__constraint text-ink-300">{{
+                  constraint
+                }}</span>
+                <slot name="actions" />
+              </div>
+            </DatePickerContext>
           </div>
         </div>
       </DatePickerContent>

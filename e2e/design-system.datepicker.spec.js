@@ -143,3 +143,19 @@ test('keeps unavailable months visible and struck, never hidden', async ({ page 
     'line-through',
   )
 })
+
+test('the footer explains the strike in every view, not just the days', async ({ page }) => {
+  // Appendix D.1's rule card is two halves: "Out-of-range days stay visible
+  // with a strike, WITH THE REASON SPELLED OUT IN THE FOOTER — a missing day
+  // looks like a bug." Adding the month and year views put struck cells on two
+  // screens the footer did not reach, which left the strike unexplained — the
+  // half of the rule that actually does the work.
+  const panel = await openPanel(page)
+  for (const view of ['day', 'month', 'year']) {
+    if (view !== 'day') await visible(panel, '[data-dp-view]').click()
+    const footer = visible(panel, '[data-dp-footer]')
+    await expect(footer, `${view} view`).toHaveCount(1)
+    await expect(footer).toContainText('Before 03 Sep unavailable')
+    await expect(footer).toContainText('Today')
+  }
+})
