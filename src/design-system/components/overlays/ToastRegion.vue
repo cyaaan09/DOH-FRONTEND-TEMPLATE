@@ -21,9 +21,19 @@ defineProps({
 </script>
 
 <template>
+  <!-- Redline "Toast region · aria-live=polite (assertive for error) ·
+       role=status · aria-atomic=true". Ark's own region is
+       `role=region aria-atomic=false`, which announces nothing on its own and
+       reads only the changed node. role=status carries an implicit polite
+       live region; aria-atomic=true makes a screen reader read the whole
+       toast rather than just the word that changed. The "assertive for
+       error" half cannot live here — one region has one politeness — so it
+       sits on the error toast itself, in Toast.vue. -->
   <Toaster
     v-slot="toast"
     data-toast-region
+    role="status"
+    aria-atomic="true"
     class="toastregion"
     :class="{ 'toastregion--contained': contained }"
     :toaster="toaster"

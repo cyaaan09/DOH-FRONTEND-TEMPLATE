@@ -42,6 +42,7 @@ defineEmits(['update:page', 'update:perPage'])
       <button
         data-prev
         type="button"
+        data-icon-button
         class="pagination__btn rounded-control border border-field bg-surface"
         :disabled="page <= 1"
         :aria-label="prevLabel"
@@ -55,6 +56,7 @@ defineEmits(['update:page', 'update:perPage'])
         :key="n"
         data-page
         type="button"
+        data-icon-button
         class="pagination__btn rounded-control"
         :class="n === page ? 'pagination__btn--active' : 'border border-field bg-surface'"
         :aria-current="n === page ? 'page' : undefined"
@@ -66,6 +68,7 @@ defineEmits(['update:page', 'update:perPage'])
       <button
         data-next
         type="button"
+        data-icon-button
         class="pagination__btn rounded-control border border-field bg-surface"
         :disabled="page >= pageCount"
         :aria-label="nextLabel"

@@ -46,7 +46,12 @@ const MARK_SHAPE = {
         <span v-if="brand.org" class="rail__brand-org block text-text-meta">{{ brand.org }}</span>
       </span>
       <!-- Redline "Icon-only control" — the meta grey at 4.83:1, with an aria-label AND a
-           title — never the caret grey, which is decorative only". -->
+           title — never the caret grey, which is decorative only".
+
+           Deliberately NOT data-icon-button. The touch redline's own precedent
+           is "17px box inside a 44px tappable row on touch": the ROW is the
+           target, not the glyph. Forcing 44px here overflowed the 62px
+           collapsed rail — measured at 62px box against 100px of content. -->
       <button
         data-collapse
         type="button"

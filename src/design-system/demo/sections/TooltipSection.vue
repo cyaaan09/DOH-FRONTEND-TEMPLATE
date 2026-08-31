@@ -41,6 +41,7 @@ const RULES = [
             <Tooltip label="Row actions">
               <button
                 type="button"
+                data-icon-button
                 class="tooltip-section__icon grid place-items-center rounded-field border border-hairline bg-surface"
                 aria-label="Row actions"
               >

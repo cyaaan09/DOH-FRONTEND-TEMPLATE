@@ -83,6 +83,7 @@ const maxValue = computed(() => (props.max ? parseDate(props.max) : undefined))
            calendar; it is a control, so it is named. -->
       <DatePickerTrigger
         data-dp-trigger
+        data-icon-button
         class="dp__trigger flex-none rounded-bar text-text-meta"
         :aria-label="openLabel"
         :title="openLabel"
@@ -137,10 +138,17 @@ const maxValue = computed(() => (props.max ? parseDate(props.max) : undefined))
                   >
                     <DatePickerTableHead>
                       <DatePickerTableRow>
+                        <!-- Redline "Tables · real <table> with <th scope=col>". Ark
+                             renders the <th> but sets no scope, so the weekday row was
+                             a column of unassociated headers. aria-label carries the
+                             long name because `narrow` is a single letter and S/T are
+                             each ambiguous between two days when read aloud. -->
                         <DatePickerTableHeader
                           v-for="(day, i) in api.weekDays"
                           :key="i"
                           data-dp-weekday
+                          scope="col"
+                          :aria-label="day.long"
                           class="dp__weekday"
                           >{{ day.narrow }}</DatePickerTableHeader
                         >

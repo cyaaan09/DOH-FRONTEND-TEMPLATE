@@ -27,6 +27,8 @@ const props = defineProps({
   sort: { type: Object, default: () => ({ key: '', dir: 'desc' }) },
   selectAllLabel: { type: String, default: 'Select all rows' },
   actionsLabel: { type: String, default: 'Row actions' },
+  /** Accessible name for the <table>. Optional: not every table needs one. */
+  label: { type: String, default: '' },
 })
 
 defineEmits(['update:selected', 'update:expanded', 'sort'])
@@ -67,143 +69,175 @@ const STRIPE = {
       <slot name="bulk" />
     </div>
 
+    <!-- Redline "Tables · real <table> with <th scope=col>; grid CSS is fine,
+         faked headers are not". This was a div grid: aria-sort sat on a plain
+         <div>, where it is inert, and no header was associated with any cell.
+         The elements are real now and the CSS grid is unchanged — but
+         overriding `display` on a table strips its semantics in some
+         browsers, so every role is restated explicitly. That is not faking
+         them: the underlying elements are genuine, and the roles only
+         reassert what the display override may have erased. -->
     <div class="table__scroll">
-      <div class="table__inner">
-        <div
-          data-header-row
-          class="table__row table__row--head"
-          :style="{ gridTemplateColumns: template }"
-        >
-          <div class="flex justify-center">
-            <Checkbox
-              data-select-all
-              :model-value="allSelected"
-              :indeterminate="someSelected"
-              :label="selectAllLabel"
-              hide-label
-              @update:model-value="
-                (on) => $emit('update:selected', on ? rows.map((r) => r.id) : [])
-              "
-            />
-          </div>
-          <component
-            :is="column.sortable ? 'button' : 'div'"
-            v-for="column in columns"
-            :key="column.key"
-            data-column-header
-            class="table__head-cell flex items-center"
-            :class="column.align === 'right' ? 'justify-end' : ''"
-            :type="column.sortable ? 'button' : undefined"
-            :aria-sort="
-              column.sortable
-                ? sort.key === column.key
-                  ? sort.dir === 'asc'
-                    ? 'ascending'
-                    : 'descending'
-                  : 'none'
-                : undefined
-            "
-            @click="column.sortable && $emit('sort', column)"
-          >
-            {{ column.label }}
-            <!-- Redline "Sort caret · 8px · active --green-fill · idle
-                 --item-mark · header cell is the button". -->
-            <span
-              v-if="column.sortable"
-              data-sort-caret
-              aria-hidden="true"
-              class="table__caret"
-              :class="sort.key === column.key ? 'text-green-fill' : 'text-item-mark'"
-              >▾</span
-            >
-          </component>
-          <div />
-        </div>
-
-        <template v-for="row in rows" :key="row.id">
-          <div
-            data-row
-            class="table__row table__row--body"
-            :class="selected.includes(row.id) ? 'table__row--selected' : ''"
+      <table role="table" class="table__inner" :aria-label="label || undefined">
+        <thead role="rowgroup">
+          <tr
+            role="row"
+            data-header-row
+            class="table__row table__row--head"
             :style="{ gridTemplateColumns: template }"
           >
-            <!-- Redline "State stripe · 3px absolute left, full row height" —
-                 the section's first idea: it replaces reading the status
-                 column to find out how a row is doing. -->
-            <span
-              v-if="row.stripe"
-              data-stripe
-              aria-hidden="true"
-              class="table__stripe"
-              :class="STRIPE[row.stripe] ?? STRIPE.closed"
-            />
-
-            <div class="flex justify-center">
+            <th role="columnheader" scope="col" class="table__th flex justify-center">
               <Checkbox
-                :model-value="selected.includes(row.id)"
-                :label="row.selectLabel ?? `Select ${row.id}`"
+                data-select-all
+                :model-value="allSelected"
+                :indeterminate="someSelected"
+                :label="selectAllLabel"
                 hide-label
                 @update:model-value="
-                  (on) =>
-                    $emit(
-                      'update:selected',
-                      on ? [...selected, row.id] : selected.filter((id) => id !== row.id),
-                    )
+                  (on) => $emit('update:selected', on ? rows.map((r) => r.id) : [])
                 "
               />
-            </div>
-
-            <div
+            </th>
+            <!-- aria-sort belongs on the header CELL, not on the button inside
+                 it: on a <button> the attribute has no defined meaning and is
+                 dropped. The redline's "header cell is the button" is about the
+                 hit area, which the button still fills. -->
+            <th
               v-for="column in columns"
               :key="column.key"
-              data-cell
-              class="min-w-0"
-              :class="column.align === 'right' ? 'text-right' : ''"
+              role="columnheader"
+              scope="col"
+              data-column-header
+              class="table__th min-w-0"
+              :aria-sort="
+                column.sortable
+                  ? sort.key === column.key
+                    ? sort.dir === 'asc'
+                      ? 'ascending'
+                      : 'descending'
+                    : 'none'
+                  : undefined
+              "
             >
-              <slot :name="`cell-${column.key}`" :row="row" :column="column">
-                <!-- Redline "Empty cell · em-dash --ink-100 in the cell's own
-                     alignment — never blank, never N/A". -->
-                <span v-if="row.cells[column.key] == null" class="text-ink-100">—</span>
-                <template v-else>{{ row.cells[column.key] }}</template>
-              </slot>
-            </div>
-
-            <div class="flex justify-center">
-              <button
-                v-if="row.expand"
-                data-expand
-                type="button"
-                class="table__icon-btn rounded-tile"
-                :aria-expanded="expanded === row.id"
-                :aria-label="`${expanded === row.id ? 'Collapse' : 'Expand'} ${row.id}`"
-                :title="`${expanded === row.id ? 'Collapse' : 'Expand'} ${row.id}`"
-                @click="$emit('update:expanded', expanded === row.id ? '' : row.id)"
+              <component
+                :is="column.sortable ? 'button' : 'div'"
+                data-header-content
+                class="table__head-cell flex w-full items-center"
+                :class="column.align === 'right' ? 'justify-end' : ''"
+                :type="column.sortable ? 'button' : undefined"
+                @click="column.sortable && $emit('sort', column)"
               >
-                {{ expanded === row.id ? '▴' : '▾' }}
-              </button>
-              <button
-                v-else
-                data-row-actions
-                type="button"
-                class="table__icon-btn rounded-tile"
-                :aria-label="actionsLabel"
-                :title="actionsLabel"
-              >
-                ⋯
-              </button>
-            </div>
-          </div>
+                {{ column.label }}
+                <!-- Redline "Sort caret · 8px · active --green-fill · idle
+                     --item-mark · header cell is the button". -->
+                <span
+                  v-if="column.sortable"
+                  data-sort-caret
+                  aria-hidden="true"
+                  class="table__caret"
+                  :class="sort.key === column.key ? 'text-green-fill' : 'text-item-mark'"
+                  >▾</span
+                >
+              </component>
+            </th>
+            <th role="columnheader" scope="col" class="table__th">
+              <span class="table__sr-only">{{ actionsLabel }}</span>
+            </th>
+          </tr>
+        </thead>
 
-          <!-- Redline "Expanded panel · --surface-sunken · pad 16px 20px 20px ·
-               auto-fit minmax(260px,1fr) gap 22px" and "Expand indent · panel
-               content starts at 78px (select 44 + gap 14 + 20 pad)". -->
-          <div v-if="row.expand && expanded === row.id" data-expand-panel class="table__panel">
-            <div class="table__panel-grid">
-              <slot name="expand" :row="row" />
-            </div>
-          </div>
-        </template>
-      </div>
+        <tbody role="rowgroup">
+          <template v-for="row in rows" :key="row.id">
+            <tr
+              role="row"
+              data-row
+              class="table__row table__row--body"
+              :class="selected.includes(row.id) ? 'table__row--selected' : ''"
+              :style="{ gridTemplateColumns: template }"
+            >
+              <td role="cell" class="table__td flex justify-center">
+                <!-- Redline "State stripe · 3px absolute left, full row height" —
+                     the section's first idea: it replaces reading the status
+                     column to find out how a row is doing. The cell stays
+                     static, so the stripe still resolves against the row. -->
+                <span
+                  v-if="row.stripe"
+                  data-stripe
+                  aria-hidden="true"
+                  class="table__stripe"
+                  :class="STRIPE[row.stripe] ?? STRIPE.closed"
+                />
+                <Checkbox
+                  :model-value="selected.includes(row.id)"
+                  :label="row.selectLabel ?? `Select ${row.id}`"
+                  hide-label
+                  @update:model-value="
+                    (on) =>
+                      $emit(
+                        'update:selected',
+                        on ? [...selected, row.id] : selected.filter((id) => id !== row.id),
+                      )
+                  "
+                />
+              </td>
+
+              <td
+                v-for="column in columns"
+                :key="column.key"
+                role="cell"
+                data-cell
+                class="table__td min-w-0"
+                :class="column.align === 'right' ? 'text-right' : ''"
+              >
+                <slot :name="`cell-${column.key}`" :row="row" :column="column">
+                  <!-- Redline "Empty cell · em-dash --ink-100 in the cell's own
+                       alignment — never blank, never N/A". -->
+                  <span v-if="row.cells[column.key] == null" class="text-ink-100">—</span>
+                  <template v-else>{{ row.cells[column.key] }}</template>
+                </slot>
+              </td>
+
+              <td role="cell" class="table__td flex justify-center">
+                <button
+                  v-if="row.expand"
+                  data-expand
+                  type="button"
+                  data-icon-button
+                  class="table__icon-btn rounded-tile"
+                  :aria-expanded="expanded === row.id"
+                  :aria-label="`${expanded === row.id ? 'Collapse' : 'Expand'} ${row.id}`"
+                  :title="`${expanded === row.id ? 'Collapse' : 'Expand'} ${row.id}`"
+                  @click="$emit('update:expanded', expanded === row.id ? '' : row.id)"
+                >
+                  {{ expanded === row.id ? '▴' : '▾' }}
+                </button>
+                <button
+                  v-else
+                  data-row-actions
+                  type="button"
+                  data-icon-button
+                  class="table__icon-btn rounded-tile"
+                  :aria-label="actionsLabel"
+                  :title="actionsLabel"
+                >
+                  ⋯
+                </button>
+              </td>
+            </tr>
+
+            <!-- Redline "Expanded panel · --surface-sunken · pad 16px 20px 20px ·
+                 auto-fit minmax(260px,1fr) gap 22px" and "Expand indent · panel
+                 content starts at 78px (select 44 + gap 14 + 20 pad)". -->
+            <tr v-if="row.expand && expanded === row.id" role="row" class="table__panel-row">
+              <td role="cell" :colspan="columns.length + 2" data-expand-panel class="table__panel">
+                <div class="table__panel-grid">
+                  <slot name="expand" :row="row" />
+                </div>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
     </div>
 
     <div v-if="$slots.footer" data-footer class="table__footer"><slot name="footer" /></div>
@@ -224,6 +258,50 @@ const STRIPE = {
 
 .table__inner {
   min-width: 1040px;
+  /* The rows are a CSS grid, which a table's own layout algorithm would
+     override — so table, head and body all become plain blocks and the <tr>
+     keeps `display: grid`. The redline allows exactly this ("grid CSS is
+     fine"); the explicit roles in the template are what keep the semantics
+     that changing `display` can otherwise strip. */
+  display: block;
+  border-collapse: collapse;
+}
+
+.table__inner > thead,
+.table__inner > tbody {
+  display: block;
+}
+
+/* <th> defaults to centred and bold; every header's own type comes from
+   .table__row--head, so reset both rather than fight them per cell. */
+.table__th,
+.table__td {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  text-align: inherit;
+}
+
+/* A full-width panel row: not a grid, so colspan is the whole table. */
+.table__panel-row {
+  display: block;
+}
+
+/* Names the actions column for a screen reader without drawing a header over
+   a 44px strip of icon buttons. */
+.table__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 .table__row {

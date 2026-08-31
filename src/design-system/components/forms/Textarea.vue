@@ -39,6 +39,7 @@ const counter = computed(() =>
 
     <textarea
       :id="id"
+      :aria-label="bare ? label : undefined"
       class="field__input w-full resize-y rounded-field border px-3 py-2.75 text-body transition-colors"
       :class="[
         // Redline 'Error' and 'Read only' both set a border colour, so

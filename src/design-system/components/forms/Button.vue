@@ -103,6 +103,7 @@ const busyClass = computed(() => (props.busy ? 'btn--busy' : ''))
     :type="type"
     :disabled="disabled || busy"
     :aria-busy="busy || undefined"
+    :data-icon-button="size === 'icon' ? '' : undefined"
   >
     <span v-if="busy" data-spinner class="btn__spinner" aria-hidden="true" />
     <slot />

@@ -32,6 +32,7 @@ defineEmits(['remove'])
       <button
         data-token-remove
         type="button"
+        data-icon-button
         class="token__remove"
         :aria-label="`${removeLabel} ${token}`"
         @click="$emit('remove', token)"

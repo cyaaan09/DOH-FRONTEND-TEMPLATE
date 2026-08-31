@@ -79,10 +79,19 @@ void props
     background-color var(--t-control) ease;
 }
 
-.fileinput__zone:hover,
+/* Split, not wrapped whole: dragging a file onto the zone happens on a touch
+   device too, so only the :hover half is conditional. Wrapping both would have
+   silently removed the drag feedback on tablets. */
 .fileinput__zone[data-dragging] {
   border-color: var(--green-500);
   background: var(--dropzone-hover);
+}
+
+@media (hover: hover) {
+  .fileinput__zone:hover {
+    border-color: var(--green-500);
+    background: var(--dropzone-hover);
+  }
 }
 
 .fileinput__zone[data-disabled] {

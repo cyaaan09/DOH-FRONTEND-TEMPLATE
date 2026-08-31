@@ -100,6 +100,7 @@ function noteText(file) {
       <button
         data-remove
         type="button"
+        data-icon-button
         class="filelist__remove flex-none rounded-tile text-text-meta"
         :aria-label="`${removeLabel} ${file.name}`"
         @click="$emit('remove', file)"

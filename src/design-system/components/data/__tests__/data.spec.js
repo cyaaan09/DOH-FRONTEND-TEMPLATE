@@ -75,15 +75,50 @@ describe('DataTable', () => {
   })
 
   it('makes a sortable header a button and announces its direction', () => {
-    // Redline "Sort caret · header cell is the button".
+    // Redlines "Sort caret · header cell is the button" and "Tables · real
+    // <table> with <th scope=col>". Both at once: the header CELL is a real
+    // <th> and carries aria-sort — the attribute is defined on a columnheader
+    // and nowhere else, so on the button it used to sit on it was inert — and
+    // the button inside fills that cell, which is what makes the whole header
+    // the hit area the caret redline asks for.
     const wrapper = mountTable({ sort: { key: 'facility', dir: 'asc' } })
     const heads = wrapper.findAll('[data-column-header]')
-    expect(heads[0].element.tagName).toBe('BUTTON')
+    expect(heads[0].element.tagName).toBe('TH')
+    expect(heads[0].attributes('scope')).toBe('col')
     expect(heads[0].attributes('aria-sort')).toBe('ascending')
     expect(heads[1].attributes('aria-sort')).toBe('none')
+
+    const control = heads[0].get('[data-header-content]')
+    expect(control.element.tagName).toBe('BUTTON')
+    expect(control.classes()).toContain('w-full')
+
     // STATUS is not sortable, so it is not a control at all
-    expect(heads[2].element.tagName).toBe('DIV')
+    expect(heads[2].get('[data-header-content]').element.tagName).toBe('DIV')
     expect(heads[2].attributes('aria-sort')).toBeUndefined()
+  })
+
+  it('gives every cell a header to be associated with', () => {
+    // Redline "Tables · grid CSS is fine, faked headers are not". A div grid
+    // has no header/cell relationship at all, so a screen reader reading a
+    // cell announces the value with nothing to say what it is a value OF.
+    const wrapper = mountTable()
+    expect(wrapper.get('table').attributes('role')).toBe('table')
+    // two structural columns (select, actions) bracket the data ones
+    expect(wrapper.findAll('th')).toHaveLength(wrapper.props('columns').length + 2)
+    for (const th of wrapper.findAll('th')) {
+      expect(th.attributes('scope')).toBe('col')
+    }
+    expect(wrapper.findAll('[data-row]')[0].element.tagName).toBe('TR')
+    expect(wrapper.findAll('[data-cell]')[0].element.tagName).toBe('TD')
+  })
+
+  it('spans the expanded panel across every column', () => {
+    // A panel in a one-column cell would be read as belonging to the select
+    // column. colspan is what makes it the row's panel.
+    const wrapper = mountTable({ expanded: 'c' })
+    const panel = wrapper.get('[data-expand-panel]')
+    expect(panel.element.tagName).toBe('TD')
+    expect(panel.attributes('colspan')).toBe(String(wrapper.props('columns').length + 2))
   })
 
   it('expands one row at a time, and names the toggle', () => {

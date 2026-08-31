@@ -24,6 +24,7 @@ const emit = defineEmits(['select'])
     <MenuTrigger
       data-trigger
       :aria-label="label"
+      data-icon-button
       class="rowmenu__trigger grid h-compact w-compact place-items-center rounded-control border border-field bg-surface text-ink-500"
     >
       <span data-glyph aria-hidden="true" class="rowmenu__glyph font-bold">⋯</span>

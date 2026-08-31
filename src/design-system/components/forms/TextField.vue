@@ -66,6 +66,7 @@ const message = computed(() => props.error || props.hint)
     <div class="relative flex items-center">
       <input
         :id="id"
+        :aria-label="bare ? label : undefined"
         class="field__input h-field w-full rounded-field border px-3 text-body transition-colors"
         :class="[
           // Redline 'Error' and 'Read only' both set a border colour, so

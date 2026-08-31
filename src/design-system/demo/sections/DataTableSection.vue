@@ -152,6 +152,7 @@ const pageCount = computed(() => 3)
               <button
                 data-save-view
                 type="button"
+                data-icon-button
                 class="datatable-section__add rounded-pill"
                 aria-label="Save the current view"
                 title="Save the current view"

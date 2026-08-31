@@ -86,10 +86,23 @@ describe('Skeleton', () => {
     expect(mount(Skeleton, { props: { rows: 2 } }).findAll('[data-row]')).toHaveLength(2)
   })
 
-  it('hides itself from assistive tech', () => {
-    // Placeholder bars carry no information; the surrounding region owns any
-    // loading announcement.
-    expect(mount(Skeleton).attributes('aria-hidden')).toBe('true')
+  it('hides its bars inside a region that announces the wait', () => {
+    // Redline "Skeletons · aria-hidden=true inside an aria-busy=true
+    // container". Both halves matter and they cannot share a node: bars carry
+    // no information so they are hidden, but a hidden element's aria-busy is
+    // never read, so the region that owns the announcement has to be its
+    // parent. Hiding alone left a screen reader at a silent empty box.
+    const wrapper = mount(Skeleton)
+    expect(wrapper.attributes('aria-hidden')).toBeUndefined()
+    expect(wrapper.attributes('aria-busy')).toBe('true')
+    expect(wrapper.attributes('role')).toBe('status')
+    expect(wrapper.attributes('aria-label')).toBe('Loading')
+    expect(wrapper.get('[data-row]').element.closest('[aria-hidden="true"]')).not.toBeNull()
+
+    // the tabular form is the same contract
+    const table = mount(Skeleton, { props: { columns: ['1fr', '1fr'] } })
+    expect(table.attributes('aria-busy')).toBe('true')
+    expect(table.get('[data-skeleton-table]').attributes('aria-hidden')).toBe('true')
   })
 })
 

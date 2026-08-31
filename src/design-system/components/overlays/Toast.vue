@@ -59,8 +59,12 @@ const hasAction = computed(() => Boolean(props.toast.action?.label))
 </script>
 
 <template>
+  <!-- Redline "Toast region · assertive for error". The region is polite for
+       everything else; an error interrupts, because a failed save the user
+       cannot see is the one toast that must not wait for a pause in speech. -->
   <ToastRoot
     data-toast
+    :aria-live="toast.type === 'error' ? 'assertive' : undefined"
     class="toast flex items-start border bg-surface"
     :class="tone.border"
     :style="{ '--toast-duration': `${toast.duration ?? 5000}ms` }"
@@ -102,6 +106,7 @@ const hasAction = computed(() => Boolean(props.toast.action?.label))
 
     <ToastCloseTrigger
       data-close
+      data-icon-button
       class="toast__close flex-none rounded-bar text-ink-200"
       :aria-label="closeLabel"
       >×</ToastCloseTrigger

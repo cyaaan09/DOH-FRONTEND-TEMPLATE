@@ -2351,6 +2351,40 @@ panel labels inside the expanded row, not section sub-blocks.
 - **22px between cards, 24px inside** — Section gap 22px, card gutter 24px (20px on narrow cards), 12px between cards in a stat grid. Nothing else.
 - **One elevation per layer** — Cards 0 1px 2px, popovers 0 12px 28px, dialogs 0 24px 60px. Elevation signals layer, never importance.
 
+- **2026-08-31 — `DataTable` is a real `<table>` whose `display` is overridden, plus explicit roles.**
+  Appendix C's *ARIA & semantics* row says `Tables | real <table> with <th scope=col>; grid CSS is
+  fine, faked headers are not`. The component was a div grid, so its `aria-sort` sat on a plain
+  `<div>` — an element where the attribute has no defined meaning and is dropped — and no cell was
+  associated with any header. It is now `table/thead/tbody/tr/th/td` with `display: block` on the
+  table and rowgroups so the redlined `grid-template-columns` still governs each row. Because
+  changing `display` on a table strips its semantics in some browsers, every role is restated
+  (`role="table"`, `rowgroup`, `row`, `columnheader`, `cell`). That is not "faking" them — the
+  elements are genuine and the roles only reassert what the display override can erase.
+  `aria-sort` moved from the sort button to the `<th>`; the button still fills the cell, which is
+  what the *Sort caret* row's "header cell is the button" is about.
+- **2026-08-31 — the toast region's "assertive for error" lives on the toast, not the region.**
+  Appendix C asks for `aria-live=polite (assertive for error) · role=status · aria-atomic=true` on
+  one region. A live region has exactly one politeness, so the two halves cannot share a node: the
+  region is `role="status"` with `aria-atomic="true"`, and an error toast carries
+  `aria-live="assertive"` itself. Ark ships `role="region" aria-atomic="false"`, which announces
+  nothing on its own and reads only the node that changed.
+- **2026-08-31 — `Skeleton` renders a wrapper so `aria-busy` is readable.**
+  `Skeletons | aria-hidden=true inside an aria-busy=true container` cannot be satisfied on one
+  element: `aria-busy` on an `aria-hidden` node is never read. The bars stay hidden inside a
+  `role="status" aria-busy="true"` region, which is also the component's single root — closing the
+  Fragment-root comment trap this file hit three times.
+- **2026-08-31 — touch targets grow the box; two exemptions, both earned.**
+  `Touch targets | 44×44px minimum — 34px controls get padding, not a smaller box` is implemented
+  as one `@media (pointer: coarse)` rule in `base.css` setting `min-height: 44px !important`, with
+  `min-width` behind a `data-icon-button` opt-in (a square target cannot be inferred from CSS).
+  `!important` is required, not stylistic: the rule is in `@layer base`, and an UNLAYERED scoped
+  component rule beats any layered one regardless of specificity — `Pagination`'s own
+  `min-width: 34px` silently won until it was added. Two exemptions, both asserted rather than
+  assumed in `e2e/design-system.touch.spec.js`: text controls whose width is their label (44px tall,
+  ≥24px wide, WCAG 2.5.8), and the rail's icon button, where the redline's own precedent — "17px
+  box inside a 44px tappable row" — makes the ROW the target. Forcing 44px there pushed 100px of
+  content into the redlined 62px collapsed rail.
+
 #### chipRules
 
 - **One tone per meaning** — Green = good or issued, amber = waiting or legacy, red = blocked or overdue, grey = neutral, purple = modification.

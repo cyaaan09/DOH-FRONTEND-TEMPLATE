@@ -15,6 +15,7 @@ const emit = defineEmits(['dismiss'])
     <span>{{ value }}</span>
     <button
       type="button"
+      data-icon-button
       class="chip__remove"
       :aria-label="`Remove ${chipKey} ${value}`"
       @click="emit('dismiss', { chipKey, value })"

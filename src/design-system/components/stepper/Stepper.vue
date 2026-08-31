@@ -65,6 +65,15 @@ const subClass = (step) =>
 const glyph = (step, index) =>
   step.state === 'done' ? '✓' : step.state === 'error' ? '!' : String(index + 1)
 
+// Redlines "Icon-only · aria-label required" and "Colour alone · never the
+// only signal". The node's own text is a tick, a bang or a bare number, so a
+// reached step announced as "✓, button" says nothing about which step it is.
+// The state word matters for the same reason: done and error differ only by
+// the glyph and the fill colour, neither of which survives being read aloud.
+const STATE_WORD = { done: ', completed', error: ', needs attention', current: ', current' }
+const nodeLabel = (step, index) =>
+  `Step ${index + 1} of ${props.steps.length}: ${step.label}${STATE_WORD[step.state] ?? ''}`
+
 const percent = computed(() => {
   const done = props.steps.filter((s) => s.state === 'done').length
   return props.steps.length ? Math.round((done / props.steps.length) * 100) : 0
@@ -122,9 +131,11 @@ const percent = computed(() => {
           <component
             :is="isReached(step) ? 'button' : 'span'"
             data-node
+            data-icon-button
             class="stepper__node grid flex-none place-items-center rounded-pill"
             :class="nodeClass(step)"
             :type="isReached(step) ? 'button' : undefined"
+            :aria-label="nodeLabel(step, index)"
             @click="isReached(step) && $emit('select', step)"
             >{{ glyph(step, index) }}</component
           >

@@ -19,9 +19,11 @@ a {
 /* The source's base CSS uses a dedicated hover green, tokenised in spec
  * Appendix A.1 as --green-link-hover. Phase 1 substituted --green-900
  * because the value had no token; it does now. */
-a:hover {
-  color: var(--green-link-hover);
-  text-decoration: underline;
+@media (hover: hover) {
+  a:hover {
+    color: var(--green-link-hover);
+    text-decoration: underline;
+  }
 }
 
 input,
@@ -68,6 +70,50 @@ textarea::placeholder {
    fast they are imperceptible while the events still fire. `!important`
    because a preference set at the OS level must beat a component's own
    declaration — the one case where losing to specificity would be wrong. */
+/* Redlines "Touch targets · 44x44px minimum — 34px controls get padding, not
+   a smaller box" and "Checkbox / radio · 17px box inside a 44px tappable row
+   on touch". Checkbox and Radio already did this; every other control on the
+   page measured between 16px and 38px tall under a coarse pointer, which is
+   the entire system failing WCAG 2.5.5 on a phone.
+
+   Global, and keyed on the pointer rather than the viewport: a small window on
+   a desktop still has a mouse, and a large tablet still has fingers. Screen
+   width has never been the question.
+
+   min-height rather than a fixed height so the control GROWS to the target —
+   the redline's "padding, not a smaller box". Icon-only controls opt into the
+   width half with data-icon-button, because a square target cannot be
+   inferred from CSS and widening every inline text button to 44px would put
+   ragged gaps through rows of links.
+
+   !important for the same reason the reduced-motion block below carries it:
+   this rule lives in @layer base, and an UNLAYERED scoped component rule beats
+   any layered one regardless of specificity. Pagination's own
+   `min-width: 34px` silently won until this was added — the attribute was
+   present, the rule matched, and the button stayed 34px wide. A floor set by
+   the input device is not a component's to override. */
+@media (pointer: coarse) {
+  :is(
+    button,
+    summary,
+    select,
+    textarea,
+    a[href],
+    [role='button'],
+    [role='tab'],
+    [role='menuitem'],
+    [role='menuitemcheckbox'],
+    [role='option'],
+    input:not([type='checkbox'], [type='radio'], [type='hidden'])
+  ) {
+    min-height: 44px !important;
+  }
+
+  [data-icon-button] {
+    min-width: 44px !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
