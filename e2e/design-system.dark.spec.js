@@ -1,4 +1,8 @@
 import { test, expect } from '@playwright/test'
+import { SECTIONS } from '../src/design-system/demo/chrome/sections.js'
+
+/** Sections the manifest says are not built yet — the only place a gap may appear. */
+const INCOMPLETE = SECTIONS.filter((s) => !s.complete).map((s) => s.id)
 
 /**
  * The dark theme had never been rendered by any test. The layout gate runs
@@ -72,8 +76,16 @@ test.describe('dark theme', () => {
     expect(await card.evaluate((el) => getComputedStyle(el).boxShadow)).toBe('none')
   })
 
-  test('renders every section, with no gaps, in dark too', async ({ page }) => {
-    await expect(page.locator('[data-gap]')).toHaveCount(0)
+  test('renders every section in dark, gaps only where work remains', async ({ page }) => {
+    const stray = await page.evaluate((incomplete) => {
+      const bad = []
+      for (const gap of document.querySelectorAll('[data-gap]')) {
+        const id = gap.closest('[data-section]')?.getAttribute('data-section') ?? '(none)'
+        if (!incomplete.includes(id)) bad.push(id)
+      }
+      return [...new Set(bad)]
+    }, INCOMPLETE)
+    expect(stray).toEqual([])
     expect(await page.locator('[data-section]').count()).toBeGreaterThan(10)
   })
 })

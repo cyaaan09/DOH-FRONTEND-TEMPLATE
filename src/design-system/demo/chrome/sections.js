@@ -19,6 +19,12 @@ export const SECTIONS = [
   { id: 'notices', title: 'Toasts & inline notices', complete: true },
   { id: 'selection', title: 'Selection controls', complete: true },
   { id: 'dialog', title: 'Dialog, empty state & loading', complete: true },
+  // Added by the 2026-08-31 artifact update — five new sections.
+  { id: 'layout', title: 'Layout primitives — Row, Column & containers', complete: true },
+  { id: 'stepper', title: 'Stepper', complete: false },
+  { id: 'form-layout', title: 'Form layout', complete: false },
+  { id: 'app-shell', title: 'App shell — side navigation', complete: false },
+  { id: 'data-table', title: 'Data table', complete: false },
   { id: 'type-scale', title: 'Type scale', complete: true },
   { id: 'specs', title: 'Component specs', complete: true },
   { id: 'dark-mode', title: 'Dark mode', complete: true },

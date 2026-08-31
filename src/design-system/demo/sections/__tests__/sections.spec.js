@@ -11,6 +11,7 @@ import DropdownsSection from '../DropdownsSection.vue'
 import FilesSection from '../FilesSection.vue'
 import SelectionSection from '../SelectionSection.vue'
 import DialogSection from '../DialogSection.vue'
+import LayoutSection from '../LayoutSection.vue'
 import FoundationsSection from '../FoundationsSection.vue'
 import DarkModeSection from '../DarkModeSection.vue'
 import SpecsSection from '../SpecsSection.vue'
@@ -903,5 +904,43 @@ describe('TokensSection prints the real tokens.css', () => {
     // silently lost its trailing newline is exactly the kind of difference
     // this assertion exists to catch.
     expect(mount(TokensSection).get('[data-code]').element.textContent).toBe(onDisk)
+  })
+})
+
+describe('LayoutSection documents the eight primitives', () => {
+  it('renders one card per primitive, with its real signature', () => {
+    const wrapper = mount(LayoutSection)
+    expect(wrapper.findAll('[data-gap]')).toHaveLength(0)
+    expect(wrapper.findAll('[data-primitive]').map((c) => c.get('[data-signature]').text())).toEqual([
+      '<Row gap align justify wrap>',
+      '<Column gap align>',
+      '<Grid cols=12 gap="16 24">',
+      '<AutoGrid min=260>',
+      '<Split>',
+      '<Cluster gap=8>',
+      '<Sidebar side=left w=244>',
+      '<Page> and <Section>',
+    ])
+  })
+
+  it('demonstrates each primitive with the real thing, not a picture of it', () => {
+    // A drawn example keeps looking right after the primitive breaks. These
+    // wells hold live Rows, Grids and Splits, so a regression in one takes
+    // its own documentation down with it.
+    const wrapper = mount(LayoutSection)
+    expect(wrapper.find('[data-row]').exists()).toBe(true)
+    expect(wrapper.find('[data-column]').exists()).toBe(true)
+    expect(wrapper.find('[data-grid]').exists()).toBe(true)
+    expect(wrapper.find('[data-auto-grid]').exists()).toBe(true)
+    expect(wrapper.find('[data-split]').exists()).toBe(true)
+    expect(wrapper.find('[data-cluster]').exists()).toBe(true)
+    expect(wrapper.find('[data-sidebar]').exists()).toBe(true)
+  })
+
+  it('carries the four rule cards', () => {
+    const rules = mount(LayoutSection).findAll('[data-rule]')
+    expect(rules).toHaveLength(4)
+    expect(rules[0].text()).toContain('Primitives own spacing only')
+    expect(rules[1].text()).toContain('No 10, no 18, no 20.')
   })
 })

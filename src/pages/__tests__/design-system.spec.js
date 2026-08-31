@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import DesignSystemPage from '../design-system.vue'
 import { SECTIONS } from '@/design-system/demo/chrome/sections'
+import DesignSystemPage from '../design-system.vue'
 
 describe('design system page', () => {
   it('renders every section the artifact has, in its order', () => {
@@ -43,11 +43,25 @@ describe('design system page', () => {
     }
   })
 
-  it('shows no gaps at all — every section is built', () => {
-    // The page was a checklist: each unbuilt slot rendered a visible gap
-    // marker, and this asserted at least one remained. All 15 sections are
-    // now complete, so the assertion inverts — a gap reappearing means a
-    // section regressed, or a new slot was added without filling it.
-    expect(mount(DesignSystemPage).findAll('[data-gap]')).toHaveLength(0)
+  it('shows gaps only in the sections still to be built', () => {
+    // The page is a live checklist. It briefly held zero gaps — all 15
+    // sections were complete — and the 2026-08-31 artifact update added five
+    // more, so the assertion is the durable one again: a gap may exist ONLY
+    // inside a section the manifest marks incomplete.
+    const wrapper = mount(DesignSystemPage)
+    const incomplete = SECTIONS.filter((s) => !s.complete).map((s) => s.id)
+    for (const gap of wrapper.findAll('[data-gap]')) {
+      const section = gap.element.closest('[data-section]')
+      expect(section, 'a gap outside any section').not.toBeNull()
+      expect(
+        incomplete,
+        `gap inside "${section.getAttribute('data-section')}", which is marked complete`,
+      ).toContain(section.getAttribute('data-section'))
+    }
+    // and every incomplete section actually shows its gaps
+    for (const id of incomplete) {
+      const section = wrapper.get(`[data-section="${id}"]`)
+      expect(section.findAll('[data-gap]').length, `${id}: no gap marker`).toBeGreaterThan(0)
+    }
   })
 })

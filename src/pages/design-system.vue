@@ -11,6 +11,11 @@ import FilesSection from '@/design-system/demo/sections/FilesSection.vue'
 import NoticesSection from '@/design-system/demo/sections/NoticesSection.vue'
 import SelectionSection from '@/design-system/demo/sections/SelectionSection.vue'
 import DialogSection from '@/design-system/demo/sections/DialogSection.vue'
+import LayoutSection from '@/design-system/demo/sections/LayoutSection.vue'
+import StepperSection from '@/design-system/demo/sections/StepperSection.vue'
+import FormLayoutSection from '@/design-system/demo/sections/FormLayoutSection.vue'
+import AppShellSection from '@/design-system/demo/sections/AppShellSection.vue'
+import DataTableSection from '@/design-system/demo/sections/DataTableSection.vue'
 import TypeScaleSection from '@/design-system/demo/sections/TypeScaleSection.vue'
 import SpecsSection from '@/design-system/demo/sections/SpecsSection.vue'
 import DarkModeSection from '@/design-system/demo/sections/DarkModeSection.vue'
@@ -30,6 +35,11 @@ const COMPONENTS = {
   notices: NoticesSection,
   selection: SelectionSection,
   dialog: DialogSection,
+  layout: LayoutSection,
+  stepper: StepperSection,
+  'form-layout': FormLayoutSection,
+  'app-shell': AppShellSection,
+  'data-table': DataTableSection,
   'type-scale': TypeScaleSection,
   specs: SpecsSection,
   'dark-mode': DarkModeSection,

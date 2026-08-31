@@ -1,6 +1,9 @@
 import { expect, test } from '@playwright/test'
 import { SECTIONS } from '../src/design-system/demo/chrome/sections.js'
 
+/** Sections the manifest says are not built yet — the only place a gap may appear. */
+const INCOMPLETE = SECTIONS.filter((s) => !s.complete).map((s) => s.id)
+
 test.describe('design-system page', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/design-system')
@@ -41,11 +44,20 @@ test.describe('design-system page', () => {
     }
   })
 
-  test('shows no gaps at all — every section is built', async ({ page }) => {
-    // The page was a progress checklist: each unbuilt slot rendered a visible
-    // gap marker and this asserted at least one remained. All 15 sections are
-    // now complete, so the assertion inverts — a gap reappearing in a real
-    // browser means a section regressed or a new slot went unfilled.
-    await expect(page.locator('[data-gap]')).toHaveCount(0)
+  test('shows gaps only inside sections still to be built', async ({ page }) => {
+    // The page is a live checklist. It briefly held zero gaps — all 15
+    // sections were complete — and the 2026-08-31 artifact update added five
+    // more. The durable assertion is that a gap may exist ONLY inside a
+    // section the manifest marks incomplete.
+    const stray = await page.evaluate((incomplete) => {
+      const bad = []
+      for (const gap of document.querySelectorAll('[data-gap]')) {
+        const section = gap.closest('[data-section]')
+        const id = section?.getAttribute('data-section') ?? '(none)'
+        if (!incomplete.includes(id)) bad.push(id)
+      }
+      return [...new Set(bad)]
+    }, INCOMPLETE)
+    expect(stray).toEqual([])
   })
 })

@@ -1845,6 +1845,61 @@ demo folder is exempt from the raw-hex guard precisely so blocks like this can q
 - `SKELETON ROWS`
 
 
+#### Layout primitives — Row, Column & containers
+
+**Description:** Eight primitives cover every screen in OLRS. They own spacing and direction only — never colour, border, or padding of their own — so a screen is composed, not hand-measured. Gaps come from one 4px-based scale: 6, 8, 12, 14, 16, 22, 24, 32.
+
+**Rule cards:**
+
+- **Primitives own spacing only** — A Row sets direction, gap, and alignment. The moment one grows a background or a border it stops being a primitive and becomes a card — put that in Section instead.
+- **One gap scale** — 6 and 8 inside a control, 12 between siblings, 14 in table rows, 16 in form rows, 22 between cards, 24 form columns and card padding, 32 page gutter. No 10, no 18, no 20.
+- **Gap, never margin** — Spacing lives on the container so drag-reorder, delete, and duplicate keep working. A child with its own margin breaks the rhythm the moment it moves.
+- **min-width: 0 on flex children** — Any Row or Grid child holding text that must clip needs it, or the ellipsis silently stops working and the layout widens instead.
+
+
+#### Stepper
+
+**Description:** Three forms, one rule: a step is only clickable once it has been reached. Horizontal for a form the user is filling, vertical for a record whose history matters, compact where the header has no room.
+
+**Sub-blocks:**
+
+- `HORIZONTAL — A FORM IN PROGRESS`
+- `VERTICAL — A RECORD WITH HISTORY`
+- `COMPACT — INSIDE A CARD HEADER`
+- `ERROR STATE`
+
+
+#### Form layout
+
+**Description:** A 12-column grid on a 24px gutter, fieldsets separated by a rule rather than a card, and one sticky footer that owns every action. Errors replace help text in place — the row never grows.
+
+**Sub-blocks:**
+
+- `IDENTIFICATION`
+- `LOCATION & SERVICES`
+- `DARK`
+
+
+#### App shell — side navigation
+
+**Description:** One rail, two widths. Group headers carry the section, the active item is the only gradient on screen, and a count badge only appears where a number changes what you do next.
+
+**Sub-blocks:**
+
+- `LICENSING`
+- `CONFIGURATION`
+
+
+#### Data table
+
+**Description:** Rebuilt around three ideas: a 3px state stripe replaces reading the status column, the count column carries its own meter so urgency is visible without comparing digits, and the toolbar holds saved views instead of a second row of filters.
+
+**Sub-blocks:**
+
+- `TOOLBAR — SAVED VIEWS`
+- `TABLE`
+- `FOOTER — ROWS PER PAGE`
+
 #### Type scale
 
 **Description:** DM Sans at three weights — 400 body, 500 labels, 700 anything that titles something. JetBrains Mono for numbers you might copy.
