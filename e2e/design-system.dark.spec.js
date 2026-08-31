@@ -40,6 +40,10 @@ test.describe('dark theme', () => {
         // Foundations paints each swatch from the hex it documents — that is
         // the table's content, and it is correct in both themes.
         if (el.matches('[data-chip]') && el.closest('[data-swatch]')) continue
+        // A tooltip is the one surface that deliberately INVERTS: --ink-900
+        // on --surface, which is near-black on light and near-white on dark.
+        // Excepted by name so the sweep still catches everything else.
+        if (el.matches('[data-tooltip]')) continue
 
         const bg = getComputedStyle(el).backgroundColor
         const m = bg.match(/rgba?\(([^)]+)\)/)

@@ -23,7 +23,7 @@ export const SECTIONS = [
   { id: 'layout', title: 'Layout primitives — Row, Column & containers', complete: true },
   { id: 'stepper', title: 'Stepper', complete: true },
   { id: 'date-picker', title: 'Date picker', complete: false },
-  { id: 'tooltip', title: 'Tooltip & popover', complete: false },
+  { id: 'tooltip', title: 'Tooltip & popover', complete: true },
   { id: 'accordion', title: 'Accordion', complete: false },
   { id: 'search', title: 'Search with results', complete: false },
   { id: 'notifications', title: 'Notification centre & activity feed', complete: false },
