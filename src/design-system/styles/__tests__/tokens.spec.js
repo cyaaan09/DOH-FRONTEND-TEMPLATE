@@ -82,12 +82,8 @@ describe('design tokens', () => {
       'surface-disabled': '#E9EDF3',
       'red-800': '#96190F',
       'green-link-hover': '#166534',
-      'nav-ink': '#4B5565',
-      'item-mark': '#B3BDCD',
-      'avatar-bg': '#DBE4F0',
       'logo-ink': '#D9F2C4',
       separator: '#CBD3E0',
-      'row-hover-strong': '#E0E5EE',
       'r-bar': '6px',
     }
     for (const [name, value] of Object.entries(expected)) {
@@ -150,7 +146,9 @@ describe('spec Appendix A parity', () => {
    * colour on a dark surface.
    */
   const KEEPS_LIGHT_VALUE = {
-    'green-900': 'sidebar logo mark — AppShell is not built, no consumer',
+    'green-900':
+      'the logo tile fill — a dark green that reads on both canvases, and the ' +
+      'redline gives it no dark value',
     'green-600': 'legacy value the redline keeps for reference; no consumer',
     'amber-400': 'status DOT fill — a saturated dot reads on both surfaces',
     'red-500': 'status DOT fill — same',
@@ -158,12 +156,7 @@ describe('spec Appendix A parity', () => {
     'toast-bg-amber': 'no consumer — Toast dresses with a tone border on --surface',
     'toast-bg-blue': 'no consumer — same',
     'green-link-hover': 'no consumer',
-    'nav-ink': 'app shell — AppShell/AppSidebar/AppHeader are not built',
-    'item-mark': 'app shell — same',
-    'avatar-bg': 'app shell — same',
     'logo-ink': 'app shell — same',
-    separator: 'app shell — same',
-    'row-hover-strong': 'app shell — same',
   }
 
   const GEOMETRY = /^(r-|h-|size-|rail-|pad-|gap-|t-|z-|w-|chip-pad|font-)/

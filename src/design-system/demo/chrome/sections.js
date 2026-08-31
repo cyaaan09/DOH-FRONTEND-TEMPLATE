@@ -23,7 +23,7 @@ export const SECTIONS = [
   { id: 'layout', title: 'Layout primitives — Row, Column & containers', complete: true },
   { id: 'stepper', title: 'Stepper', complete: true },
   { id: 'form-layout', title: 'Form layout', complete: true },
-  { id: 'app-shell', title: 'App shell — side navigation', complete: false },
+  { id: 'app-shell', title: 'App shell — side navigation', complete: true },
   { id: 'data-table', title: 'Data table', complete: false },
   { id: 'type-scale', title: 'Type scale', complete: true },
   { id: 'specs', title: 'Component specs', complete: true },

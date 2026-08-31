@@ -107,4 +107,14 @@
   --toast-border-green:  rgba(111,220,150,.45);
   --toast-border-amber:  rgba(240,192,112,.45);
   --toast-border-blue:   rgba(143,184,255,.45);
+
+  /* App shell — these were allowlisted as "no consumer" until AppSidebar and
+     AppHeader were built on 2026-08-31. The rail is a --surface card on the
+     dark canvas, so its text and marks take the dark neutrals. --logo-ink
+     stays: it sits on the dark-green logo tile, which does not flip. */
+  --nav-ink: #C3CCDA;          /* rail item label, matching --ink-700 */
+  --item-mark: #6F7B8C;        /* decorative mark, the dark decorative step */
+  --avatar-bg: #222B38;        /* the control shell, not a pale tint */
+  --separator: #384556;        /* breadcrumb slash, the dark border colour */
+  --row-hover-strong: #222B38;
 }

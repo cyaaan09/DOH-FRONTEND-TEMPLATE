@@ -1912,6 +1912,13 @@ demo folder is exempt from the raw-hex guard precisely so blocks like this can q
 - `LICENSING`
 - `CONFIGURATION`
 
+**Rule cards:**
+
+- **Two states, one rail** — 244px → 62px over 160ms ease. Labels drop, the active gradient becomes a 34px tile, and each count badge collapses to a 7px dot with a 2px ring in the rail surface.
+- **One gradient per screen** — The active item is the rail's only filled surface — hover is a flat #F4F6FA, so the current page never competes with a pointer.
+- **Badges earn their place** — Red only where something is waiting on you. A total that never demands action stays neutral — on the active item it sits in a 25% white well.
+- **Marks are decorative** — 13px shapes at 1.8px #B3BDCD sit below 3:1 on purpose — they read as texture beside a text label, never as the only cue. Collapsed, each keeps a tooltip.
+
 
 #### Data table
 
