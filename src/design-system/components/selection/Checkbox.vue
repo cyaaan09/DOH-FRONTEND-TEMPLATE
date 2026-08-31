@@ -1,6 +1,12 @@
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
-import { CheckboxRoot, CheckboxControl, CheckboxLabel, CheckboxHiddenInput } from '@ark-ui/vue/checkbox'
+import { computed } from 'vue'
+import {
+  CheckboxRoot,
+  CheckboxControl,
+  CheckboxIndicator,
+  CheckboxLabel,
+  CheckboxHiddenInput,
+} from '@ark-ui/vue/checkbox'
 
 const props = defineProps({
   /** Whether the box is checked. Ignored while `indeterminate` is true. */
@@ -29,25 +35,8 @@ const boxClass = computed(() => {
   if (props.disabled) return 'bg-surface-disabled border-soft text-ink-200'
   if (props.indeterminate || props.modelValue)
     return 'bg-green-fill border-green-fill text-green-on-fill'
-  return 'bg-surface border-ink-100 text-transparent'
+  return 'bg-surface border-ink-100'
 })
-
-// Ark keeps the native hidden input's `checked` DOM property in sync on every
-// render, but `indeterminate` has no HTML attribute, so it only updates
-// through @zag-js/vue's change-triggered watcher (`track()` wraps Vue's
-// `watch()` without `immediate: true` — see @zag-js/vue/dist/track.mjs). A
-// checkbox that *mounts* already indeterminate never gets that watcher fired
-// — there is no prior value to change from — so `input.indeterminate` stays
-// false and a screen reader announces it as merely unchecked. Owning the
-// sync here for both mount and later prop changes means this does not depend
-// on Ark's internal timing at all.
-const hiddenInputRef = ref(null)
-function syncIndeterminate() {
-  const el = hiddenInputRef.value?.$el
-  if (el) el.indeterminate = props.indeterminate
-}
-onMounted(syncIndeterminate)
-watch(() => props.indeterminate, syncIndeterminate)
 </script>
 
 <template>
@@ -65,10 +54,21 @@ watch(() => props.indeterminate, syncIndeterminate)
       :class="boxClass"
     >
       <!-- Redlines "Checkbox on" and "Indeterminate" — 10px/700 glyph, a dash
-           for mixed. Decorative: the control itself carries the state. -->
-      <span data-glyph aria-hidden="true" class="checkbox__glyph font-bold">{{
-        indeterminate ? '–' : '✓'
-      }}</span>
+           for mixed. Decorative: the control itself carries the state.
+           Visibility comes from CheckboxIndicator's own `hidden` prop
+           (hidden = !indeterminate && !checked, independent of `disabled`),
+           not from colour — a disabled-and-unchecked box previously showed
+           a phantom checkmark because the old plain <span> always rendered
+           text and relied on boxClass matching it to the background colour
+           to hide it, which the disabled branch's opaque glyph colour broke.
+           boxClass now only ever carries colour. -->
+      <CheckboxIndicator
+        :indeterminate="indeterminate"
+        data-glyph
+        aria-hidden="true"
+        class="checkbox__glyph font-bold"
+        >{{ indeterminate ? '–' : '✓' }}</CheckboxIndicator
+      >
     </CheckboxControl>
 
     <span class="checkbox__text min-w-0">
@@ -81,7 +81,18 @@ watch(() => props.indeterminate, syncIndeterminate)
       }}</span>
     </span>
 
-    <CheckboxHiddenInput ref="hiddenInputRef" />
+    <!-- `indeterminate` isn't one of CheckboxHiddenInput's declared props, so
+         it falls through Vue's normal $attrs inheritance onto the native
+         <input> this part renders. Vue's patchProp/shouldSetAsProp has no
+         exclusion for `indeterminate` and it exists on HTMLInputElement, so
+         Vue assigns it as a DOM property (el.indeterminate = ...) on every
+         patch, including the very first one at mount — unlike Ark's own
+         sync, which is driven by a change-only watcher (@zag-js/vue's
+         track() wraps Vue's watch() without immediate: true) and never fires
+         for a checkbox that mounts already indeterminate. Confirmed by
+         running the "exposes the mixed state" test against this binding
+         alone with no ref/onMounted/watch — see task-1-report.md. -->
+    <CheckboxHiddenInput :indeterminate="indeterminate" />
   </CheckboxRoot>
 </template>
 

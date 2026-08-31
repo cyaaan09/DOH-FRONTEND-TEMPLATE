@@ -75,6 +75,20 @@ describe('Checkbox', () => {
     expect(box.classes()).not.toContain('bg-green-fill')
   })
 
+  it('does not show a checkmark when disabled and unchecked', () => {
+    // Regression test: the glyph used to render unconditionally whenever
+    // `indeterminate` was false, hidden only by the off-state's boxClass
+    // matching its text colour to the background (`text-transparent`). The
+    // disabled branch's glyph colour (`text-ink-200`) is opaque, so a
+    // disabled-and-unchecked box showed a phantom checkmark it shouldn't
+    // have — this cell was never exercised by the disabled test above,
+    // which mounts `{ disabled: true, modelValue: true }`. Visibility now
+    // comes from CheckboxIndicator's own `hidden` prop, independent of
+    // colour and of `disabled`.
+    const glyph = mountBox({ disabled: true, modelValue: false }).get('[data-glyph]')
+    expect(glyph.isVisible()).toBe(false)
+  })
+
   it('emits update:modelValue when toggled', async () => {
     // Targets the native hidden input rather than `[role="checkbox"]` — see
     // "exposes the mixed state to assistive technology" above. This is the
