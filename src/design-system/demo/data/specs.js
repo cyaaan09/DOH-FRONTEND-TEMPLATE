@@ -641,6 +641,216 @@ export const SPEC_GROUPS = [
     ]
   },
   {
+    "name": "Layout primitives",
+    "summary": "Row · Column · Grid · AutoGrid · Split · Cluster · Sidebar · Page",
+    "rows": [
+      {
+        "k": "Rule",
+        "v": "primitives set direction, gap and alignment only — no colour, border, or padding of their own"
+      },
+      {
+        "k": "Gap scale",
+        "v": "6 · 8 · 12 · 14 · 16 · 22 · 24 · 32 — no 10, 18, or 20"
+      },
+      {
+        "k": "Row",
+        "v": "flex · align center · gap 12 default · wrap off — toolbars, button pairs, label rows"
+      },
+      {
+        "k": "Column",
+        "v": "flex column · align stretch · gap 12 default — stacked fields, card bodies"
+      },
+      {
+        "k": "Grid",
+        "v": "repeat(12, minmax(0,1fr)) · gap 16 row / 24 col · children span 4 / 6 / 8 / 12, floor 172px"
+      },
+      {
+        "k": "AutoGrid",
+        "v": "repeat(auto-fit, minmax(min,1fr)) · gap 12 · min 190px stats, 240–300px panels"
+      },
+      {
+        "k": "Split",
+        "v": "Row with a flex:1 spacer — content left, actions right · wraps at 640px"
+      },
+      {
+        "k": "Cluster",
+        "v": "Row with wrap on · gap 7–8 — chips, tags, filter pills, service lists"
+      },
+      {
+        "k": "Sidebar",
+        "v": "244px rail + flex:1 main · 62px under 1024px · off-canvas under 768px · one per page"
+      },
+      {
+        "k": "Page",
+        "v": "max-w 1320px detail / 1560px tables · pad 26px 32px · canvas #EEF1F6"
+      },
+      {
+        "k": "Section",
+        "v": "one card + 22px below · cards never nest — divide (1px #EEF1F6) or sink (#FAFBFD) instead"
+      },
+      {
+        "k": "Divider",
+        "v": "1px #EEF1F6 between sections · 1px #F5F7FA between rows"
+      },
+      {
+        "k": "Flex children",
+        "v": "min-width: 0 on any child whose text must clip, or the ellipsis silently fails"
+      },
+      {
+        "k": "Spacing owner",
+        "v": "always the container's gap, never a child's margin"
+      }
+    ]
+  },
+  {
+    "name": "Stepper",
+    "summary": "28px nodes · 2px connector · horizontal ≤4, vertical 5+",
+    "rows": [
+      {
+        "k": "Node",
+        "v": "28px circle · 12px / 700 label · connector 2px radius 999px, trailing each node except the last"
+      },
+      {
+        "k": "Connector rule",
+        "v": "a step's trailing connector is green only when that step is DONE — the current step's is #EEF1F6, so the fill stops at the node you are on"
+      },
+      {
+        "k": "Done",
+        "v": "#177236 fill, 1.8px #177236, ✓ #FFF · connector behind it #177236"
+      },
+      {
+        "k": "Current",
+        "v": "--grad-primary fill, #FFF number, 0 0 0 4px rgba(23,114,54,.12) halo"
+      },
+      {
+        "k": "Upcoming",
+        "v": "#FFF fill, 1.8px #D5DBE6, #98A2B3 number · connector #EEF1F6"
+      },
+      {
+        "k": "Error",
+        "v": "#B42318 fill with #FFF ! · sub-label 11.5px / 500 #B42318 · connector stays unfilled"
+      },
+      {
+        "k": "Step label",
+        "v": "13px / 700 · #1E2532 current, #344054 done, #667085 upcoming · clips, never wraps"
+      },
+      {
+        "k": "Sub-label",
+        "v": "11.5px · done = date + actor, current = what remains (500 weight #177236), upcoming = requirement"
+      },
+      {
+        "k": "Horizontal",
+        "v": "grid repeat(n, minmax(0,1fr)) · gap 12 · node row then labels · 4 steps max"
+      },
+      {
+        "k": "Vertical",
+        "v": "grid 28px / 1fr · gap 12 · 2px spine · 18px below each step except the last"
+      },
+      {
+        "k": "Compact",
+        "v": "title 13px / 700 + mono % · 5px meter --grad-meter · 4px segments for ≤4 steps"
+      },
+      {
+        "k": "Container",
+        "v": "pad 18px 20px · 1px #EEF1F6 · radius 12px · #FBFCFE — a sunken block, not a card"
+      },
+      {
+        "k": "Interaction",
+        "v": "done and current are buttons; upcoming is plain text — no forward jumps past validation"
+      },
+      {
+        "k": "ARIA",
+        "v": "ol/li with aria-current=step on the current node; state also in the sub-label text, not colour alone"
+      }
+    ]
+  },
+  {
+    "name": "Forms & validation",
+    "summary": "12-col grid · 16px/24px gutter · error replaces help text in place",
+    "rows": [
+      {
+        "k": "Shell",
+        "v": "one card per form · 1px #E4E8EF · radius 14px · header/footer rules #EEF1F6"
+      },
+      {
+        "k": "Header",
+        "v": "pad 18px 24px 14px · title 16px/700 · sub 12.5px #667085 · progress 5px #EEF1F6 fill --grad-meter"
+      },
+      {
+        "k": "Body",
+        "v": "pad 20px 24px · grid repeat(12, minmax(0,1fr)) · gap 16px row / 24px col · fields span 4 / 8 / 12 · a span-4 cell floors at 172px (one line of 13.5px text) and drops to span 6 below that"
+      },
+      {
+        "k": "Fieldset label",
+        "v": "10.5px / 700 / 0.08em #5A6577 + 1px #EEF1F6 rule · 24px above, 14px below"
+      },
+      {
+        "k": "Field label",
+        "v": "12.5px / 500 #344054 · 6px above the control · 38px shells clip with ellipsis, never wrap"
+      },
+      {
+        "k": "Required mark",
+        "v": "* #B42318 (dark #FF9B95) · 4px gap — used on required fields only"
+      },
+      {
+        "k": "Optional mark",
+        "v": "11.5px #98A2B3 lowercase \\\\"
+      },
+      {
+        "k": "Help/error slot",
+        "v": "one shared slot per field: 5px below the control, min-height 32px, line-height 1.35 — reserved for two lines so validating never reflows the row"
+      },
+      {
+        "k": "Error text",
+        "v": "11.5px / 500 #B42318 + 13px round ! badge, align-items flex-start · REPLACES help text in the shared slot"
+      },
+      {
+        "k": "Error field",
+        "v": "1px #E5484D + 0 0 0 3px rgba(229,72,77,.14) · dark #FF9B95 / .18"
+      },
+      {
+        "k": "Read-only",
+        "v": "background #F4F6FA · 1px #EEF1F6 · text #98A2B3 · never a disabled input"
+      },
+      {
+        "k": "Textarea",
+        "v": "min-height 76px · pad 10px 12px · line-height 1.5 · counter 11.5px mono right"
+      },
+      {
+        "k": "Token field",
+        "v": "min-height 38px · pad 5px 8px · chips 26px --green-100 / --green-text with × at .75 opacity"
+      },
+      {
+        "k": "Consent row",
+        "v": "#FBFCFE · 1px #EEF1F6 · radius 10px · pad 12px 14px · 17px checkbox + 13px copy"
+      },
+      {
+        "k": "Footer",
+        "v": "pad 14px 24px · 1px top #EEF1F6 · #FAFBFD · autosave note left, actions right"
+      },
+      {
+        "k": "Actions",
+        "v": "38px · primary --grad-primary / #FFF 700 · secondary 1px #D5DBE6 on #FFF · order Back then Continue"
+      },
+      {
+        "k": "Autosave note",
+        "v": "12px #667085 + 6px #D9A13B dot"
+      },
+      {
+        "k": "Validation timing",
+        "v": "on blur, then on every change once errored · never on first keystroke"
+      },
+      {
+        "k": "Submit failure",
+        "v": "focus the first errored field, scroll it under the sticky header, announce the count via aria-live"
+      },
+      {
+        "k": "Mobile",
+        "v": "grid collapses to 1 col · gutter 20px · footer becomes sticky, buttons full-width stacked"
+      }
+    ]
+  },
+  {
     "name": "App shell — sidebar & header",
     "summary": "rail 244px · item 9px radius · header 12px 32px sticky",
     "rows": [
@@ -658,7 +868,7 @@ export const SPEC_GROUPS = [
       },
       {
         "k": "Logo tile",
-        "v": "30×30px · radius 9px · #14532D · #D9F2C4 10.5px / 700"
+        "v": "30×30px · radius 9px · --logo-tile #14532D · --logo-tile-on #D9F2C4 10.5px / 700"
       },
       {
         "k": "Group header",
@@ -678,7 +888,15 @@ export const SPEC_GROUPS = [
       },
       {
         "k": "Item mark",
-        "v": "13px · 1.8px #B3BDCD — square PTC, circle LTO, diamond config"
+        "v": "13px · 1.8px #B3BDCD — square PTC, circle LTO, diamond config · decorative, 1.4.11 exempt beside its label"
+      },
+      {
+        "k": "Icon-only control",
+        "v": "collapse chevron and account ⋯ use #667085 (4.83:1) with an aria-label + title — never the #98A2B3 caret grey, which is decorative only"
+      },
+      {
+        "k": "Collapsed item",
+        "v": "34px tile · title + aria-label required (the label is the only name once text drops)"
       },
       {
         "k": "Nav badge",
@@ -755,8 +973,72 @@ export const SPEC_GROUPS = [
         "v": "10.5px / 700 / 0.08em #5A6577 · 8px below"
       },
       {
+        "k": "Grid template",
+        "v": "44px · minmax(240px,2.4fr) · 148px · 132px · 116px · 136px · 44px · gap 14px · min-width 1040px"
+      },
+      {
+        "k": "Select column",
+        "v": "44px centred · 17px checkbox · header is aria-checked=mixed when partial"
+      },
+      {
+        "k": "Identity cell",
+        "v": "13.5px/700 #1E2532 + 12px #667085 sub · both clip with ellipsis, never wrap"
+      },
+      {
+        "k": "Mono cell",
+        "v": "12px JetBrains Mono #15803D for live codes · #C3CAD6 em-dash when absent"
+      },
+      {
+        "k": "Numeric cell",
+        "v": "12.5px mono / 700 right-aligned + 10.5px #98A2B3 unit + 3px meter (track #EEF1F6, fill = the tone) 5px below"
+      },
+      {
+        "k": "State stripe",
+        "v": "3px absolute left, full row height · green #177236 · amber #D9A13B · red #E5484D · closed #EEF1F6 · never the only status cue"
+      },
+      {
+        "k": "Row padding",
+        "v": "12px 20px default · 8px 20px compact · header 10px 20px"
+      },
+      {
+        "k": "Saved views",
+        "v": "pills 5px 11px · active #14532D / #D9F2C4 · idle 1px #DDE2EA · + is 26px dashed #CBD3E0"
+      },
+      {
+        "k": "Bulk bar",
+        "v": "8px 20px · #F7FCF9 · 1px bottom #E4F1E8 · 12.5px #15803D with a select-all link"
+      },
+      {
+        "k": "Rows-per-page",
+        "v": "30px · 1px #D5DBE6 · radius 8px · sits left of pagination in the footer"
+      },
+      {
+        "k": "Actions cell",
+        "v": "44px centred · 26px ⋯ hit area, aria-label + title required"
+      },
+      {
+        "k": "Sort caret",
+        "v": "8px · active #177236 · idle #B3BDCD · header cell is the button"
+      },
+      {
+        "k": "Selected row",
+        "v": "#F7FCF9 · bulk bar #E8F6EC with 1px #D3EBDB under the toolbar"
+      },
+      {
+        "k": "Toolbar",
+        "v": "pad 12px 20px · 34px search and segmented · density toggle right"
+      },
+      {
+        "k": "Empty cell",
+        "v": "em-dash #C3CAD6 in the cell's own alignment — never blank, never N/A"
+      },
+      {
+        "k": "Expand indent",
+        "v": "panel content starts at 78px (select 44 + gap 14 + 20 pad)"
+      },
+      {
         "k": "Min table width",
-        "v": "1020–1180px inside overflow-x:auto"
+        "v": "1040–1180px inside overflow-x:auto"
       },
       {
         "k": "Footer bar",

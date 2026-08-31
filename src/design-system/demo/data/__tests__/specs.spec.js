@@ -17,10 +17,17 @@ describe('generated spec data', () => {
   })
 
   it('carries every Appendix C group the artifact shows', () => {
-    expect(SPEC_GROUPS).toHaveLength(19)
+    // 22 since the 2026-08-31 artifact update added Layout primitives,
+    // Stepper and Forms & validation, and grew Tables 14 -> 30 and
+    // App shell 16 -> 18.
+    expect(SPEC_GROUPS).toHaveLength(22)
     expect(SPEC_GROUPS[0].name).toBe('Containers & surfaces')
     expect(SPEC_GROUPS[0].summary).toBe('canvas #EEF1F6 · card #FFF radius 14 · sunken #FAFBFD')
     expect(SPEC_GROUPS.at(-1).name).toBe('Type & layout')
+    for (const name of ['Layout primitives', 'Stepper', 'Forms & validation']) {
+      expect(SPEC_GROUPS.map((g) => g.name)).toContain(name)
+    }
+    expect(SPEC_GROUPS.find((g) => g.name === 'Tables').rows).toHaveLength(30)
   })
 
   it('marks a swatch only where the value IS a colour', () => {

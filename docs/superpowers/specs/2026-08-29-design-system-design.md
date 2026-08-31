@@ -860,6 +860,75 @@ _dialog 428px · scrim 42% ink · skeleton 11px bars_
 | Empty title | 14.5px / 700 · sub 13px #667085 |
 | Skeleton bar | 11px · radius 6px · #EEF1F6 · 3 rows max |
 
+### Layout primitives
+
+_Row · Column · Grid · AutoGrid · Split · Cluster · Sidebar · Page_
+
+| Property | Value |
+|---|---|
+| Rule | primitives set direction, gap and alignment only — no colour, border, or padding of their own |
+| Gap scale | 6 · 8 · 12 · 14 · 16 · 22 · 24 · 32 — no 10, 18, or 20 |
+| Row | flex · align center · gap 12 default · wrap off — toolbars, button pairs, label rows |
+| Column | flex column · align stretch · gap 12 default — stacked fields, card bodies |
+| Grid | repeat(12, minmax(0,1fr)) · gap 16 row / 24 col · children span 4 / 6 / 8 / 12, floor 172px |
+| AutoGrid | repeat(auto-fit, minmax(min,1fr)) · gap 12 · min 190px stats, 240–300px panels |
+| Split | Row with a flex:1 spacer — content left, actions right · wraps at 640px |
+| Cluster | Row with wrap on · gap 7–8 — chips, tags, filter pills, service lists |
+| Sidebar | 244px rail + flex:1 main · 62px under 1024px · off-canvas under 768px · one per page |
+| Page | max-w 1320px detail / 1560px tables · pad 26px 32px · canvas #EEF1F6 |
+| Section | one card + 22px below · cards never nest — divide (1px #EEF1F6) or sink (#FAFBFD) instead |
+| Divider | 1px #EEF1F6 between sections · 1px #F5F7FA between rows |
+| Flex children | min-width: 0 on any child whose text must clip, or the ellipsis silently fails |
+| Spacing owner | always the container's gap, never a child's margin |
+
+### Stepper
+
+_28px nodes · 2px connector · horizontal ≤4, vertical 5+_
+
+| Property | Value |
+|---|---|
+| Node | 28px circle · 12px / 700 label · connector 2px radius 999px, trailing each node except the last |
+| Connector rule | a step's trailing connector is green only when that step is DONE — the current step's is #EEF1F6, so the fill stops at the node you are on |
+| Done | #177236 fill, 1.8px #177236, ✓ #FFF · connector behind it #177236 |
+| Current | --grad-primary fill, #FFF number, 0 0 0 4px rgba(23,114,54,.12) halo |
+| Upcoming | #FFF fill, 1.8px #D5DBE6, #98A2B3 number · connector #EEF1F6 |
+| Error | #B42318 fill with #FFF ! · sub-label 11.5px / 500 #B42318 · connector stays unfilled |
+| Step label | 13px / 700 · #1E2532 current, #344054 done, #667085 upcoming · clips, never wraps |
+| Sub-label | 11.5px · done = date + actor, current = what remains (500 weight #177236), upcoming = requirement |
+| Horizontal | grid repeat(n, minmax(0,1fr)) · gap 12 · node row then labels · 4 steps max |
+| Vertical | grid 28px / 1fr · gap 12 · 2px spine · 18px below each step except the last |
+| Compact | title 13px / 700 + mono % · 5px meter --grad-meter · 4px segments for ≤4 steps |
+| Container | pad 18px 20px · 1px #EEF1F6 · radius 12px · #FBFCFE — a sunken block, not a card |
+| Interaction | done and current are buttons; upcoming is plain text — no forward jumps past validation |
+| ARIA | ol/li with aria-current=step on the current node; state also in the sub-label text, not colour alone |
+
+### Forms & validation
+
+_12-col grid · 16px/24px gutter · error replaces help text in place_
+
+| Property | Value |
+|---|---|
+| Shell | one card per form · 1px #E4E8EF · radius 14px · header/footer rules #EEF1F6 |
+| Header | pad 18px 24px 14px · title 16px/700 · sub 12.5px #667085 · progress 5px #EEF1F6 fill --grad-meter |
+| Body | pad 20px 24px · grid repeat(12, minmax(0,1fr)) · gap 16px row / 24px col · fields span 4 / 8 / 12 · a span-4 cell floors at 172px (one line of 13.5px text) and drops to span 6 below that |
+| Fieldset label | 10.5px / 700 / 0.08em #5A6577 + 1px #EEF1F6 rule · 24px above, 14px below |
+| Field label | 12.5px / 500 #344054 · 6px above the control · 38px shells clip with ellipsis, never wrap |
+| Required mark | * #B42318 (dark #FF9B95) · 4px gap — used on required fields only |
+| Optional mark | 11.5px #98A2B3 lowercase \\ |
+| Help/error slot | one shared slot per field: 5px below the control, min-height 32px, line-height 1.35 — reserved for two lines so validating never reflows the row |
+| Error text | 11.5px / 500 #B42318 + 13px round ! badge, align-items flex-start · REPLACES help text in the shared slot |
+| Error field | 1px #E5484D + 0 0 0 3px rgba(229,72,77,.14) · dark #FF9B95 / .18 |
+| Read-only | background #F4F6FA · 1px #EEF1F6 · text #98A2B3 · never a disabled input |
+| Textarea | min-height 76px · pad 10px 12px · line-height 1.5 · counter 11.5px mono right |
+| Token field | min-height 38px · pad 5px 8px · chips 26px --green-100 / --green-text with × at .75 opacity |
+| Consent row | #FBFCFE · 1px #EEF1F6 · radius 10px · pad 12px 14px · 17px checkbox + 13px copy |
+| Footer | pad 14px 24px · 1px top #EEF1F6 · #FAFBFD · autosave note left, actions right |
+| Actions | 38px · primary --grad-primary / #FFF 700 · secondary 1px #D5DBE6 on #FFF · order Back then Continue |
+| Autosave note | 12px #667085 + 6px #D9A13B dot |
+| Validation timing | on blur, then on every change once errored · never on first keystroke |
+| Submit failure | focus the first errored field, scroll it under the sticky header, announce the count via aria-live |
+| Mobile | grid collapses to 1 col · gutter 20px · footer becomes sticky, buttons full-width stacked |
+
 ### App shell — sidebar & header
 
 _rail 244px · item 9px radius · header 12px 32px sticky_
@@ -869,12 +938,14 @@ _rail 244px · item 9px radius · header 12px 32px sticky_
 | Rail width | 244px expanded · 62px collapsed (transition 160ms ease) |
 | Rail surface | #FFF · 1px right #E4E8EF · sticky top 0 · h 100vh |
 | Brand block | pad 16px 16px 13px · 1px bottom #EEF1F6 · gap 10px |
-| Logo tile | 30×30px · radius 9px · #14532D · #D9F2C4 10.5px / 700 |
+| Logo tile | 30×30px · radius 9px · --logo-tile #14532D · --logo-tile-on #D9F2C4 10.5px / 700 |
 | Group header | pad 14px 8px 7px · 10.5px / 700 / 0.1em · #5A6577 |
 | Nav item | pad 8px 10px · radius 9px · gap 10px · 13.5px / 400 #4B5565 |
 | Nav active | linear-gradient(180deg,#177236,#125A2B) · #FFF / 700 = 6.01:1 at the lightest stop |
 | Nav hover | #F4F6FA bg · #1E2532 text |
-| Item mark | 13px · 1.8px #B3BDCD — square PTC, circle LTO, diamond config |
+| Item mark | 13px · 1.8px #B3BDCD — square PTC, circle LTO, diamond config · decorative, 1.4.11 exempt beside its label |
+| Icon-only control | collapse chevron and account ⋯ use #667085 (4.83:1) with an aria-label + title — never the #98A2B3 caret grey, which is decorative only |
+| Collapsed item | 34px tile · title + aria-label required (the label is the only name once text drops) |
 | Nav badge | min-w 20px h 20px · radius 10px · #FEE2E2 / #B42318 11px / 700 |
 | Badge on active | rgba(255,255,255,.25) bg · #FFF text |
 | Collapsed badge | 7px dot #E5484D · 2px #FFF ring · top/right 5px |
@@ -899,7 +970,23 @@ _header 11px 20px · row 13px 20px · expand panel #FAFBFD_
 | Caret cell | 44px wide · 13px ▸/▾ · #98A2B3 (decorative) · right aligned |
 | Expanded panel | #FAFBFD · pad 16px 20px 20px · auto-fit minmax(260px,1fr) gap 22px |
 | Panel label | 10.5px / 700 / 0.08em #5A6577 · 8px below |
-| Min table width | 1020–1180px inside overflow-x:auto |
+| Grid template | 44px · minmax(240px,2.4fr) · 148px · 132px · 116px · 136px · 44px · gap 14px · min-width 1040px |
+| Select column | 44px centred · 17px checkbox · header is aria-checked=mixed when partial |
+| Identity cell | 13.5px/700 #1E2532 + 12px #667085 sub · both clip with ellipsis, never wrap |
+| Mono cell | 12px JetBrains Mono #15803D for live codes · #C3CAD6 em-dash when absent |
+| Numeric cell | 12.5px mono / 700 right-aligned + 10.5px #98A2B3 unit + 3px meter (track #EEF1F6, fill = the tone) 5px below |
+| State stripe | 3px absolute left, full row height · green #177236 · amber #D9A13B · red #E5484D · closed #EEF1F6 · never the only status cue |
+| Row padding | 12px 20px default · 8px 20px compact · header 10px 20px |
+| Saved views | pills 5px 11px · active #14532D / #D9F2C4 · idle 1px #DDE2EA · + is 26px dashed #CBD3E0 |
+| Bulk bar | 8px 20px · #F7FCF9 · 1px bottom #E4F1E8 · 12.5px #15803D with a select-all link |
+| Rows-per-page | 30px · 1px #D5DBE6 · radius 8px · sits left of pagination in the footer |
+| Actions cell | 44px centred · 26px ⋯ hit area, aria-label + title required |
+| Sort caret | 8px · active #177236 · idle #B3BDCD · header cell is the button |
+| Selected row | #F7FCF9 · bulk bar #E8F6EC with 1px #D3EBDB under the toolbar |
+| Toolbar | pad 12px 20px · 34px search and segmented · density toggle right |
+| Empty cell | em-dash #C3CAD6 in the cell's own alignment — never blank, never N/A |
+| Expand indent | panel content starts at 78px (select 44 + gap 14 + 20 pad) |
+| Min table width | 1040–1180px inside overflow-x:auto |
 | Footer bar | pad 13px 20px · #FAFBFD · 12.5px #667085 |
 | Pagination | 34×32px · radius 8px · active #177236/#FFF · idle 1px #D5DBE6 |
 | Result pill | pad 8px 12px · radius 999px · #E8F6EC / #15803D 12.5px / 700 (4.50:1) |
