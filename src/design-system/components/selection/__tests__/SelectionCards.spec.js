@@ -83,6 +83,14 @@ describe('RadioCard', () => {
     const wrapper = mountCards()
     expect(wrapper.get('[role="radiogroup"]').attributes('aria-label')).toBe('Application type')
     expect(wrapper.text()).not.toContain('Application type')
+    // Beyond the brief's literal Step 1 code, but required by the task's own
+    // constraints: Ark's getRootProps() always sets aria-labelledby to the id
+    // of a RadioGroupLabel this component never renders, which would dangle
+    // if left alone. RadioCard neutralises it the same way Radio.vue does
+    // (:aria-labelledby="undefined"); this is the matching assertion
+    // Radio.spec.js already carries for that fix, reused here so the same
+    // defect can't silently come back.
+    expect(wrapper.get('[role="radiogroup"]').attributes('aria-labelledby')).toBeUndefined()
   })
 
   it('marks only the chosen card', () => {
