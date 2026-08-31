@@ -58,7 +58,7 @@ Checked against `tokens.css` definitions and the `theme.css` bridge before this 
 
 **Values with no token — scoped CSS, each commented with its redline row name:** the 1.8px control border; the 8px radio inner dot; the 38×22px switch track and its 2px padding; the 18px knob and its `0 1px 2px rgba(16,24,40,.2)` shadow (no shadow token is close — `--sh-card` is `.04`); the **11px card radius** (`--r-panel` is 12px, `--r-card` is 14px); the 11px and 14px row gaps; the 10px label gap; the 10px/700 check glyph.
 
-**One deliberate divergence, decided here.** Appendix C's `Card selected` row for this group specifies `ring rgba(37,169,78,.10)`; no `.10` token exists and `--ring-select` is `.12`. The artifact's own *Stat cards* group writes the same ring as a range, `.10–.12`, so `--ring-select` sits inside the artifact's stated tolerance. **Use `var(--ring-select)`** rather than introducing a literal or a new token — the frozen token layer should not grow for a 0.02 alpha difference the source itself treats as a range.
+**One deliberate divergence, decided here.** Appendix C's `Card selected` row for this group specifies `ring rgba(37,169,78,.10)`; no `.10` token exists and `--ring-select` is `.12`. The system carries this ring at two different alphas in two different rows — `.10` here and `.12` in *Stat cards & meters* — and a third row, *Containers & surfaces → Selected surface*, states it as the range `.10–.12`. `--ring-select` carries the `.12` value and sits inside that stated range. **Use `var(--ring-select)`** rather than introducing a literal or a new token — the frozen token layer should not grow for a 0.02 alpha difference the source itself treats as a range.
 
 ## File Structure
 
