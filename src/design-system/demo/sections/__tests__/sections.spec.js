@@ -734,3 +734,22 @@ describe('DialogSection carries all three states', () => {
     wrapper.unmount()
   })
 })
+
+describe('ChipsSection is complete', () => {
+  it('renders the count and overflow badges, and leaves no gap', () => {
+    const wrapper = mount(ChipsSection)
+    expect(wrapper.findAll('[data-gap]')).toHaveLength(0)
+    const text = wrapper.text()
+    for (const label of ['13', '8', '+4 more', '128 days left', '36 days left']) {
+      expect(text, `missing count chip: ${label}`).toContain(label)
+    }
+  })
+
+  it('tints only the INTERACTIVE strip, not DISMISSIBLE', () => {
+    // Appendix D.1 — both shipped tinted; only the first one is.
+    const strips = mount(ChipsSection).findAll('.demo-strip')
+    expect(strips).toHaveLength(2)
+    expect(strips[0].classes()).toContain('bg-surface-sunken')
+    expect(strips[1].classes()).not.toContain('bg-surface-sunken')
+  })
+})

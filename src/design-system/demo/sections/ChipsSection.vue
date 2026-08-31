@@ -6,7 +6,6 @@ import DemoBlocks from '../chrome/DemoBlocks.vue'
 import DemoBlock from '../chrome/DemoBlock.vue'
 import DemoStrip from '../chrome/DemoStrip.vue'
 import DemoRules from '../chrome/DemoRules.vue'
-import DemoGap from '../chrome/DemoGap.vue'
 
 const applied = ref([
   { key: 'Status:', value: 'Active' },
@@ -117,7 +116,16 @@ function toggle(label) {
         label="COUNT &amp; OVERFLOW"
         note="Numeric badges in nav and tables. Red only when the count is work waiting on you."
       >
-        <DemoGap component="Chip variant=&quot;count&quot;" group="Chips" />
+        <ChipGroup>
+          <!-- Appendix D.1 — red only when the count is work waiting on you;
+               the quiet ones take the `count` variant, and the expiry pills
+               carry the tone their remaining days deserve. -->
+          <Chip tone="red">13</Chip>
+          <Chip variant="count">8</Chip>
+          <Chip variant="count">+4 more</Chip>
+          <Chip tone="amber">128 days left</Chip>
+          <Chip tone="red">36 days left</Chip>
+        </ChipGroup>
       </DemoBlock>
     </DemoBlocks>
 
@@ -140,7 +148,9 @@ function toggle(label) {
       </p>
     </DemoStrip>
 
-    <DemoStrip label="DISMISSIBLE — APPLIED FILTERS">
+    <!-- Appendix D.1 — this strip is NOT tinted; only the INTERACTIVE one
+         above it is. Both shipped tinted. -->
+    <DemoStrip label="DISMISSIBLE — APPLIED FILTERS" :tinted="false">
       <ChipGroup>
         <DismissibleChip
           v-for="chip in applied"

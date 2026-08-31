@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { DEFAULT_TONE, TONE_TEXT, TONES } from '../tones'
 
-const VARIANTS = ['tint', 'filled', 'service']
+const VARIANTS = ['tint', 'filled', 'service', 'count']
 
 const props = defineProps({
   tone: {
@@ -13,7 +13,10 @@ const props = defineProps({
   variant: {
     type: String,
     default: 'tint',
-    validator: (value) => ['tint', 'filled', 'service'].includes(value),
+    // Inlined rather than VARIANTS.includes: defineProps is hoisted out of
+    // <script setup>'s scope by the compiler, so a validator cannot close
+    // over a module-level binding. Keep the two lists in step.
+    validator: (value) => ['tint', 'filled', 'service', 'count'].includes(value),
   },
   dot: { type: Boolean, default: false },
 })
@@ -39,6 +42,12 @@ const variantClass = computed(() => {
   if (variant === 'service') {
     return 'chip--service bg-surface border border-soft text-ink-600 text-hint'
   }
+  // Appendix D.1's COUNT & OVERFLOW set — a QUIET numeric badge on
+  // --surface-muted in --text-meta. Deliberately not the `neutral` tone,
+  // which is a full step darker in both (--neutral-100 on --text-header) and
+  // reads as a status chip; a count that is not work waiting on you should
+  // recede. A count that IS gets tone="red" instead.
+  if (variant === 'count') return 'chip--pad bg-surface-muted text-text-meta text-chip'
   const tone = TONES.includes(props.tone) ? props.tone : DEFAULT_TONE
   return `chip--pad ${BACKGROUNDS[tone]} ${TONE_TEXT[tone]} text-chip`
 })

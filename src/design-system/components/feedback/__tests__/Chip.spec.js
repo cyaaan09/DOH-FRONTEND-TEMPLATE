@@ -188,4 +188,19 @@ describe('DismissibleChip — Appendix C conformance', () => {
     }).get('button')
     expect(button.classes()).toContain('chip__remove')
   })
+
+  it('renders a quiet count badge distinct from the neutral tone', () => {
+    // Appendix D.1's COUNT & OVERFLOW set — a count that is not work waiting
+    // on you recedes onto --surface-muted in --text-meta. The `neutral` tone
+    // is a full step darker in both and reads as a status chip, so the two
+    // must not resolve to the same classes.
+    const count = [...mount(Chip, { props: { variant: 'count' } }).element.classList]
+    expect(count).toContain('bg-surface-muted')
+    expect(count).toContain('text-text-meta')
+    expect(count).toContain('text-chip')
+
+    const neutral = [...mount(Chip, { props: { tone: 'neutral' } }).element.classList]
+    expect(neutral).toContain('bg-neutral-100')
+    expect(neutral).not.toContain('bg-surface-muted')
+  })
 })
