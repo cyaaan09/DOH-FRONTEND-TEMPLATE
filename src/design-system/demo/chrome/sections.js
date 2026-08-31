@@ -22,5 +22,5 @@ export const SECTIONS = [
   { id: 'type-scale', title: 'Type scale', complete: true },
   { id: 'specs', title: 'Component specs', complete: true },
   { id: 'dark-mode', title: 'Dark mode', complete: false },
-  { id: 'tokens', title: 'Tokens for handoff', complete: false },
+  { id: 'tokens', title: 'Tokens for handoff', complete: true },
 ]

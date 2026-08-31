@@ -1,8 +1,7 @@
 <script setup>
 import DemoCard from '../chrome/DemoCard.vue'
-import DemoBlocks from '../chrome/DemoBlocks.vue'
 import DemoRules from '../chrome/DemoRules.vue'
-import DemoGap from '../chrome/DemoGap.vue'
+import TokenBlock from '../chrome/TokenBlock.vue'
 
 // Rule cards - spec Appendix D, handoffRules
 const RULES = [
@@ -18,9 +17,10 @@ const RULES = [
     title="Tokens for handoff"
     description="Paste this block into your stylesheet first, then build components against the variables — not raw hex. Every value above resolves to one of these."
   >
-    <DemoBlocks>
-      <DemoGap component="TokenBlock" source="Appendix A" group="tokens.css" />
-    </DemoBlocks>
+    <!-- Appendix D.1 — pad 16px 24px 24px, the block filling it. -->
+    <div class="px-card-x pt-4 pb-6">
+      <TokenBlock />
+    </div>
 
     <DemoRules :rules="RULES" />
   </DemoCard>

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { SPEC_GROUPS } from '../specs.js'
-import { buildSpecGroups, render } from '../../../../../scripts/build-spec-data.mjs'
+import { buildSpecGroups, render, renderTokens } from '../../../../../scripts/build-demo-data.mjs'
 
 const SPEC_PATH = 'docs/superpowers/specs/2026-08-29-design-system-design.md'
 
@@ -31,5 +31,13 @@ describe('generated spec data', () => {
     for (const row of rows.filter((r) => r.c)) {
       expect(row.v.trim()).toMatch(/^#[0-9A-Fa-f]{6}$/)
     }
+  })
+
+  it('keeps the generated tokens module in sync with tokens.css', () => {
+    // Vite's ?raw returns '' for a .css file under Vitest, so the block is
+    // generated instead; this is what stops that module going stale.
+    expect(readFileSync('src/design-system/demo/data/tokens-css.js', 'utf8')).toBe(
+      renderTokens(readFileSync('src/design-system/styles/tokens.css', 'utf8')),
+    )
   })
 })

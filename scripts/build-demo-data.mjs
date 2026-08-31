@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 /**
- * Generates src/design-system/demo/data/specs.js from spec Appendix C.
+ * Generates the demo page's two data modules:
+ *   - data/specs.js      from spec Appendix C
+ *   - data/tokens-css.js from src/design-system/styles/tokens.css
  *
  * The Component specs section IS Appendix C rendered as an accordion — the
  * artifact's own 19 group names and summaries match it line for line. Hand
@@ -8,13 +10,20 @@
  * side changed, and nothing would notice; a test asserts this output is in
  * sync, so a stale file fails the suite rather than shipping quietly.
  *
- *   node scripts/build-spec-data.mjs           # write
- *   node scripts/build-spec-data.mjs --check   # verify in sync, exit 1 if not
+ * tokens-css.js exists because Vite's `?raw` returns an EMPTY STRING for a
+ * .css file under Vitest — its CSS stubbing beats the raw query — so the
+ * block would render correctly in the browser while every test saw nothing.
+ * A generated module reads the same in both.
+ *
+ *   node scripts/build-demo-data.mjs           # write
+ *   node scripts/build-demo-data.mjs --check   # verify in sync, exit 1 if not
  */
 import { readFileSync, writeFileSync } from 'node:fs'
 
 const SPEC = 'docs/superpowers/specs/2026-08-29-design-system-design.md'
 const OUT = 'src/design-system/demo/data/specs.js'
+const TOKENS = 'src/design-system/styles/tokens.css'
+const TOKENS_OUT = 'src/design-system/demo/data/tokens-css.js'
 
 export function buildSpecGroups(markdown) {
   const start = markdown.indexOf('## Appendix C')
@@ -43,6 +52,16 @@ export function buildSpecGroups(markdown) {
   return groups
 }
 
+export function renderTokens(css) {
+  return (
+    '// GENERATED from src/design-system/styles/tokens.css — do not hand-edit.\n' +
+    '// Regenerate with `node scripts/build-demo-data.mjs`.\n' +
+    'export const TOKENS_CSS = ' +
+    JSON.stringify(css) +
+    '\n'
+  )
+}
+
 export function render(groups) {
   return (
     '// GENERATED from spec Appendix C — do not hand-edit.\n' +
@@ -55,16 +74,22 @@ export function render(groups) {
 
 const isMain = process.argv[1] && import.meta.url.endsWith(process.argv[1].split('/').pop())
 if (isMain) {
-  const output = render(buildSpecGroups(readFileSync(SPEC, 'utf8')))
+  const targets = [
+    [OUT, render(buildSpecGroups(readFileSync(SPEC, 'utf8'))), 'Appendix C'],
+    [TOKENS_OUT, renderTokens(readFileSync(TOKENS, 'utf8')), TOKENS],
+  ]
   if (process.argv.includes('--check')) {
-    const current = readFileSync(OUT, 'utf8')
-    if (current !== output) {
-      console.error(`${OUT} is out of sync with Appendix C. Run: node scripts/build-spec-data.mjs`)
-      process.exit(1)
+    for (const [path, expected, source] of targets) {
+      if (readFileSync(path, 'utf8') !== expected) {
+        console.error(`${path} is out of sync with ${source}. Run: node scripts/build-demo-data.mjs`)
+        process.exit(1)
+      }
+      console.log(`${path} is in sync with ${source}.`)
     }
-    console.log(`${OUT} is in sync with Appendix C.`)
   } else {
-    writeFileSync(OUT, output)
-    console.log(`Wrote ${OUT}`)
+    for (const [path, output] of targets) {
+      writeFileSync(path, output)
+      console.log(`Wrote ${path}`)
+    }
   }
 }

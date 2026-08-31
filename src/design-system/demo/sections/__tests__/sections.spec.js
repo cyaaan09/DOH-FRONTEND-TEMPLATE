@@ -872,3 +872,28 @@ describe('SpecsSection renders Appendix C as an accordion', () => {
     expect(geometryRows + colourRows).toBe(all)
   })
 })
+
+describe('TokensSection prints the real tokens.css', () => {
+  it('renders the file itself, not a transcription of it', () => {
+    // The block exists to be copied into someone else's stylesheet, so it
+    // is imported with ?raw rather than kept by hand — a drifted copy would
+    // be wrong in THEIR codebase, which no test here could ever catch.
+    const wrapper = mount(TokensSection)
+    expect(wrapper.findAll('[data-gap]')).toHaveLength(0)
+    const code = wrapper.get('[data-code]').text()
+    expect(code.startsWith(':root {')).toBe(true)
+    expect(code.trimEnd().endsWith('}')).toBe(true)
+    expect(code).toContain('--green-fill: #177236')
+    expect(wrapper.get('[data-filename]').text()).toBe('olrs-tokens.css')
+    expect(wrapper.get('[data-hint]').text()).toBe('select all · paste into :root')
+  })
+
+  it('matches src/design-system/styles/tokens.css byte for byte', async () => {
+    const { readFileSync } = await import('node:fs')
+    const onDisk = readFileSync('src/design-system/styles/tokens.css', 'utf8')
+    // textContent, not .text(): test-utils trims, and a token block that
+    // silently lost its trailing newline is exactly the kind of difference
+    // this assertion exists to catch.
+    expect(mount(TokensSection).get('[data-code]').element.textContent).toBe(onDisk)
+  })
+})
