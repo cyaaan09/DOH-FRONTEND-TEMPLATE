@@ -11,7 +11,8 @@ const props = defineProps({
   variant: {
     type: String,
     default: 'primary',
-    validator: (value) => ['primary', 'secondary', 'destructive', 'ghost'].includes(value),
+    validator: (value) =>
+      ['primary', 'secondary', 'destructive', 'destructive-fill', 'ghost'].includes(value),
   },
   size: {
     type: String,
@@ -35,19 +36,28 @@ const SIZES = {
   touch: 'h-touch px-5 rounded-field text-body',
 }
 
-// Colour classes only — one entry per property (background, text, border,
-// hover) per variant. Kept separate from the `btn--primary` marker class
+// Colour AND WEIGHT per variant — one entry per property. Weight belongs
+// here, not on `.btn`: Appendix C gives Secondary its ink colour at 500 and
+// Ghost its green at 700, and the artifact renders destructive and disabled
+// at 500 too. A blanket `font-bold` on the base class made every variant
+// 700, and because nothing else declared a weight there was no competing
+// class to notice — so the four 500 variants rendered heavier than the
+// redline all along. Kept separate from the `btn--primary` marker class
 // below so the marker (which drives the shadow and hover-green in scoped
 // CSS) never has to be duplicated inside a colour string.
 const VARIANT_COLORS = {
   // Redline "Primary"
-  primary: 'bg-green-fill text-green-on-fill',
+  primary: 'bg-green-fill text-green-on-fill font-bold',
   // Redline "Secondary" (+ "Secondary hover")
-  secondary: 'bg-surface text-ink-700 border border-field hover:bg-surface-muted',
+  secondary: 'bg-surface text-ink-700 border border-field hover:bg-surface-muted font-medium',
   // Redline "Destructive"
-  destructive: 'bg-surface text-red-700 border border-red-border-btn hover:bg-red-50',
+  destructive: 'bg-surface text-red-700 border border-red-border-btn hover:bg-red-50 font-medium',
+  // Redline "Confirm button" — the FILLED destructive the confirmation
+  // dialog uses, red-700 going to red-800 on hover. Appendix C carries the
+  // row; nothing implemented it, so Dialog had no button to confirm with.
+  'destructive-fill': 'bg-red-700 text-red-on-fill hover:bg-red-800 font-bold',
   // Redline "Ghost"
-  ghost: 'text-green-text hover:bg-green-tint',
+  ghost: 'text-green-text hover:bg-green-tint font-bold',
 }
 
 // Redline "Disabled" — a single colour set that REPLACES the variant's own
@@ -60,7 +70,7 @@ const VARIANT_COLORS = {
 // red text and border. Because the variant's own hover class is dropped
 // entirely rather than left in place, a disabled button also can no longer
 // change colour on hover — only primary was previously guarded for that.
-const DISABLED_COLORS = 'bg-surface-input border border-hairline text-ink-200'
+const DISABLED_COLORS = 'bg-surface-input border border-hairline text-ink-200 font-medium'
 
 const sizeClass = computed(() => SIZES[props.size] ?? SIZES.default)
 
@@ -88,7 +98,7 @@ const busyClass = computed(() => (props.busy ? 'btn--busy' : ''))
 
 <template>
   <button
-    class="btn inline-flex items-center justify-center gap-2 font-bold whitespace-nowrap select-none transition-colors disabled:cursor-not-allowed"
+    class="btn inline-flex items-center justify-center gap-2 whitespace-nowrap select-none transition-colors disabled:cursor-not-allowed"
     :class="[sizeClass, colorClass, markerClass, busyClass]"
     :type="type"
     :disabled="disabled || busy"

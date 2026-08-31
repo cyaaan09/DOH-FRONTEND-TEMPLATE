@@ -13,6 +13,8 @@ export { default as FileInputCompact } from './components/files/FileInputCompact
 export { default as FileList } from './components/files/FileList.vue'
 export { default as Toast } from './components/overlays/Toast.vue'
 export { default as ToastRegion } from './components/overlays/ToastRegion.vue'
+export { default as Dialog } from './components/overlays/Dialog.vue'
+export { default as EmptyState } from './components/feedback/EmptyState.vue'
 export { default as Card } from './components/surfaces/Card.vue'
 export { default as CardHeader } from './components/surfaces/CardHeader.vue'
 export { default as CardBody } from './components/surfaces/CardBody.vue'

@@ -18,7 +18,7 @@ export const SECTIONS = [
   { id: 'files', title: 'File inputs', complete: true },
   { id: 'notices', title: 'Toasts & inline notices', complete: true },
   { id: 'selection', title: 'Selection controls', complete: true },
-  { id: 'dialog', title: 'Dialog, empty state & loading', complete: false },
+  { id: 'dialog', title: 'Dialog, empty state & loading', complete: true },
   { id: 'type-scale', title: 'Type scale', complete: true },
   { id: 'specs', title: 'Component specs', complete: false },
   { id: 'dark-mode', title: 'Dark mode', complete: false },

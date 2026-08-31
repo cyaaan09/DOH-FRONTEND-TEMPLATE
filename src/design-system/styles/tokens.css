@@ -108,6 +108,11 @@
   /* Destructive confirm hover — redline "Confirm button · #B42318 → hover #96190F" */
   --red-800: #96190F;
 
+  /* Label colour on --red-700, mirroring --green-on-fill. Its own token
+     rather than a reuse of the green one: the dark theme flips the green
+     fill's foreground, and there is no reason the red must follow it. */
+  --red-on-fill: #FFFFFF;
+
   /* Link hover — the source's base CSS uses a:hover { color: #166534 }. */
   --green-link-hover: #166534;
 

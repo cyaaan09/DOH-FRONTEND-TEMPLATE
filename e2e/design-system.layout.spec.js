@@ -193,3 +193,36 @@ test.describe('toasts actually stack inside their demo surface', () => {
     await expect(page.locator('[data-toast]')).toHaveCount(0)
   })
 })
+
+test.describe('dialog focus behaviour', () => {
+  // Spec §13's Behavior row requires "Dialog focus trap + restore". Neither
+  // is observable in jsdom: the trap depends on real focus order and the
+  // restore on the browser returning focus to the trigger.
+  test('traps focus while open and restores it to the trigger on close', async ({ page }) => {
+    const trigger = page.getByRole('button', { name: 'Revoke certificate' })
+    await trigger.click()
+
+    const dialog = page.locator('[data-dialog]')
+    await expect(dialog).toBeVisible()
+
+    // Focus must be inside the dialog, and Tab must not escape it.
+    for (let i = 0; i < 6; i += 1) {
+      await page.keyboard.press('Tab')
+      expect(await dialog.evaluate((el) => el.contains(document.activeElement))).toBe(true)
+    }
+
+    await page.keyboard.press('Escape')
+    await expect(dialog).toHaveCount(0)
+    await expect(trigger).toBeFocused()
+  })
+
+  test('the confirm button is the filled destructive, not the outlined one', async ({ page }) => {
+    // Redline "Confirm button" — Appendix C carried this row with nothing
+    // implementing it, so Dialog originally had no filled variant to use.
+    await page.getByRole('button', { name: 'Revoke certificate' }).click()
+    const confirm = page.locator('[data-dialog] [data-confirm]')
+    await expect(confirm).toBeVisible()
+    const bg = await confirm.evaluate((el) => getComputedStyle(el).backgroundColor)
+    expect(bg).toBe('rgb(180, 35, 24)')
+  })
+})

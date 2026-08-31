@@ -137,16 +137,6 @@ describe('ContainersSection', () => {
 
 describe('skeleton sections show their headings and mark their gaps', () => {
 
-  it('DialogSection shows Skeleton for real and marks the other two', () => {
-    const wrapper = mount(DialogSection)
-    const text = wrapper.text()
-    for (const label of ['CONFIRMATION DIALOG', 'EMPTY STATE', 'SKELETON ROWS']) {
-      expect(text, `missing: ${label}`).toContain(label)
-    }
-    // Skeleton is built; Dialog and EmptyState are not.
-    expect(wrapper.findAll('[data-gap]')).toHaveLength(2)
-    expect(wrapper.findAll('[data-row]').length).toBeGreaterThan(0)
-  })
 
   it.each([
     ['FoundationsSection', FoundationsSection],
@@ -694,5 +684,53 @@ describe('NoticesSection carries the toast demo', () => {
     expect(mount(NoticesSection).get('[data-footnote]').text()).toContain(
       'One line, one pill: the outlined tone label carries the meaning',
     )
+  })
+})
+
+describe('DialogSection carries all three states', () => {
+  it('renders the three sub-blocks with their notes and no gaps', () => {
+    const wrapper = mount(DialogSection)
+    expect(wrapper.findAll('[data-gap]')).toHaveLength(0)
+    for (const label of ['CONFIRMATION DIALOG', 'EMPTY STATE', 'SKELETON ROWS']) {
+      expect(wrapper.text(), `missing: ${label}`).toContain(label)
+    }
+    expect(wrapper.findAll('[data-footnote]').map((n) => n.text())).toEqual([
+      'Destructive confirmations name the consequence, not the action.',
+      'Three rows only — never a full page of shimmer.',
+    ])
+  })
+
+  it('renders the empty state with its own action', () => {
+    const empty = mount(DialogSection).get('[data-empty-state]')
+    expect(empty.get('[data-title]').text()).toBe('Nothing matches those filters')
+    expect(empty.get('[data-body]').text()).toBe('Clear the search or switch back to all types.')
+    expect(empty.text()).toContain('Reset filters')
+  })
+
+  it('renders the skeleton in its table form, three ruled rows of three bars', () => {
+    // Appendix D.1 — the demo is a bordered card of ruled rows, not the
+    // plain stack Appendix C's bar redline describes on its own.
+    const table = mount(DialogSection).get('[data-skeleton-table]')
+    const rows = table.findAll('[data-row]')
+    expect(rows).toHaveLength(3)
+    expect(rows[0].findAll('[data-bar]')).toHaveLength(3)
+    // The bars are deliberately not uniform between rows.
+    expect(rows[0].findAll('[data-bar]')[0].attributes('style')).toContain('88%')
+    expect(rows[1].findAll('[data-bar]')[0].attributes('style')).toContain('72%')
+    expect(rows[2].findAll('[data-bar]')[2].attributes('style')).toContain('50%')
+  })
+
+  it('opens the confirmation dialog from the destructive trigger', async () => {
+    const wrapper = mount(DialogSection, { attachTo: document.body })
+    expect(document.querySelector('[data-dialog]')).toBeNull()
+    await wrapper.get('button').trigger('click')
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    const dialog = document.querySelector('[data-dialog]')
+    expect(dialog).not.toBeNull()
+    expect(dialog.textContent).toContain('Revoke this certificate?')
+    // The consequence, not the action — the section's own stated rule.
+    expect(dialog.textContent).toContain('You will not be able to sign documents')
+    expect(dialog.textContent).toContain('Keep certificate')
+    wrapper.unmount()
   })
 })

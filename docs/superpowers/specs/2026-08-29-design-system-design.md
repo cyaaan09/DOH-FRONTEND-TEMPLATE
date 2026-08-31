@@ -563,6 +563,11 @@ from the source.
   /* Destructive confirm hover — redline "Confirm button · #B42318 → hover #96190F" */
   --red-800: #96190F;
 
+  /* Label colour on --red-700, mirroring --green-on-fill. Its own token
+     rather than a reuse of the green one: the dark theme flips the green
+     fill's foreground, and there is no reason the red must follow it. */
+  --red-on-fill: #FFFFFF;
+
   /* Link hover — the source's base CSS uses a:hover { color: #166534 }.
      Phase 1 substituted --green-900; this is the real value. */
   --green-link-hover: #166534;
@@ -1154,6 +1159,18 @@ _DM Sans 400/500/700 · JetBrains Mono for copyable values_
   A live count means tracking ids. Wired the other way first, `Dismiss all` and the empty state
   were both dead, and only the e2e test caught it.
 
+- **2026-08-31 — `Button` forced 700 on every variant.** `.btn` carried a blanket `font-bold`, so
+  Secondary, Destructive and Disabled all rendered at 700 against Appendix C's `#344054 / 500`.
+  Nothing competed for the property, so there was no two-declarations smell to catch it; weight now
+  lives once per variant beside that variant's colours. Found while adding the filled destructive.
+- **2026-08-31 — `EmptyState`'s action is a 34px compact secondary.** The artifact's own button is
+  34px at `13px / 500` with `pad 0 16px`; `Button`'s compact size is `12.5px` with `pad 0 14px`.
+  Using the real component for a real control beats reproducing a button inside `EmptyState` for a
+  0.5px type difference and 2px of padding.
+- **2026-08-31 — `Dialog` sets `lazyMount` and `unmountOnExit`.** Ark otherwise keeps a closed
+  dialog's content mounted and merely hidden, leaving its heading and both buttons in the document
+  at all times. The artifact renders the dialog only while open.
+
 ## Appendix D — demo page content
 
 Extracted verbatim from the source artifact. This is the content authority for the
@@ -1495,6 +1512,39 @@ at gap 18, `margin-top: 16px` — no top rule, no card borders, no sunken surfac
 `DemoRules`. The notices strip below is the standard tinted strip, but stacks at **10px**, and
 closes with a trailing note: `One line, one pill: the outlined tone label carries the meaning, so
 the surface stays almost white.`
+
+#### Dialog, empty state & loading → the three demos
+
+Extracted 2026-08-31. Section body is a grid — `repeat(auto-fit, minmax(300px,1fr))`,
+`gap: 22px 24px`, `align-items: start`, padding `18px 24px 24px`. Three uppercase sub-blocks at
+`margin-bottom: 10px`; two close with a 12px meta note 8px below.
+
+| Sub-block | Content | Trailing note |
+|---|---|---|
+| `CONFIRMATION DIALOG` | a 34px outlined-destructive `Revoke certificate` | `Destructive confirmations name the consequence, not the action.` |
+| `EMPTY STATE` | the panel below | — |
+| `SKELETON ROWS` | the table below | `Three rows only — never a full page of shimmer.` |
+
+**The dialog** is a modal the first block opens. Scrim `--scrim` at `--z-dialog`, `place-items:
+center`, pad 24. Content `max-width: 428px`, radius `--r-card`, `--sh-dialog`, `overflow: hidden`.
+Body pad `22px 24px 18px`: a header row at gap 10 holding a 30px icon tile (radius `--r-field`,
+`--red-50` on `--red-border`, `--red-700`, `!` at 14/700) and the title at **16.5/700**; then the
+description at 13.5/1.55 meta, 12px below. Footer: `--surface-sunken` under a 1px `--divider`, pad
+`14px 24px`, gap 8, right-aligned — `Keep certificate` (38px secondary) then `Revoke`, which is the
+**filled** destructive from Appendix C's `Confirm button` row.
+
+Copy: `Revoke this certificate?` / `You will not be able to sign documents until a new PNPKI
+certificate is uploaded and verified. Documents already signed stay valid.`
+
+**Empty state** — pad `30px 20px`, `1px dashed --border-dashed`, radius `--r-panel`, centred: title
+`Nothing matches those filters` at **14.5/700**, sub `Clear the search or switch back to all types.`
+at 13px meta 4px below, then a 34px secondary `Reset filters` 14px below.
+
+**Skeleton rows** — a bordered card (1px `--divider`, radius `--r-panel`, `overflow: hidden`) of
+three rows, each `grid-template-columns: 1.6fr 0.7fr 1fr`, gap 12, pad `14px 16px`, ruled with
+`--divider-row`. The bars are deliberately uneven — row 1 `88/64/76%`, row 2 `72/64/76%`, row 3
+`88/64/50%` — so the block does not read as a grid of identical strips. Appendix C's
+`Skeleton bar` row describes the bar alone; this table shape is D.1 only.
 
 #### Dropdowns → the four inline demos
 
