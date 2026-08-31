@@ -1,4 +1,5 @@
 <script setup>
+import { useId } from 'vue'
 import {
   RadioGroupRoot,
   RadioGroupItem,
@@ -22,6 +23,14 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue'])
+
+// Redline "Fields" (ARIA & semantics) — hint via aria-describedby. Same
+// index-keyed id scheme as Radio.vue's identical binding — see the comment
+// there for why the index, not option.value, anchors the id.
+const groupId = useId()
+function hintId(index) {
+  return `${groupId}-hint-${index}`
+}
 
 function isChosen(option) {
   return option.value === props.modelValue
@@ -71,7 +80,7 @@ function cardClass(option) {
          Radio.vue; see the comment there for how the override reaches the
          DOM through attrs fallthrough. -->
     <RadioGroupItem
-      v-for="option in options"
+      v-for="(option, index) in options"
       :key="option.value"
       data-card
       :value="option.value"
@@ -105,6 +114,7 @@ function cardClass(option) {
           >
           <span
             v-if="option.hint"
+            :id="hintId(index)"
             data-hint
             class="radiocard__hint block text-hint text-text-meta"
             >{{ option.hint }}</span
@@ -126,7 +136,7 @@ function cardClass(option) {
         >Selected</span
       >
 
-      <RadioGroupItemHiddenInput />
+      <RadioGroupItemHiddenInput :aria-describedby="option.hint ? hintId(index) : undefined" />
     </RadioGroupItem>
   </RadioGroupRoot>
 </template>
@@ -175,13 +185,19 @@ function cardClass(option) {
   margin-left: 10px;
 }
 
-/* Scoped to the item, not the group root: with several cards per component
-   instance, a group-level :focus-within (Checkbox's pattern, correct there
-   because it only ever has one control) would ring every card's control at
-   once whenever any one of their inputs had focus — same reasoning as
-   Radio.vue's identical rule. */
-.card:focus-within .radiocard__control {
+/* Redline "Focus ring" — :focus-visible -> border var(--green-500) + ring.
+   Targets the control directly via [data-focus-visible], scoped per item by
+   Zag itself (getItemControlProps()) rather than through a :focus-within
+   ancestor — same mechanism and same reasoning as Radio.vue's identical
+   rule, which also explains why a group-level selector was never needed
+   here even before this change. Also replaces :focus-within because it
+   matched a mouse click landing on the hidden input, not just a keyboard
+   focus. border-color is new here too, to match TextField.vue's :focus
+   rule — the control already carries a permanent 1.8px border (above), so
+   this only ever changes its colour, never its width. */
+.radiocard__control[data-focus-visible] {
   outline: none;
+  border-color: var(--green-500);
   box-shadow: var(--ring-focus);
 }
 

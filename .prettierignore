@@ -1,0 +1,9 @@
+# Frozen token layer — spec decision, not a style choice. These two files are
+# byte-verbatim transcriptions of the source design system's token block,
+# checked by a parity test (src/design-system/styles/__tests__/tokens.spec.js
+# via parse-tokens.js) that compares parsed --name: value pairs rather than
+# raw text, so a prettier reflow of quotes/whitespace parses identically and
+# would slip past that guard. `.prettierignore` also covers editor
+# format-on-save, unlike narrowing the `format` script's own glob.
+src/design-system/styles/tokens.css
+src/design-system/styles/tokens.dark.css

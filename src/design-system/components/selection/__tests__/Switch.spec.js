@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import { describe, expect, it } from 'vitest'
 import Switch from '../Switch.vue'
 
@@ -40,13 +41,75 @@ describe('Switch', () => {
   })
 
   it('exposes its state through the native input', () => {
-    // Verified against @zag-js/switch: `role` appears NOWHERE in that package,
-    // and getHiddenInputProps renders a plain <input type="checkbox"> with
-    // defaultChecked and no aria-checked. State therefore lives on the input's
-    // own `checked` IDL property, exactly as it does for Checkbox.
+    // Verified against @zag-js/switch: `role` appears NOWHERE in that
+    // package's own output (see the dedicated "announces as a switch" test
+    // below for the role Switch.vue adds itself), and getHiddenInputProps
+    // renders a plain <input type="checkbox"> with defaultChecked and no
+    // aria-checked. State therefore lives on the input's own `checked` IDL
+    // property, exactly as it does for Checkbox.
     const input = mountSwitch({ modelValue: true }).get('input[type="checkbox"]')
     expect(input.element.checked).toBe(true)
     expect(mountSwitch().get('input[type="checkbox"]').element.checked).toBe(false)
+  })
+
+  it('announces as a switch, not a checkbox', () => {
+    // Redline "Switch" (ARIA & semantics) — role=switch aria-checked, not a
+    // checkbox. Ark never sets a role on this input (see the test above) —
+    // role="switch" is added directly in Switch.vue's template and reaches
+    // the real input through the same consumer-attrs-fallthrough path
+    // Checkbox.vue's :indeterminate binding proves. With native checked
+    // already wired (test above), the native `checked` IDL property maps
+    // to aria-checked automatically once role=switch is present — ARIA-in-
+    // HTML explicitly permits role="switch" on input[type=checkbox].
+    const input = mountSwitch().get('input[type="checkbox"]')
+    expect(input.attributes('role')).toBe('switch')
+  })
+
+  it('associates the hint with the input via aria-describedby', () => {
+    // Redline "Fields" (ARIA & semantics) — hint via aria-describedby. Same
+    // reason as Checkbox.spec.js's identical test: the hidden input's own
+    // aria-labelledby wins over the wrapping <label> for the accessible
+    // NAME, so the hint needs its own wire into the description.
+    const wrapper = mountSwitch({ hint: 'Digest at 6 PM, weekdays only' })
+    const input = wrapper.get('input[type="checkbox"]')
+    const describedbyId = input.attributes('aria-describedby')
+    expect(describedbyId).toBeTruthy()
+    expect(wrapper.get(`[id="${describedbyId}"]`).text()).toBe('Digest at 6 PM, weekdays only')
+  })
+
+  it('omits aria-describedby when there is no hint', () => {
+    expect(
+      mountSwitch().get('input[type="checkbox"]').attributes('aria-describedby'),
+    ).toBeUndefined()
+  })
+
+  it('marks the track focus-visible for keyboard focus, not a mouse click', async () => {
+    // Redline "Focus ring" — :focus-visible -> border/ring, never on a mouse
+    // click. Same mechanism and same reason this needs a real focus() on an
+    // attached element as Checkbox.spec.js's identical test — see the
+    // comment there.
+    const wrapper = mount(Switch, {
+      props: { modelValue: false, label: 'Email me on returns' },
+      attachTo: document.body,
+    })
+    const input = wrapper.get('input[type="checkbox"]')
+    const track = () => wrapper.get('[data-track]')
+
+    try {
+      document.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+      input.element.focus()
+      await nextTick()
+      expect(track().attributes('data-focus-visible')).toBeUndefined()
+      input.element.blur()
+      await nextTick()
+
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }))
+      input.element.focus()
+      await nextTick()
+      expect(track().attributes('data-focus-visible')).toBe('')
+    } finally {
+      wrapper.unmount()
+    }
   })
 
   it('emits update:modelValue when toggled, and not when disabled', async () => {

@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import { describe, expect, it } from 'vitest'
 import Radio from '../Radio.vue'
 
@@ -81,5 +82,57 @@ describe('Radio', () => {
     const dot = mountRadio({ modelValue: 'n/a' }).findAll('[data-dot]')[2]
     expect(dot.classes()).toContain('bg-ink-200')
     expect(dot.classes()).not.toContain('bg-green-fill')
+  })
+
+  it('associates a hint with its input via aria-describedby, per option', () => {
+    // Redline "Fields" (ARIA & semantics) — hint via aria-describedby. Same
+    // reason as Checkbox.spec.js's identical test: each hidden input's own
+    // aria-labelledby wins over the wrapping <label> for the accessible
+    // NAME, so a hint needs its own wire into the description. This file's
+    // own OPTIONS fixture carries no hints, so this test supplies one
+    // locally rather than widening the shared fixture other tests rely on.
+    const withHint = [
+      { value: 'as-plan', label: 'As-plan', hint: 'Drawn but not yet built' },
+      { value: 'as-built', label: 'As-built' },
+    ]
+    const wrapper = mountRadio({ options: withHint, modelValue: 'as-plan' })
+    const inputs = wrapper.findAll('[data-item] input')
+
+    const describedbyId = inputs[0].attributes('aria-describedby')
+    expect(describedbyId).toBeTruthy()
+    expect(wrapper.get(`[id="${describedbyId}"]`).text()).toBe('Drawn but not yet built')
+
+    expect(inputs[1].attributes('aria-describedby')).toBeUndefined()
+  })
+
+  it('marks only the focused control focus-visible, for keyboard focus only', async () => {
+    // Redline "Focus ring" — :focus-visible -> border/ring, never on a mouse
+    // click, and scoped to the ONE item with focus (Zag's
+    // getItemControlProps() computes focusVisible per item). Same reason
+    // this needs a real focus() on an attached element as Checkbox.spec.js's
+    // identical test — see the comment there.
+    const wrapper = mount(Radio, {
+      props: { options: OPTIONS, modelValue: 'as-plan', label: 'Drawing type' },
+      attachTo: document.body,
+    })
+    const inputs = wrapper.findAll('[data-item] input')
+    const controls = () => wrapper.findAll('[data-control]')
+
+    try {
+      document.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+      inputs[0].element.focus()
+      await nextTick()
+      expect(controls()[0].attributes('data-focus-visible')).toBeUndefined()
+      inputs[0].element.blur()
+      await nextTick()
+
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }))
+      inputs[1].element.focus()
+      await nextTick()
+      expect(controls()[1].attributes('data-focus-visible')).toBe('')
+      expect(controls()[0].attributes('data-focus-visible')).toBeUndefined()
+    } finally {
+      wrapper.unmount()
+    }
   })
 })

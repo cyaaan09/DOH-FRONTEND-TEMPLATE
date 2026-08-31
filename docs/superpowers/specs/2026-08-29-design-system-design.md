@@ -409,6 +409,34 @@ Found while extracting the page structure; each is scheduled into the phase that
   reused across every section, so changing it to match Dropdowns exactly would move every other
   section's grid too. D.1 is the more specific authority if this is revisited.
 
+- **2026-08-31 — a disabled-and-chosen radio card has no governing row.** Appendix C's Selection
+  controls group gives cards exactly two states, `Card` and `Card selected` — neither is a disabled
+  variant, so a disabled-and-chosen option (the selected green surface wrapped around a greyed-out
+  control) is unreachable in the shipped demo: no `RADIO CARDS · SINGLE` option is both disabled and
+  chosen. `RadioCard.vue`'s `cardClass` has only the two redlined branches for exactly this reason —
+  Appendix C does not specify a third.
+
+- **2026-08-31 — `Selected row` governs the selected state only.** Appendix C's Selection controls
+  group has one row, `Selected row | #F7FCF9 bg · 1px top #F5F7FA`, covering both the background and
+  the top rule together, with no separate row for an idle one. `BulkActionBar.vue` therefore gives an
+  unselected row neither class rather than a guessed one — nothing is ever left to compete with the
+  selected branch for the same property.
+
+- **2026-08-31 — two Selection controls values are inferred, not redlined.** `Radio`'s chosen and
+  unchosen control border colours reuse the `Checkbox off` row's exact hex (`Checkbox off | #FFF
+  fill · 1.8px #C3CAD6`) — Appendix C's own `Radio` row specifies only the inner dot's colour, not
+  the control's border. `RadioCard`'s "Selected" marker typography (13.5px/400, the same step as
+  `Label`) is likewise an inference: Appendix D.1 records that the chosen card carries a "Selected"
+  marker at all, not what type styles it, and no Type scale row covers it either.
+
+- **2026-08-31 — the 44px touch target for `Checkbox`/`Radio` is unimplemented.** Appendix C's
+  Responsive & touch group states `Checkbox / radio | 17px box inside a 44px tappable row on touch`;
+  the shipped rows sit at roughly the label's natural height (~21px, from the 17px box and its own
+  text), not padded out to 44px, even though `--h-touch: 44px` already exists in `tokens.css` for
+  exactly this. Not a failure against this project's WCAG 2.1 AA baseline (§18) — SC 2.5.5 Target
+  Size is Level AAA, a stricter bar than §18.1's own 2.2-era 2.5.8 discussion — but the row names
+  these components specifically, so it belongs on this list rather than staying silent.
+
 ## Appendix A — `tokens.css`
 
 ```css

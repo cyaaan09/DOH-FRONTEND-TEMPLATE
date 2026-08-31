@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import { describe, expect, it } from 'vitest'
 import Checkbox from '../Checkbox.vue'
 
@@ -109,5 +110,59 @@ describe('Checkbox', () => {
     const label = mountBox().get('[data-label]')
     expect(label.classes()).toContain('text-body')
     expect(label.classes()).toContain('text-ink-700')
+  })
+
+  it('associates the hint with the input via aria-describedby', () => {
+    // Redline "Fields" (ARIA & semantics) — hint via aria-describedby. The
+    // hidden input already carries an explicit aria-labelledby (Ark's own
+    // getHiddenInputProps(), pointed at CheckboxLabel), which wins over the
+    // wrapping <label> for the accessible NAME — so without this wire, a
+    // hint like "Migrated paper licences with no service list" is in
+    // neither the name nor the description, and is silent on focus.
+    const wrapper = mountBox({ hint: 'Migrated paper licences with no service list' })
+    const input = wrapper.get('input[type="checkbox"]')
+    const describedbyId = input.attributes('aria-describedby')
+    expect(describedbyId).toBeTruthy()
+    expect(wrapper.get(`[id="${describedbyId}"]`).text()).toBe(
+      'Migrated paper licences with no service list',
+    )
+  })
+
+  it('omits aria-describedby when there is no hint', () => {
+    expect(mountBox().get('input[type="checkbox"]').attributes('aria-describedby')).toBeUndefined()
+  })
+
+  it('marks the box focus-visible for keyboard focus, not a mouse click', async () => {
+    // Redline "Focus ring" — :focus-visible -> border + ring; the artifact
+    // never shows this on a mouse click. Zag's isFocusVisible() reads a
+    // module-level modality flag set by a real keydown/mousedown on
+    // `document` (the machine's own effect wires that listener there on
+    // mount). Needs a REAL focus(), not Test Utils' synthetic
+    // trigger('focus'): focus/blur do not bubble and jsdom only runs the
+    // browser's real focus machinery — which is what actually drives Ark's
+    // context update here — for a connected, attached element, so this
+    // mount uses attachTo and is unmounted again at the end.
+    const wrapper = mount(Checkbox, {
+      props: { modelValue: false, label: 'Include legacy records' },
+      attachTo: document.body,
+    })
+    const input = wrapper.get('input[type="checkbox"]')
+    const box = () => wrapper.get('[data-box]')
+
+    try {
+      document.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+      input.element.focus()
+      await nextTick()
+      expect(box().attributes('data-focus-visible')).toBeUndefined()
+      input.element.blur()
+      await nextTick()
+
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }))
+      input.element.focus()
+      await nextTick()
+      expect(box().attributes('data-focus-visible')).toBe('')
+    } finally {
+      wrapper.unmount()
+    }
   })
 })

@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, useId } from 'vue'
 import {
   CheckboxRoot,
   CheckboxControl,
@@ -25,6 +25,14 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue'])
+
+// Redline "Fields" (ARIA & semantics) — hint via aria-describedby. The
+// hidden input already carries an explicit aria-labelledby (Ark's own
+// getHiddenInputProps(), pointed at CheckboxLabel), which wins over the
+// wrapping <label> for the accessible NAME — so without a separate
+// aria-describedby, a hint is in neither the name nor the description, and
+// is silent on focus.
+const hintId = `${useId()}-hint`
 
 // Ark models the tri-state as a value of true | false | 'indeterminate'.
 const checked = computed(() => (props.indeterminate ? 'indeterminate' : props.modelValue))
@@ -76,9 +84,13 @@ const boxClass = computed(() => {
       <CheckboxLabel data-label class="checkbox__label block text-body text-ink-700">{{
         label
       }}</CheckboxLabel>
-      <span v-if="hint" data-hint class="checkbox__hint block text-hint text-text-meta">{{
-        hint
-      }}</span>
+      <span
+        v-if="hint"
+        :id="hintId"
+        data-hint
+        class="checkbox__hint block text-hint text-text-meta"
+        >{{ hint }}</span
+      >
     </span>
 
     <!-- `indeterminate` isn't one of CheckboxHiddenInput's declared props, so
@@ -92,7 +104,10 @@ const boxClass = computed(() => {
          for a checkbox that mounts already indeterminate. Confirmed by
          running the "exposes the mixed state" test against this binding
          alone with no ref/onMounted/watch — see task-1-report.md. -->
-    <CheckboxHiddenInput :indeterminate="indeterminate" />
+    <CheckboxHiddenInput
+      :indeterminate="indeterminate"
+      :aria-describedby="hint ? hintId : undefined"
+    />
   </CheckboxRoot>
 </template>
 
@@ -100,7 +115,6 @@ const boxClass = computed(() => {
 /* Redline "Checkbox" — 1.8px border. No border-width utility carries it. */
 .checkbox__box {
   border-width: 1.8px;
-  cursor: pointer;
 }
 
 /* Redline "Label" — gap 10px between box and text. */
@@ -114,12 +128,31 @@ const boxClass = computed(() => {
   line-height: 1;
 }
 
+/* Appendix D's Selection controls description — "whole row clickable".
+   Lives on the root, not .checkbox__box: a cursor declared directly on the
+   box would beat the INHERITED not-allowed below regardless of specificity
+   — a direct declaration on an element always wins over an inherited value,
+   no matter how specific the ancestor rule that produced it — which is
+   exactly how the box used to swallow the disabled cursor. Matches Radio's
+   and RadioCard's row/card-level cursor. */
+.checkbox {
+  cursor: pointer;
+}
+
 .checkbox[data-disabled] {
   cursor: not-allowed;
 }
 
-.checkbox:focus-within .checkbox__box {
+/* Redline "Focus ring" — :focus-visible -> border var(--green-500) + ring.
+   [data-focus-visible] is Zag's own isFocusVisible() heuristic (keyboard
+   only, never a mouse click) landing directly on the box via
+   getControlProps(); replaces :focus-within, which also matched a mouse
+   click landing on the hidden input. border-color is new here too, to match
+   TextField.vue's :focus rule — the box already carries a permanent 1.8px
+   border (above), so this only ever changes its colour, never its width. */
+.checkbox__box[data-focus-visible] {
   outline: none;
+  border-color: var(--green-500);
   box-shadow: var(--ring-focus);
 }
 

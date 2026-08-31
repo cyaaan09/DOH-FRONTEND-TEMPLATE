@@ -1,4 +1,5 @@
 <script setup>
+import { useId } from 'vue'
 import {
   RadioGroupRoot,
   RadioGroupItem,
@@ -24,6 +25,16 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue'])
+
+// Redline "Fields" (ARIA & semantics) — hint via aria-describedby. One id
+// per option, keyed by array position rather than option.value: values are
+// consumer data with no guarantee of being DOM-id-safe (this file's own
+// fixture already has one containing "/"), while the index is always a
+// valid id token.
+const groupId = useId()
+function hintId(index) {
+  return `${groupId}-hint-${index}`
+}
 
 // One branch per state, each setting every property it owns — never a base
 // class plus an override, which is this project's recurring defect.
@@ -71,7 +82,7 @@ function dotClass(option) {
          DOM. Verified in Radio.spec.js "names the group without drawing the
          name"; do not remove this without re-checking that assertion. -->
     <RadioGroupItem
-      v-for="option in options"
+      v-for="(option, index) in options"
       :key="option.value"
       data-item
       :value="option.value"
@@ -99,12 +110,16 @@ function dotClass(option) {
         <RadioGroupItemText data-label class="radio__label block text-body text-ink-700">{{
           option.label
         }}</RadioGroupItemText>
-        <span v-if="option.hint" data-hint class="radio__hint block text-hint text-text-meta">{{
-          option.hint
-        }}</span>
+        <span
+          v-if="option.hint"
+          :id="hintId(index)"
+          data-hint
+          class="radio__hint block text-hint text-text-meta"
+          >{{ option.hint }}</span
+        >
       </span>
 
-      <RadioGroupItemHiddenInput />
+      <RadioGroupItemHiddenInput :aria-describedby="option.hint ? hintId(index) : undefined" />
     </RadioGroupItem>
   </RadioGroupRoot>
 </template>
@@ -139,12 +154,23 @@ function dotClass(option) {
   margin-left: 10px;
 }
 
-/* Scoped to the item, not the group root: with several items per component
-   instance, a group-level :focus-within (Checkbox's pattern, correct there
-   because it only ever has one control) would ring every item's control at
-   once whenever any one of their inputs had focus. */
-.radio__item:focus-within .radio__control {
+/* Redline "Focus ring" — :focus-visible -> border var(--green-500) + ring.
+   Targets the control directly via [data-focus-visible] rather than a
+   :focus-within ancestor: Zag's getItemControlProps() already scopes
+   focusVisible PER ITEM (itemState.focusVisible checks this item's own
+   value against context.focusVisibleValue), so there is no need to re-scope
+   it through an item-level selector the way :focus-within needed — a
+   group-level [data-focus-visible] would have been the Checkbox mistake
+   repeated (ringing every item at once), but this attribute never appears
+   on more than one item's control simultaneously. Also replaces
+   :focus-within because it matched a mouse click landing on the hidden
+   input, not just a keyboard focus — see Checkbox.vue's identical rule.
+   border-color is new here too, to match TextField.vue's :focus rule — the
+   control already carries a permanent 1.8px border (above), so this only
+   ever changes its colour, never its width. */
+.radio__control[data-focus-visible] {
   outline: none;
+  border-color: var(--green-500);
   box-shadow: var(--ring-focus);
 }
 

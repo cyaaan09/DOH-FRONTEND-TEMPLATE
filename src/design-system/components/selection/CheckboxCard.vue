@@ -25,10 +25,35 @@ const cardClass = computed(() =>
     ? 'border-green-500 bg-green-tint-2 card--selected'
     : 'border-hairline bg-surface',
 )
+
+// Appendix D's Selection controls description — "whole row clickable".
+// RadioCard's card IS the <label> (its root is Ark's own RadioGroupItem,
+// whose getRootProps() -> normalize.label), so its entire padded surface is
+// native label-click territory. This card instead wraps Checkbox (above),
+// whose own root is ALSO a <label> but only as wide as its box + text
+// content — the padding this wrapping <div> adds around it sits outside
+// that label and is native-click-dead. A click landing there is forwarded
+// to the same event Checkbox itself emits. A click landing inside the
+// nested <label> is left alone — it already toggles natively there, and
+// forwarding it too would double-toggle: the browser re-dispatches a
+// synthetic click at the label's control that also bubbles back up through
+// this div.
+function onCardClick(event) {
+  if (props.disabled) return
+  const label = event.target.closest('label')
+  if (label && event.currentTarget.contains(label)) return
+  emit('update:modelValue', !props.modelValue)
+}
 </script>
 
 <template>
-  <div data-card class="card flex flex-col border" :class="cardClass">
+  <div
+    data-card
+    class="card flex flex-col border"
+    :class="cardClass"
+    :data-disabled="disabled ? '' : undefined"
+    @click="onCardClick"
+  >
     <Checkbox
       :model-value="modelValue"
       :label="label"
@@ -47,6 +72,11 @@ const cardClass = computed(() =>
   padding: 13px 14px;
   border-radius: 11px;
   gap: 11px;
+  cursor: pointer;
+}
+
+.card[data-disabled] {
+  cursor: not-allowed;
 }
 
 /* Redline "Card selected" — ring shadow has no utility namespace (spec

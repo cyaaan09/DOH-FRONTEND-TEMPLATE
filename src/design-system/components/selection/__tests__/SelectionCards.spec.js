@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import { describe, expect, it } from 'vitest'
 import CheckboxCard from '../CheckboxCard.vue'
 import RadioCard from '../RadioCard.vue'
@@ -65,6 +66,37 @@ describe('CheckboxCard', () => {
     const input = mountCard({ disabled: true }).get('input[type="checkbox"]')
     expect(input.element.disabled).toBe(true)
   })
+
+  it('toggles when the card padding is clicked, not just the nested checkbox', async () => {
+    // Appendix D's Selection controls description — "whole row clickable".
+    // RadioCard's card IS the label, so its whole padded surface is native
+    // click territory; this card wraps Checkbox, whose own <label> root is
+    // only as wide as its box + text, so the padding this wrapping <div>
+    // adds was dead to clicks before this fix. trigger('click') dispatched
+    // directly on [data-card] targets the div itself, simulating a click
+    // that lands on that padding (outside the nested label) rather than on
+    // any of its children.
+    const wrapper = mountCard()
+    await wrapper.get('[data-card]').trigger('click')
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([true])
+  })
+
+  it('does not double-toggle when the click lands on the nested checkbox', async () => {
+    // Regression guard for the card-padding forwarder above: a click that
+    // DOES land inside the nested Checkbox's own <label> must be left to
+    // toggle it natively, exactly once — not re-emitted a second time by
+    // the card's own click handler.
+    const wrapper = mountCard()
+    await wrapper.get('input[type="checkbox"]').trigger('click')
+    expect(wrapper.emitted('update:modelValue')).toHaveLength(1)
+    expect(wrapper.emitted('update:modelValue')[0]).toEqual([true])
+  })
+
+  it('does not toggle from the card padding when disabled', async () => {
+    const wrapper = mountCard({ disabled: true })
+    await wrapper.get('[data-card]').trigger('click')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+  })
 })
 
 describe('RadioCard', () => {
@@ -126,5 +158,55 @@ describe('RadioCard', () => {
     const control = wrapper.findAll('[data-control]')[3]
     expect(control.classes()).toContain('bg-surface-disabled')
     expect(control.classes()).toContain('border-soft')
+  })
+
+  it('associates a hint with its input via aria-describedby, per option', () => {
+    // Redline "Fields" (ARIA & semantics) — hint via aria-describedby. Same
+    // reason as Radio.spec.js's identical test: each hidden input's own
+    // aria-labelledby wins over the wrapping <label> for the accessible
+    // NAME, so a hint needs its own wire into the description. Adds one
+    // hint-less option locally, since every CARD_OPTIONS entry carries one.
+    const wrapper = mountCards({
+      options: [...CARD_OPTIONS, { value: 'n/a', label: 'Not applicable' }],
+    })
+    const inputs = wrapper.findAll('[data-card] input')
+
+    const describedbyId = inputs[0].attributes('aria-describedby')
+    expect(describedbyId).toBeTruthy()
+    expect(wrapper.get(`[id="${describedbyId}"]`).text()).toBe(
+      'First licence for a newly built facility',
+    )
+
+    expect(inputs[3].attributes('aria-describedby')).toBeUndefined()
+  })
+
+  it('marks only the focused control focus-visible, for keyboard focus only', async () => {
+    // Redline "Focus ring" — :focus-visible -> border/ring, never on a mouse
+    // click, and scoped to the ONE item with focus. Same mechanism and same
+    // reason this needs a real focus() on an attached element as
+    // Checkbox.spec.js's identical test — see the comment there.
+    const wrapper = mount(RadioCard, {
+      props: { options: CARD_OPTIONS, modelValue: 'renewal', label: 'Application type' },
+      attachTo: document.body,
+    })
+    const inputs = wrapper.findAll('[data-card] input')
+    const controls = () => wrapper.findAll('[data-control]')
+
+    try {
+      document.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+      inputs[0].element.focus()
+      await nextTick()
+      expect(controls()[0].attributes('data-focus-visible')).toBeUndefined()
+      inputs[0].element.blur()
+      await nextTick()
+
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }))
+      inputs[2].element.focus()
+      await nextTick()
+      expect(controls()[2].attributes('data-focus-visible')).toBe('')
+      expect(controls()[0].attributes('data-focus-visible')).toBeUndefined()
+    } finally {
+      wrapper.unmount()
+    }
   })
 })
