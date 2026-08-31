@@ -363,12 +363,6 @@ zero `DemoGap`s, so a section cannot be declared done while a slot is still empt
 
 Found while extracting the page structure; each is scheduled into the phase that touches its section:
 
-- **Chip row gaps differ by context.** The tone-chip rows use `gap 7px`; the filter-chip row uses
-  `gap 8px`. The conformance pass set `ChipGroup` to 7px globally.
-- **`FilterChip` has no mark.** The artifact's filter chips carry a checkbox-style mark glyph inside
-  the chip; ours renders the label alone.
-- **Two Chip variants are missing** that the artifact shows: count badges (`13`, `8`, `+4 more`) and
-  overflow/expiry pills (`128 days left`, `36 days left`).
 - **2026-08-30 — `MultiSelect`'s filter input and footer buttons are children of `role="listbox"`.**
   Zag's `getContentProps()` sets `role: "listbox"` when `composite` (the default, verified against
   the installed `@zag-js/select` source), and ARIA 1.2 allows only `option`/`group` as listbox
@@ -402,13 +396,6 @@ Found while extracting the page structure; each is scheduled into the phase that
   exempt. Do not "restore" the labels — that reintroduces the defect. See the comments at
   `Tabs.vue`'s count span and `StageTabs.vue`'s figure span, which state this at the call site.
 
-- **2026-08-30 — Appendix D.1's Dropdowns grid conflicts with §17.1's generic `DemoBlocks` chrome.**
-  D.1 records `minmax(260px,1fr)`, `gap: 20px 24px`, padding `18px 24px 24px`; `DemoBlocks` (§17.1)
-  implements `minmax(268px,1fr)`, `gap: 24px`, padding `18px 24px 6px`. The visible difference is the
-  card's bottom edge, 6px vs 24px. The shared chrome deliberately wins for now — `DemoBlocks` is
-  reused across every section, so changing it to match Dropdowns exactly would move every other
-  section's grid too. D.1 is the more specific authority if this is revisited.
-
 - **2026-08-31 — a disabled-and-chosen radio card has no governing row.** Appendix C's Selection
   controls group gives cards exactly two states, `Card` and `Card selected` — neither is a disabled
   variant, so a disabled-and-chosen option (the selected green surface wrapped around a greyed-out
@@ -430,14 +417,6 @@ Found while extracting the page structure; each is scheduled into the phase that
   colour — the `--text-hint` step, not `Label`'s 13.5px/400) is likewise an inference: Appendix D.1
   records that the chosen card carries a "Selected" marker at all, not what type styles it, and no
   Type scale row covers it either.
-
-- **2026-08-31 — the 44px touch target for `Checkbox`/`Radio` is unimplemented.** Appendix C's
-  Responsive & touch group states `Checkbox / radio | 17px box inside a 44px tappable row on touch`;
-  the shipped rows sit at roughly the label's natural height (~21px, from the 17px box and its own
-  text), not padded out to 44px, even though `--h-touch: 44px` already exists in `tokens.css` for
-  exactly this. Not a failure against this project's WCAG 2.1 AA baseline (§18) — SC 2.5.5 Target
-  Size is Level AAA, a stricter bar than §18.1's own 2.2-era 2.5.8 discussion — but the row names
-  these components specifically, so it belongs on this list rather than staying silent.
 
 ## Appendix A — `tokens.css`
 
@@ -1117,20 +1096,6 @@ _DM Sans 400/500/700 · JetBrains Mono for copyable values_
   inset. Following the artifact here would make this the only strip on the page at a different
   gutter, a worse inconsistency than the 2–4px it fixes. Deliberate; the label's own
   `margin-bottom: 10px` already matches `DemoStrip`.
-- **2026-08-31 — `CheckboxCard`'s control-to-text gap is 10px, not the card's 11px.** The artifact's
-  card is one flex row at `gap: 11px`, which sets the distance from the box to the label.
-  `CheckboxCard` composes `Checkbox` rather than re-rendering Ark's parts, so that distance comes
-  from `Checkbox`'s own 10px `margin-left`. `RadioCard`, which does render its own parts, gets the
-  11px right. Closing the 1px would mean either duplicating Ark's checkbox wiring in the card or
-  making the gap a `Checkbox` prop; neither is worth 1px.
-- **2026-08-31 — `DemoBlock`'s label gap is 4px page-wide, and the source page never uses 4px.**
-  §17.1 redlines `margin-bottom 4px`. Scanning every uppercase sub-block label in the artifact gives
-  `2px` (Tabs), `10px` (Containers, and the bulk strip), `11px` (three reference sections) and
-  `12px` (Selection controls) — never 4px, so the §17.1 value looks like a bad extraction rather
-  than a real redline. Left alone here: it is page-wide chrome, and changing it inside a
-  Selection-controls fix would silently move every other section. Wants its own pass, with §17.1
-  corrected to a per-section value.
-
 - **2026-08-31 — the `LTO number` field is not permanently focused.** The artifact renders that one
   demo with the focus ring always on, to show it; its hint says so (`Focus · 3px ring at 15%
   green`). Reproducing that needs a `focused` prop on a production field component whose only

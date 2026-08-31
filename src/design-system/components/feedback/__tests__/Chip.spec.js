@@ -203,4 +203,26 @@ describe('DismissibleChip — Appendix C conformance', () => {
     expect(neutral).toContain('bg-neutral-100')
     expect(neutral).not.toContain('bg-surface-muted')
   })
+
+  it('keeps a filter chip the same size selected and unselected', () => {
+    // Both states carry a 1px border in the artifact. Only the unselected
+    // one did, so a chip lost 2px in each dimension the moment it was picked
+    // and the whole row reflowed. No wrong value was needed for this — just
+    // a missing one, which is why no colour assertion caught it.
+    const on = [...mount(FilterChip, { props: { selected: true } }).element.classList]
+    const off = [...mount(FilterChip, { props: { selected: false } }).element.classList]
+    expect(on).toContain('border')
+    expect(off).toContain('border')
+    expect(on).toContain('border-green-fill')
+    expect(off).toContain('border-field')
+  })
+
+  it('gives a filter chip the mark glyph, dressed per state', () => {
+    // Redline "Filter chip" — a 13px checkbox-style mark ahead of the label.
+    const on = mount(FilterChip, { props: { selected: true } }).get('[data-mark]')
+    const off = mount(FilterChip, { props: { selected: false } }).get('[data-mark]')
+    expect(on.classes()).toContain('filter-chip__mark--on')
+    expect(off.classes()).toContain('filter-chip__mark--off')
+    expect(on.attributes('aria-hidden')).toBe('true')
+  })
 })

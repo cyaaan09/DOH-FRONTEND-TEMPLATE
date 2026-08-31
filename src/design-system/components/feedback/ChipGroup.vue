@@ -1,5 +1,16 @@
+<script setup>
+defineProps({
+  /**
+   * Appendix C's Chips group says 7px, and that governs the tone rows; the
+   * artifact's FILTER chip row runs 8px. Recorded in §17.3 as "chip row gaps
+   * differ by context" — this is the context.
+   */
+  gap: { type: String, default: '7px' },
+})
+</script>
+
 <template>
-  <div class="chip-group flex flex-wrap items-center">
+  <div class="chip-group flex flex-wrap items-center" :style="{ '--chip-group-gap': gap }">
     <slot />
   </div>
 </template>
@@ -13,6 +24,6 @@
  * token: tokens.css stays untouched and --gap-chip-row remains defined but
  * unused here. Do not "fix" this back to the gap-chip-row utility. */
 .chip-group {
-  gap: 7px;
+  gap: var(--chip-group-gap, 7px);
 }
 </style>

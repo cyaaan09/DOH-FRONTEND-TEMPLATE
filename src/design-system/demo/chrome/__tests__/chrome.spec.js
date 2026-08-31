@@ -160,4 +160,18 @@ describe('DemoStrip', () => {
     expect(wrapper.text()).toContain('INTERACTIVE — FILTER CHIPS')
     expect(wrapper.find('.strip-probe').exists()).toBe(true)
   })
+
+describe('DemoBlock label gap', () => {
+  it('tightens to 4px only when a note follows it', () => {
+    // §17.1 recorded 4px, which is right for a block WITH a note (Chips,
+    // Foundations) and 6px too tight for every block without one (Dialog,
+    // Containers, File inputs). The page shipped 4px everywhere.
+    const noted = mount(DemoBlock, { props: { label: 'X', note: 'why' } })
+    expect(noted.get('[data-label]').classes()).toContain('mb-1')
+
+    const bare = mount(DemoBlock, { props: { label: 'X' } })
+    expect(bare.get('[data-label]').classes()).toContain('mb-2.5')
+    expect(bare.get('[data-label]').classes()).not.toContain('mb-1')
+  })
+})
 })

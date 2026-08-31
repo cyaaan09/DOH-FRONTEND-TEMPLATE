@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import { describe, expect, it } from 'vitest'
@@ -182,5 +183,16 @@ describe('Checkbox', () => {
     const card = [...mountBox({ emphasis: true }).get('[data-label]').element.classList]
     expect(card).toContain('font-medium')
     expect(card).toContain('text-ink-900')
+  })
+
+  it('grows the row to a 44px tap target on a coarse pointer', () => {
+    // Appendix C, Responsive & touch — "17px box inside a 44px tappable row
+    // on touch". --h-touch has existed since Phase 1 for exactly this and
+    // nothing used it. min-height, not height: a row carrying a hint is
+    // already taller and must not be squashed back to 44.
+    const source = readFileSync('src/design-system/components/selection/Checkbox.vue', 'utf8')
+    expect(source).toMatch(/@media \(pointer: coarse\)/)
+    expect(source).toMatch(/min-height:\s*var\(--h-touch\)/)
+    expect(source).not.toMatch(/\n\s+height:\s*var\(--h-touch\)/)
   })
 })

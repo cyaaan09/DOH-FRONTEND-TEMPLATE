@@ -27,11 +27,22 @@ describe('ChipGroup', () => {
     expect(mount(ChipGroup).classes()).not.toContain('gap-chip-row')
   })
 
-  it('sets the row gap to the redlined 7px in a scoped style, not a Tailwind step', () => {
+  it('defaults the row gap to the redlined 7px, in CSS rather than a utility', () => {
     // No Tailwind spacing step lands on 7px (gap-2 is 8px, the next step
     // down is 6px), so this is a scoped CSS rule rather than a utility —
     // asserted against the source text since jsdom does not apply the
-    // component's <style scoped> block in this test environment.
-    expect(source).toMatch(/gap:\s*7px/)
+    // component's <style scoped> block in this test environment. The value
+    // now arrives as a custom property so a caller can pass the artifact's
+    // 8px filter row, but 7px remains BOTH the prop default and the CSS
+    // fallback, so an unset property still lands on the redline.
+    expect(source).toMatch(/gap:\s*var\(--chip-group-gap,\s*7px\)/)
+    expect(source).toMatch(/default:\s*'7px'/)
+    expect(mount(ChipGroup).attributes('style')).toContain('--chip-group-gap: 7px')
+  })
+
+  it('takes the 8px gap the artifact uses for the filter row', () => {
+    expect(mount(ChipGroup, { props: { gap: '8px' } }).attributes('style')).toContain(
+      '--chip-group-gap: 8px',
+    )
   })
 })

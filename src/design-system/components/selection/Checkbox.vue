@@ -144,8 +144,10 @@ const boxClass = computed(() => {
 }
 
 /* Redline "Label" — gap 10px between box and text. */
+/* 10px in a plain list; Appendix D.1's card runs 11px, and CheckboxCard sets
+   --checkbox-gap rather than declaring margin-left a second time. */
 .checkbox__text {
-  margin-left: 10px;
+  margin-left: var(--checkbox-gap, 10px);
 }
 
 /* Redlines "Checkbox on" / "Indeterminate" — glyph 10px. */
@@ -186,3 +188,8 @@ const boxClass = computed(() => {
   margin-top: 2px;
 }
 </style>
+
+/* Redline "Checkbox / radio · 17px box inside a 44px tappable row on touch" (Responsive & touch).
+min-height, not height: a row with a hint is already taller than 44px and must not be squashed to
+it. --h-touch is the token that has existed for this since Phase 1. */ @media (pointer: coarse) {
+.checkbox { min-height: var(--h-touch); } }

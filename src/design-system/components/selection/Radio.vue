@@ -187,3 +187,7 @@ function dotClass(option) {
   margin-top: 2px;
 }
 </style>
+
+/* Redline "Checkbox / radio · 17px box inside a 44px tappable row on touch" (Responsive & touch),
+matching Checkbox.vue. min-height so a row carrying a hint keeps its natural height. */ @media
+(pointer: coarse) { .radio__item { min-height: var(--h-touch); } }

@@ -69,7 +69,13 @@ function onCardClick(event) {
 /* Redline "Card" — pad 13px 14px, radius 11px. No token carries the radius:
    --r-panel is 12px and --r-card is 14px, so this is scoped rather than a
    rounded-* utility. */
+/* Appendix D.1 — the card's own flex gap is 11px, and that governs the
+   distance from the box to the label too. CheckboxCard composes Checkbox
+   rather than re-rendering Ark's parts, so it hands the value down through
+   --checkbox-gap; declaring margin-left again here would be a second rule
+   for one property, which is this codebase's recurring defect. */
 .card {
+  --checkbox-gap: 11px;
   padding: 13px 14px;
   border-radius: 11px;
   gap: 11px;

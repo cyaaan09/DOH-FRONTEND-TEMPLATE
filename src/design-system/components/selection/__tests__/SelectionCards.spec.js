@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import { describe, expect, it } from 'vitest'
@@ -233,5 +234,19 @@ describe('RadioCard', () => {
     expect(cls).toContain('font-medium')
     expect(cls).toContain('text-ink-900')
     expect(cls).not.toContain('text-ink-700')
+  })
+
+  it('widens the box-to-label gap to the card\'s own 11px', () => {
+    // Appendix D.1 — the card's flex gap is 11px and governs the distance
+    // from the box to the label too. CheckboxCard composes Checkbox rather
+    // than re-rendering Ark's parts, so it hands the value down through a
+    // custom property; a second margin-left here would be two rules for one
+    // property. jsdom applies no scoped styles, so this reads the source.
+    const card = readFileSync('src/design-system/components/selection/CheckboxCard.vue', 'utf8')
+    const checkbox = readFileSync('src/design-system/components/selection/Checkbox.vue', 'utf8')
+    expect(card).toMatch(/--checkbox-gap:\s*11px/)
+    expect(checkbox).toMatch(/margin-left:\s*var\(--checkbox-gap,\s*10px\)/)
+    // and exactly one declaration sets it
+    expect(checkbox.match(/margin-left:/g)).toHaveLength(1)
   })
 })

@@ -159,7 +159,9 @@ function toggle(label) {
           :value="chip.value"
           @dismiss="dismiss"
         />
-        <span v-if="applied.length === 0" class="text-caption text-text-meta">No filters applied.</span>
+        <span v-if="applied.length === 0" class="text-caption text-text-meta"
+          >No filters applied.</span
+        >
       </ChipGroup>
     </DemoStrip>
 
