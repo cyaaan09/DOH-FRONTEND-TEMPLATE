@@ -13,6 +13,14 @@ import SelectionSection from '@/design-system/demo/sections/SelectionSection.vue
 import DialogSection from '@/design-system/demo/sections/DialogSection.vue'
 import LayoutSection from '@/design-system/demo/sections/LayoutSection.vue'
 import StepperSection from '@/design-system/demo/sections/StepperSection.vue'
+import DatePickerSection from '@/design-system/demo/sections/DatePickerSection.vue'
+import TooltipSection from '@/design-system/demo/sections/TooltipSection.vue'
+import AccordionSection from '@/design-system/demo/sections/AccordionSection.vue'
+import SearchSection from '@/design-system/demo/sections/SearchSection.vue'
+import NotificationsSection from '@/design-system/demo/sections/NotificationsSection.vue'
+import DestructiveSection from '@/design-system/demo/sections/DestructiveSection.vue'
+import ShortcutsSection from '@/design-system/demo/sections/ShortcutsSection.vue'
+import PrintSection from '@/design-system/demo/sections/PrintSection.vue'
 import FormLayoutSection from '@/design-system/demo/sections/FormLayoutSection.vue'
 import AppShellSection from '@/design-system/demo/sections/AppShellSection.vue'
 import DataTableSection from '@/design-system/demo/sections/DataTableSection.vue'
@@ -37,6 +45,14 @@ const COMPONENTS = {
   dialog: DialogSection,
   layout: LayoutSection,
   stepper: StepperSection,
+  'date-picker': DatePickerSection,
+  tooltip: TooltipSection,
+  accordion: AccordionSection,
+  search: SearchSection,
+  notifications: NotificationsSection,
+  destructive: DestructiveSection,
+  shortcuts: ShortcutsSection,
+  print: PrintSection,
   'form-layout': FormLayoutSection,
   'app-shell': AppShellSection,
   'data-table': DataTableSection,

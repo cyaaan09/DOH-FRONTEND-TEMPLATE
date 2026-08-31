@@ -2082,6 +2082,147 @@ demo folder is exempt from the raw-hex guard precisely so blocks like this can q
 - **Four steps horizontal, five plus vertical** — Above four, horizontal labels start truncating — switch to the vertical form, or the compact meter if the header has no room.
 
 
+#### Date picker
+
+**Description:** A field plus one popover. Single date for issuance, a two-month range for reporting periods. Typing beats clicking for a date three years out, so the field stays editable and the calendar is the assist, never the only way in.
+
+**Sub-blocks:**
+
+- `SINGLE DATE — OPEN`
+- `RANGE — TWO MONTHS, PRESETS LEFT`
+
+**Rule cards:**
+
+- **Type or pick** — The field accepts 04/09/2026, 4 Sep 26, and 2026-09-04, all normalised on blur. A calendar-only date field is a wall for anyone entering a hundred records.
+- **Range shows its length** — The Apply button carries the day count, so a mistyped year is obvious before it is committed.
+- **Unavailable, not hidden** — Out-of-range days stay visible in #DDE2EA with a strike, with the reason spelled out in the footer — a missing day looks like a bug.
+- **32px cells** — Cells are 32px with a 2px gap, so a 7-column month fits 280px. On touch the popover scales to 44px cells and goes full-width below 420px.
+
+
+#### Tooltip & popover
+
+**Description:** Two layers with one rule between them: a tooltip names a thing, a popover holds content you can point at. If it has a button inside, it is a popover.
+
+**Sub-blocks:**
+
+- `TOOLTIP — LABEL ONLY, 6PX OFFSET`
+- `POPOVER — CONTENT PLUS ACTIONS`
+
+**Rule cards:**
+
+- **Tooltip never holds the only copy** — It is a label for something already visible. Anything a user must read to make a decision goes in the row, the field help, or a popover.
+- **Popovers trap focus, tooltips never** — A popover is a dialog without a scrim: Esc closes, Tab cycles inside, focus returns to the trigger. A tooltip is aria-describedby and nothing else.
+- **Hover and focus, both** — Every tooltip shows on keyboard focus too, or it does not exist for half your users. On touch it becomes a tap-to-toggle popover.
+- **12px offset, flip on collide** — Popover sits 6px off its trigger with a 10px arrow; near a viewport edge it flips side rather than shifting off screen.
+
+
+#### Accordion
+
+**Description:** For a long record read top to bottom — not for switching views, which is what tabs are. One section open by default, the rest collapsed with enough summary in the header to decide whether to open them.
+
+**Sub-blocks:**
+
+- `TYPE`
+- `ADDRESS`
+- `CONTACT`
+- `TELEPHONE`
+
+**Rule cards:**
+
+- **Headers summarise, not tease** — Each closed header carries the answer most people came for. If a header needs opening to know whether it matters, rewrite the sub-line.
+- **Accordion or tabs, never both** — Accordion is one long record; tabs swap between views of different things. A tabbed accordion means the information architecture is unresolved.
+- **Chevron is decorative** — The whole 14px 18px header is the button with aria-expanded; the 22px chevron tile only reflects state.
+- **Open state sinks** — An open section's header goes #FAFBFD and its body indents to 52px, aligning with the chevron — so nesting reads without a second border.
+
+
+#### Search with results
+
+**Description:** One field, results grouped by what they are, and a keyboard path from first keystroke to open record. Distinct from the plain filter field in the table toolbar, which narrows a list already on screen.
+
+**Sub-blocks:**
+
+- `FACILITIES · 3`
+- `APPLICATIONS · 1`
+
+**Rule cards:**
+
+- **Grouped, capped, counted** — Max three groups and four rows each, every group counted in its header. Everything beyond that lives behind See all — a scrolling result list is a results page in disguise.
+- **Mono for the identifier** — Every row's second line is the thing you would paste into a search: the LTO number, the filing date. Absent, it says so plainly.
+- **Keyboard is the point** — Slash or cmd-K opens, arrows move, Enter opens, Esc closes and restores the previous query. The first result is preselected but never auto-navigated.
+- **Field merges with the panel** — The open field squares its bottom corners and the panel continues it — one object, not a field with a floating list.
+
+
+#### Notification centre & activity feed
+
+**Description:** Two different jobs. The centre is unread work addressed to you, dismissible and countable. The feed is an immutable record of what happened to one object — nothing to dismiss, nothing to mark read.
+
+**Sub-blocks:**
+
+- `NOTIFICATION CENTRE — HEADER PANEL`
+- `ACTIVITY FEED — ONE RECORD'S HISTORY`
+
+**Rule cards:**
+
+- **Addressed to you, or it does not belong** — The centre carries only items with an action or a consequence for this user. System chatter belongs in the record's feed, where nobody has to dismiss it.
+- **Unread is a tint plus a dot** — #F7FCF9 row with a 7px green dot, never bold text — bolding half a list makes both halves harder to read.
+- **The feed is append-only** — No dismiss, no mark-read, no edit. Corrections are new entries; the wrong one stays visible, which is the point of an audit trail.
+- **Detail attaches to its event** — Files, quoted reasons, and result payloads render inside the event that produced them — never as a separate row you have to correlate by timestamp.
+
+
+#### Destructive confirmation
+
+**Description:** Three levels, chosen by how bad the mistake is. A reversible action gets a toast with undo and no dialog at all; a serious one gets a normal dialog; an irreversible one makes you type the thing's name, because a second button is not friction, it is muscle memory.
+
+**Sub-blocks:**
+
+- `LEVEL 3 — TYPE TO CONFIRM`
+- `LEVEL 2 — SERIOUS, NOT PERMANENT`
+- `LEVEL 1 — REVERSIBLE, NO DIALOG`
+
+**Rule cards:**
+
+- **Name the consequence, not the action** — The body says what happens to the facility, how many things it touches, and whether it can be undone. Are you sure is not information.
+- **The typed string is the identifier** — Always the LTO number or facility name shown in mono right above the field — never the word DELETE, which teaches nothing about what is selected.
+- **Disabled until exact** — Trim whitespace, compare case-insensitively, and keep the button visibly disabled with a plain reason under the field. No shake, no toast.
+- **Undo beats confirm** — If the action is reversible for even 10 seconds, ship a toast with Undo instead of a dialog. Level 3 exists for the handful that truly are not.
+
+
+#### Keyboard shortcuts
+
+**Description:** The sheet is the contract: if a key is listed here it works on every screen, and if it is not listed it is not bound. Opened with question mark, closed with Esc, and reachable from the account menu for anyone who never guesses at question mark.
+
+**Sub-blocks:**
+
+- `GLOBAL`
+- `NAVIGATE`
+- `TABLE`
+- `RECORD`
+
+**Rule cards:**
+
+- **Keycap, not code font alone** — 11px mono on #FFF with a 1px #E4E8EF border and a 1px bottom shadow — it reads as a key at a glance and survives being printed in greyscale.
+- **Two-key sequences, not chords** — Navigation uses g then l, so nothing collides with the browser or a screen reader. Chords are reserved for save and select-all, where users already expect them.
+- **Never inside a text field** — Single-letter bindings are suspended while an input, textarea, or contenteditable has focus — otherwise typing a facility name fires four commands.
+- **Discoverable twice** — Question mark opens it, and the account menu links it. A shortcut nobody can find is a shortcut nobody uses.
+
+
+#### Print & PDF preview
+
+**Description:** Certificates get printed, so the preview shows the real page at real proportions — A4 portrait, 20mm margins, the signature block where it will actually land. What is on screen is what comes out of the tray.
+
+**Sub-blocks:**
+
+- `PREVIEW — A4 AT TRUE ASPECT`
+- `UNSIGNED — BLOCKED BEFORE THE TRAY`
+- `BATCH — MANY CERTIFICATES`
+
+**Rule cards:**
+
+- **True aspect, always** — The sheet is 210 by 297 at whatever scale fits — never a rounded card standing in for paper. Margins show as a 1px dashed guide so nothing lands in the dead zone.
+- **Preview is the print path** — Same markup, same stylesheet, one page box. If the preview and the printout can disagree, the preview is decoration.
+- **Block invalid output** — An unsigned or expired certificate cannot reach the tray — watermark the preview and disable Print, with the fix one button away.
+- **Batch is one file per licence** — Twelve selected means twelve single-page PDFs named by LTO number, delivered zipped. A twelve-page merged document is nobody's filing system.
+
 #### Form layout
 
 **Description:** A 12-column grid on a 24px gutter, fieldsets separated by a rule rather than a card, and one sticky footer that owns every action. Errors replace help text in place — the row never grows.
