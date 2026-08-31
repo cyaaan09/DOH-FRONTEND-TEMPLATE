@@ -21,6 +21,6 @@ export const SECTIONS = [
   { id: 'dialog', title: 'Dialog, empty state & loading', complete: true },
   { id: 'type-scale', title: 'Type scale', complete: true },
   { id: 'specs', title: 'Component specs', complete: true },
-  { id: 'dark-mode', title: 'Dark mode', complete: false },
+  { id: 'dark-mode', title: 'Dark mode', complete: true },
   { id: 'tokens', title: 'Tokens for handoff', complete: true },
 ]

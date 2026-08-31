@@ -43,8 +43,11 @@ describe('design system page', () => {
     }
   })
 
-  it('still shows the remaining work as visible gaps', () => {
-    // Sanity: the page is a checklist, so incomplete sections must show gaps.
-    expect(mount(DesignSystemPage).findAll('[data-gap]').length).toBeGreaterThan(0)
+  it('shows no gaps at all — every section is built', () => {
+    // The page was a checklist: each unbuilt slot rendered a visible gap
+    // marker, and this asserted at least one remained. All 15 sections are
+    // now complete, so the assertion inverts — a gap reappearing means a
+    // section regressed, or a new slot was added without filling it.
+    expect(mount(DesignSystemPage).findAll('[data-gap]')).toHaveLength(0)
   })
 })

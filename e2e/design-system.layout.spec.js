@@ -226,3 +226,24 @@ test.describe('dialog focus behaviour', () => {
     expect(bg).toBe('rgb(180, 35, 24)')
   })
 })
+
+test.describe('dark-mode preview is really dark', () => {
+  // The whole point of scoping data-theme="dark" to the panel instead of
+  // hand-drawing miniatures is that the preview breaks when the dark palette
+  // breaks. jsdom computes no styles, so only a browser can check that.
+  test('re-scopes tokens for its subtree while the page stays light', async ({ page }) => {
+    const panel = page.locator('[data-dark-preview]')
+    await panel.scrollIntoViewIfNeeded()
+
+    // --canvas in the dark palette; the light page keeps its own surface.
+    const panelBg = await panel.evaluate((el) => getComputedStyle(el).backgroundColor)
+    expect(panelBg).toBe('rgb(15, 20, 28)')
+
+    const bodyBg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor)
+    expect(bodyBg).not.toBe(panelBg)
+
+    // A real component inside it picks up the dark ink, not the light one.
+    const title = panel.locator('.text-section-title').first()
+    expect(await title.evaluate((el) => getComputedStyle(el).color)).toBe('rgb(232, 236, 243)')
+  })
+})

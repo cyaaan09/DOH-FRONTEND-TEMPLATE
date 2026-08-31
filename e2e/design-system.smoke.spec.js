@@ -41,9 +41,11 @@ test.describe('design-system page', () => {
     }
   })
 
-  test('still shows unbuilt work as visible gaps', async ({ page }) => {
-    // Sanity: the page is a progress checklist. If gaps ever hit zero while
-    // sections remain incomplete, the markers have been lost, not the work done.
-    expect(await page.locator('[data-gap]').count()).toBeGreaterThan(0)
+  test('shows no gaps at all — every section is built', async ({ page }) => {
+    // The page was a progress checklist: each unbuilt slot rendered a visible
+    // gap marker and this asserted at least one remained. All 15 sections are
+    // now complete, so the assertion inverts — a gap reappearing in a real
+    // browser means a section regressed or a new slot went unfilled.
+    await expect(page.locator('[data-gap]')).toHaveCount(0)
   })
 })

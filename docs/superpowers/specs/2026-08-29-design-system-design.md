@@ -1171,6 +1171,23 @@ _DM Sans 400/500/700 · JetBrains Mono for copyable values_
   dialog's content mounted and merely hidden, leaving its heading and both buttons in the document
   at all times. The artifact renders the dialog only while open.
 
+- **2026-08-31 — the Dark mode previews are real components, not the artifact's drawings.** The
+  artifact hand-draws six dark miniatures with literal hexes because it has no theme system. Ours
+  puts `data-theme="dark"` on the preview panel — an attribute selector, so it re-scopes every
+  token for that subtree — and renders the actual components inside. That is far less markup and a
+  genuine check: a drawing would keep looking right after the dark palette broke. An e2e test reads
+  the computed background and ink, since jsdom computes no styles.
+- **2026-08-31 — the dark previews omit pagination and a table.** Two sub-block labels name them
+  (`DIALOG, EMPTY, SKELETON & PAGINATION`, `TOASTS, NOTICES & TABLE`) and neither component exists;
+  the labels are D.1 content and stay verbatim. Tied to the open `DataTable` / `Pagination`
+  decision — those two, plus `PasswordField`, `AppShell`, `AppSidebar` and `AppHeader`, are
+  redlined or planned in §7 with **no section on the page rendering them**.
+- **2026-08-31 — the Tokens block is a generated module, not Vite's `?raw`.** `?raw` on a `.css`
+  file returns an **empty string** under Vitest, whose CSS stubbing beats the raw query: the block
+  would have rendered correctly in the browser while every test saw nothing, and would have kept
+  passing if it broke. `scripts/build-demo-data.mjs` emits it, and a test asserts it matches the
+  file byte for byte.
+
 ## Appendix D — demo page content
 
 Extracted verbatim from the source artifact. This is the content authority for the

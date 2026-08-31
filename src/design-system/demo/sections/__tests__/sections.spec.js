@@ -149,8 +149,16 @@ describe('skeleton sections show their headings and mark their gaps', () => {
     ]) {
       expect(text, `missing: ${label}`).toContain(label)
     }
-    expect(wrapper.findAll('[data-gap]')).toHaveLength(6)
+    expect(wrapper.findAll('[data-gap]')).toHaveLength(0)
     expect(wrapper.findAll('[data-rule]')).toHaveLength(4)
+
+    // The previews are REAL components re-scoped by data-theme="dark" on the
+    // panel, not a hand-drawn picture. A picture would keep looking right
+    // after the dark palette broke; this cannot.
+    const panel = wrapper.get('[data-dark-preview]')
+    expect(panel.attributes('data-theme')).toBe('dark')
+    expect(panel.findAll('[data-track]').length).toBeGreaterThan(0)
+    expect(panel.findAll('[data-file-row]').length).toBeGreaterThan(0)
   })
 
   it('renders no invented uppercase headings for Dropdowns, Component specs and Tokens', () => {
