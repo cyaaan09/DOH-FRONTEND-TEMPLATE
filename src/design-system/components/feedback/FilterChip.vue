@@ -64,7 +64,9 @@ defineEmits(['toggle'])
 
 .filter-chip__mark--on {
   border-color: var(--green-on-fill);
-  background: rgb(255 255 255 / 0.4);
+  /* Same reasoning as Button's spinner track: the mark sits ON the filled
+     green, so it follows that fill's own foreground rather than white. */
+  background: color-mix(in srgb, var(--green-on-fill) 40%, transparent);
 }
 
 .filter-chip__mark--off {
@@ -73,7 +75,11 @@ defineEmits(['toggle'])
 }
 
 .filter-chip--on {
-  box-shadow: 0 1px 2px rgb(20 80 40 / 0.24);
+  /* Redline "Filter chip on · shadow 0 1px 2px rgba(20,80,40,.24)" — the
+     same family as --sh-primary (.25). Taking the token rather than the
+     literal costs 0.01 of alpha and buys the dark theme's `none`, which the
+     Dark mode group's Elevation row requires of every button-like control. */
+  box-shadow: var(--sh-primary);
 }
 
 .filter-chip:focus-visible {

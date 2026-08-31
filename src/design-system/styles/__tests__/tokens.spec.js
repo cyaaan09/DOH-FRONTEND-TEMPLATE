@@ -35,10 +35,23 @@ describe('design tokens', () => {
 
   it('defines the tokens every component depends on', () => {
     for (const name of [
-      'canvas', 'surface', 'surface-sunken', 'ink-900', 'ink-500',
-      'green-fill', 'green-on-fill', 'border-card', 'border-field',
-      'r-field', 'r-card', 'h-field', 'h-compact', 'h-touch',
-      'sh-card', 'ring-focus', 'scrim',
+      'canvas',
+      'surface',
+      'surface-sunken',
+      'ink-900',
+      'ink-500',
+      'green-fill',
+      'green-on-fill',
+      'border-card',
+      'border-field',
+      'r-field',
+      'r-card',
+      'h-field',
+      'h-compact',
+      'h-touch',
+      'sh-card',
+      'ring-focus',
+      'scrim',
     ]) {
       expect(light.has(name), `light is missing --${name}`).toBe(true)
     }
@@ -73,7 +86,7 @@ describe('design tokens', () => {
       'item-mark': '#B3BDCD',
       'avatar-bg': '#DBE4F0',
       'logo-ink': '#D9F2C4',
-      'separator': '#CBD3E0',
+      separator: '#CBD3E0',
       'row-hover-strong': '#E0E5EE',
       'r-bar': '6px',
     }
@@ -86,7 +99,9 @@ describe('design tokens', () => {
     // The additions are appended after a marker comment; everything above it
     // must still match spec Appendix A byte for byte.
     const css = readStyle('tokens.css')
-    expect(css).toContain('/* --- additions: colours the source document uses but never tokenised --- */')
+    expect(css).toContain(
+      '/* --- additions: colours the source document uses but never tokenised --- */',
+    )
     const verbatim = css.split('/* --- additions')[0]
     expect(verbatim).toMatch(/^:root\s*\{/m)
     expect(verbatim).not.toContain('--notice-border-green')
@@ -124,5 +139,54 @@ describe('spec Appendix A parity', () => {
     const additions = readStyle('tokens.css').split('/* --- additions')[1]
     const fileTokens = parseTokens(additions)
     expect(Object.fromEntries(fileTokens)).toEqual(Object.fromEntries(specTokens))
+  })
+
+  /**
+   * Tokens that legitimately keep their LIGHT value under [data-theme="dark"].
+   * Every entry needs a reason, because the default assumption is that a
+   * colour token is wrong in the other theme until someone says why it is not.
+   * 29 tokens sat unthemed before this guard existed and nothing noticed —
+   * an unthemed token is silent: no error, the page just paints a light-mode
+   * colour on a dark surface.
+   */
+  const KEEPS_LIGHT_VALUE = {
+    'green-900': 'sidebar logo mark — AppShell is not built, no consumer',
+    'green-600': 'legacy value the redline keeps for reference; no consumer',
+    'amber-400': 'status DOT fill — a saturated dot reads on both surfaces',
+    'red-500': 'status DOT fill — same',
+    'dot-green': 'status DOT fill — same; the redline gives no dark value',
+    'toast-bg-amber': 'no consumer — Toast dresses with a tone border on --surface',
+    'toast-bg-blue': 'no consumer — same',
+    'green-link-hover': 'no consumer',
+    'nav-ink': 'app shell — AppShell/AppSidebar/AppHeader are not built',
+    'item-mark': 'app shell — same',
+    'avatar-bg': 'app shell — same',
+    'logo-ink': 'app shell — same',
+    separator: 'app shell — same',
+    'row-hover-strong': 'app shell — same',
+  }
+
+  const GEOMETRY = /^(r-|h-|size-|rail-|pad-|gap-|t-|z-|w-|chip-pad|font-)/
+
+  it('overrides every colour token in dark, or says why not', () => {
+    const unthemed = [...light.keys()].filter(
+      (name) => !GEOMETRY.test(name) && !dark.has(name) && !(name in KEEPS_LIGHT_VALUE),
+    )
+    expect(
+      unthemed,
+      `these paint a light colour on a dark surface: ${unthemed.join(', ')}`,
+    ).toEqual([])
+  })
+
+  it('keeps the dark allowlist honest', () => {
+    // An entry that no longer applies — because the token was themed, or
+    // removed — is a lie the next reader would trust. Both directions.
+    const stale = Object.keys(KEEPS_LIGHT_VALUE).filter(
+      (name) => !light.has(name) || dark.has(name),
+    )
+    expect(stale, `allowlisted but no longer unthemed: ${stale.join(', ')}`).toEqual([])
+    for (const reason of Object.values(KEEPS_LIGHT_VALUE)) {
+      expect(reason.length).toBeGreaterThan(10)
+    }
   })
 })

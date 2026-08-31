@@ -56,4 +56,55 @@
   --sh-panel:  0 12px 28px rgba(0,0,0,.45);
   --sh-dialog: 0 24px 60px rgba(0,0,0,.60);
   --scrim: rgba(4,7,12,.62);
+
+  /* --- tokens the first dark pass missed ---------------------------------
+     These kept their LIGHT value under [data-theme="dark"], which is silent:
+     nothing errors, the page just renders a light-mode colour on a dark
+     surface. A guard test now requires every colour token to be overridden
+     here or allowlisted with a reason. */
+
+  /* Redline "Focus ring · 1px #2FB25F + 0 0 0 3px rgba(47,178,95,.18)".
+     --ring-focus was already flipped; the BORDER half of the same row was
+     not, so every focus outline stayed light green. */
+  --green-500: #2FB25F;
+
+  /* Redline "Empty state · 1px dashed #384556". Dropzones and empty-state
+     panels were drawing a near-white dashed edge on dark. */
+  --border-dashed: #384556;
+
+  /* Redline "Destructive · filled #FF9B95 with #2A0806 text". The light
+     value is #FFFFFF, which on a light-red dark fill is 2.2:1. */
+  --red-on-fill: #2A0806;
+
+  /* Inferred, not redlined — the Dark mode group names only two neutral
+     steps, "Decorative #6F7B8C" and "disabled #55606F", already taken by
+     --ink-400 and --ink-200. --ink-300 (carets, glyphs) joins the
+     decorative one; --ink-100 is used as the UNCHECKED CONTROL BORDER, so
+     it takes the dark border colour rather than a text grey. */
+  --ink-300: #6F7B8C;
+  --ink-100: #384556;
+
+  /* Selection controls "Disabled · #E9EDF3" — the dark equivalent of an
+     inert control surface is the control shell, not a pale grey. */
+  --surface-disabled: #222B38;
+
+  /* "Dropzone hover · bg #F7FCF8" — a green wash over the surface, at the
+     same weight --green-tint uses for a selected option row. */
+  --dropzone-hover: rgba(47,178,95,.10);
+
+  /* "Confirm button · #B42318 → hover #96190F" inverts on dark: the filled
+     destructive is #FF9B95, so its hover goes LIGHTER, the way
+     --green-fill-hover is lighter than --green-fill. */
+  --red-800: #FFB3AE;
+
+  /* Notice and toast borders — the light values are pastels (#A6E7C3 and
+     friends) that glare on a dark surface. Dark follows the pattern
+     --red-border already set here: the tone's own light text colour at 45%. */
+  --notice-border-green: rgba(111,220,150,.45);
+  --notice-border-blue:  rgba(143,184,255,.45);
+  --notice-border-amber: rgba(240,192,112,.45);
+  --notice-border-red:   rgba(255,155,149,.45);
+  --toast-border-green:  rgba(111,220,150,.45);
+  --toast-border-amber:  rgba(240,192,112,.45);
+  --toast-border-blue:   rgba(143,184,255,.45);
 }

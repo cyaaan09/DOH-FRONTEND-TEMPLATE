@@ -140,7 +140,10 @@ const busyClass = computed(() => (props.busy ? 'btn--busy' : ''))
   height: 12px;
   flex: none;
   border-radius: 50%;
-  border: 2px solid rgb(255 255 255 / 0.4);
+  /* Redline "Pending · 2px track rgba(255,255,255,.4)". Written against
+     --green-on-fill, not white: on dark that token flips to a near-black,
+     so a hardcoded white track no longer belongs to its own button. */
+  border: 2px solid color-mix(in srgb, var(--green-on-fill) 40%, transparent);
   border-top-color: currentColor;
   animation: spin 600ms linear infinite;
 }

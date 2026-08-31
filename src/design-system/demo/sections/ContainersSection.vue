@@ -199,7 +199,9 @@ const SURFACES = [
   padding: 0 12px;
   font-weight: 700;
   letter-spacing: 0.04em;
-  background: rgb(255 255 255 / 0.75);
+  /* Redline "Header · rgba(255,255,255,.75)". Written against --surface so it
+     follows the theme: a literal white bar glared across the dark schematic. */
+  background: color-mix(in srgb, var(--surface) 75%, transparent);
   border-bottom: 1px solid var(--border-card);
 }
 

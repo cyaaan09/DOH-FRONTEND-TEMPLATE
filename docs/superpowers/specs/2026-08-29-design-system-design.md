@@ -1167,6 +1167,26 @@ _DM Sans 400/500/700 · JetBrains Mono for copyable values_
   the top toast was clipped. The artifact's own value cannot hold the maximum its own rule card
   states. 340px covers it with headroom for the taller wrapping a narrower viewport produces.
 
+- **2026-08-31 — 29 colour tokens kept their light value under `[data-theme="dark"]`.** An unthemed
+  token is silent: nothing errors, the page simply paints a light-mode colour on a dark surface.
+  Sixteen were fixed against the Dark mode group's own rows — `--green-500` (the BORDER half of the
+  focus-ring row, whose ring half was already flipped), `--border-dashed`, `--red-on-fill`, the four
+  notice borders and three toast borders, plus `--ink-300`/`--ink-100`/`--surface-disabled`/
+  `--dropzone-hover`/`--red-800` inferred from the file's own patterns and commented as inferred.
+  Fourteen are allowlisted with reasons in `tokens.spec.js` — status dots, which stay saturated on
+  both surfaces, and app-shell tokens with no consumer. A guard now requires every colour token to
+  be overridden or allowlisted, and a second one keeps the allowlist from going stale.
+- **2026-08-31 — the raw-colour guard was hex-only, so `rgb()`/`rgba()` walked past it.** That is
+  how a white schematic header, a white spinner track and a white chip mark all reached the dark
+  theme. The guard now also scans `background`/`border`/`outline`/`color`/`fill`/`stroke`
+  declarations; `box-shadow` is deliberately out of scope, since a neutral dark shadow reads as
+  nothing on a dark surface rather than as the wrong colour. Two demo files are allowlisted: their
+  hairlines sit OVER an arbitrary swatch colour and must be neutral-translucent in both themes.
+- **2026-08-31 — a hand-set `data-theme` does not stick.** `useTheme()` wraps VueUse's `useDark`,
+  whose watcher rewrites the attribute back within a tick. The first dark e2e spec set it directly
+  and therefore measured the LIGHT theme while reporting on the dark one; it now clicks the real
+  toggle and polls for the attribute. Any future dark test must do the same.
+
 ## Appendix D — demo page content
 
 Extracted verbatim from the source artifact. This is the content authority for the

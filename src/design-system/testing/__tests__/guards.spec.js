@@ -101,6 +101,42 @@ describe('findRawHex', () => {
   })
 })
 
+describe('findRawColorFunctions', () => {
+  it('catches a raw colour on every property that paints one', () => {
+    expect(findRawColorFunctions('a { background: rgb(255 255 255 / 0.75); }')).toHaveLength(1)
+    expect(findRawColorFunctions('a { border-color: rgba(1, 2, 3, 0.5); }')).toHaveLength(1)
+    // The one that made the first version of this guard vacuous.
+    expect(
+      findRawColorFunctions('a { border-bottom: 1px solid rgb(16 24 40 / 0.06); }'),
+    ).toHaveLength(1)
+    expect(findRawColorFunctions('a { outline: 2px solid rgba(0,0,0,.2); }')).toHaveLength(1)
+    expect(findRawColorFunctions('a { color: rgb(0 0 0); }')).toHaveLength(1)
+  })
+
+  it('leaves box-shadow alone', () => {
+    // Deliberately out of scope: a neutral dark shadow reads as nothing on a
+    // dark surface rather than as the wrong colour, and the redline gives
+    // its shadow literals no token.
+    expect(findRawColorFunctions('a { box-shadow: 0 1px 2px rgba(16,24,40,.08); }')).toEqual([])
+  })
+
+  it('allows a themed colour-mix', () => {
+    expect(
+      findRawColorFunctions(
+        'a { background: color-mix(in srgb, var(--surface) 75%, transparent); }',
+      ),
+    ).toEqual([])
+    // even when the mix names an rgb() explicitly
+    expect(
+      findRawColorFunctions('a { color: color-mix(in srgb, rgb(1 2 3) 50%, transparent); }'),
+    ).toEqual([])
+  })
+
+  it('allows var() references', () => {
+    expect(findRawColorFunctions('a { background: var(--surface); }')).toEqual([])
+  })
+})
+
 describe('findDarkVariants', () => {
   it('catches a dark: utility in a class attribute', () => {
     expect(findDarkVariants('class="bg-surface dark:bg-black"')).toEqual(['dark:bg-black'])
@@ -122,6 +158,42 @@ describe('findDarkVariants', () => {
   })
 })
 
+/**
+ * A colour written as rgb()/rgba() slipped past the raw-hex scan entirely,
+ * which is how a white schematic header, a white spinner track and a white
+ * chip mark all survived into the dark theme. This finds the ones used as a
+ * COLOUR — background, color, border-color — where a light literal on a dark
+ * surface is visibly wrong. box-shadow is deliberately out of scope: a
+ * neutral dark shadow reads as nothing on a dark surface rather than as the
+ * wrong colour, and the redline gives its literals no token.
+ */
+export function findRawColorFunctions(source) {
+  const found = []
+  // Anchor on a DECLARATION start so the property name is known, rather than
+  // scanning loosely for rgb(: that is what let `border-bottom` slip through
+  // a first version of this and made the whole guard vacuous.
+  const re =
+    /(?:^|[;{])\s*((?:background|border|outline|color|fill|stroke)[a-z-]*)\s*:\s*([^;{}]*?\brgba?\([^)]*\)[^;{}]*)/gm
+  for (const match of source.matchAll(re)) {
+    // color-mix(in srgb, var(--token) …) is themed, not a literal.
+    if (match[2].includes('color-mix')) continue
+    found.push(`${match[1]}: ${match[2].trim()}`)
+  }
+  return found
+}
+
+/**
+ * Files whose rgb()/rgba() is genuinely theme-agnostic. Each needs a reason:
+ * the default assumption is that a literal colour is wrong in the other
+ * theme until someone says why it is not.
+ */
+const RAW_COLOR_ALLOWED = {
+  'demo/chrome/SwatchGrid.vue':
+    'a hairline drawn OVER an arbitrary swatch colour — it must be a neutral ' +
+    'translucent black regardless of theme, and no token can express that',
+  'demo/chrome/SpecTables.vue': 'same: a swatch tile border over an arbitrary redline colour',
+}
+
 describe('design-system components', () => {
   // Passes vacuously until phase 2 adds components, then guards every file.
   it('contain no raw hex colours and no dark: variants', () => {
@@ -139,6 +211,35 @@ describe('design-system components', () => {
       for (const v of findDarkVariants(source)) violations.push(`${file}: ${v}`)
     }
     expect(violations).toEqual([])
+  })
+
+  it('write no colour as a raw rgb()/rgba(), or say why', () => {
+    // The hex scan never saw these. A white literal is invisible in light
+    // mode and glaring in dark, which is exactly how three of them shipped:
+    // a schematic header, a spinner track and a chip mark.
+    const violations = []
+    for (const file of [...listComponents(), ...listDemoFiles()]) {
+      const relative = file.slice(file.indexOf('design-system/') + 'design-system/'.length)
+      if (RAW_COLOR_ALLOWED[relative]) continue
+      const source = readFileSync(file, 'utf8')
+      for (const c of findRawColorFunctions(source)) violations.push(`${relative}: ${c}`)
+    }
+    expect(violations).toEqual([])
+  })
+
+  it('keeps the raw-colour allowlist honest', () => {
+    // An entry for a file that no longer has one is a lie the next reader
+    // would trust.
+    const all = [...listComponents(), ...listDemoFiles()]
+    for (const [relative, reason] of Object.entries(RAW_COLOR_ALLOWED)) {
+      const file = all.find((f) => f.endsWith(relative))
+      expect(file, `allowlisted file not found: ${relative}`).toBeDefined()
+      expect(
+        findRawColorFunctions(readFileSync(file, 'utf8')).length,
+        `${relative} no longer has a raw colour — drop it from the allowlist`,
+      ).toBeGreaterThan(0)
+      expect(reason.length).toBeGreaterThan(20)
+    }
   })
 
   it('widens the dark: scan to the demo directory but keeps the raw-hex scan components-only', () => {
@@ -192,9 +293,9 @@ describe('findAppImports', () => {
   // dominant idiom future components will use, so these six forms are the
   // realistic violations a `from`-clause-only regex would miss.
   it('catches a dynamic import wrapped in defineAsyncComponent', () => {
-    expect(
-      findAppImports("defineAsyncComponent(() => import('@/components/Foo.vue'))"),
-    ).toEqual(['@/components/Foo.vue'])
+    expect(findAppImports("defineAsyncComponent(() => import('@/components/Foo.vue'))")).toEqual([
+      '@/components/Foo.vue',
+    ])
   })
 
   it('catches an awaited dynamic import', () => {
@@ -204,9 +305,7 @@ describe('findAppImports', () => {
   })
 
   it('catches a side-effect import', () => {
-    expect(findAppImports("import '@/components/styles.css'")).toEqual([
-      '@/components/styles.css',
-    ])
+    expect(findAppImports("import '@/components/styles.css'")).toEqual(['@/components/styles.css'])
   })
 
   it('catches a bare import with no sub-path', () => {
