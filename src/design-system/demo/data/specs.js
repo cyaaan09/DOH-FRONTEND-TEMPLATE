@@ -1,0 +1,1364 @@
+// GENERATED from spec Appendix C — do not hand-edit.
+// Regenerate with `node scripts/build-spec-data.mjs`.
+export const SPEC_GROUPS = [
+  {
+    "name": "Containers & surfaces",
+    "summary": "canvas #EEF1F6 · card #FFF radius 14 · sunken #FAFBFD",
+    "rows": [
+      {
+        "k": "Canvas",
+        "v": "#EEF1F6 — page background; text on it uses #5A6577"
+      },
+      {
+        "k": "Card",
+        "v": "#FFF · radius 14px · 1px #E4E8EF · shadow 0 1px 2px rgba(16,24,40,.04)"
+      },
+      {
+        "k": "Card gutter",
+        "v": "24px x · 20px on cards under ~360px"
+      },
+      {
+        "k": "Card header",
+        "v": "pad 20px 24px 4px · title 17px / 700 · sub 13.5px / 400 #667085"
+      },
+      {
+        "k": "Card footer",
+        "v": "#FAFBFD · 1px top #EEF1F6 · pad 13–16px 20–24px"
+      },
+      {
+        "k": "Internal rule",
+        "v": "1px #EEF1F6 (rows use #F5F7FA)"
+      },
+      {
+        "k": "Sunken strip",
+        "v": "#FAFBFD — expanded rows, headers, footers"
+      },
+      {
+        "k": "Input well",
+        "v": "#F7F9FC — read-only fields, in-panel search"
+      },
+      {
+        "k": "Control shell",
+        "v": "#F4F6FA — segmented tabs, row hover in nav"
+      },
+      {
+        "k": "Muted card",
+        "v": "#FBFCFE — closed / archived stat cards"
+      },
+      {
+        "k": "Dashed panel",
+        "v": "1.6px dashed #CDD5E2 · radius 10–12px — dropzones, empty states only"
+      },
+      {
+        "k": "Selected surface",
+        "v": "#F7FCF9 + 1px #25A94E + ring 0 0 0 3px rgba(37,169,78,.10–.12)"
+      },
+      {
+        "k": "Popover panel",
+        "v": "#FFF · radius 12px · pad 6px · shadow 0 12px 28px rgba(16,24,40,.14)"
+      },
+      {
+        "k": "Dialog surface",
+        "v": "#FFF · radius 14px · max-w 428px · shadow 0 24px 60px rgba(16,24,40,.28)"
+      },
+      {
+        "k": "Section gap",
+        "v": "22px between cards · 12px in stat grids · 20px between sub-blocks"
+      },
+      {
+        "k": "Content width",
+        "v": "detail pages max-w 1320px · table pages 1560px · page pad 26px 32px, both"
+      },
+      {
+        "k": "Nesting",
+        "v": "cards never nest — divide or sink instead"
+      },
+      {
+        "k": "Overflow",
+        "v": "cards clip with overflow:hidden; popover parents need overflow:visible"
+      }
+    ]
+  },
+  {
+    "name": "Chips",
+    "summary": "auto height (20px) · radius 999 · 11px/700 · tint + matching text",
+    "rows": [
+      {
+        "k": "Height",
+        "v": "auto — padding 3px 9px renders 20px at 11px type"
+      },
+      {
+        "k": "Radius",
+        "v": "999px"
+      },
+      {
+        "k": "Type",
+        "v": "11px / 700 / nowrap"
+      },
+      {
+        "k": "Dot",
+        "v": "6px circle, gap 6px, left pad 7px"
+      },
+      {
+        "k": "Gap in row",
+        "v": "7px"
+      },
+      {
+        "k": "Approved",
+        "v": "#E8F6EC bg · #15803D text"
+      },
+      {
+        "k": "Active (filled)",
+        "v": "#177236 bg · #FFFFFF text = 6.01:1 (never #17A34A — 3.29:1)"
+      },
+      {
+        "k": "Pending",
+        "v": "#FEF2E0 bg · #8A5206 text = 5.77:1 (#A16207 is 4.45:1 — fails)"
+      },
+      {
+        "k": "Returned",
+        "v": "#FEE2E2 bg · #B42318 text = 5.38:1"
+      },
+      {
+        "k": "Closed",
+        "v": "#EEF1F6 bg · #5A6577 text = 5.21:1 (#667085 is 4.39:1 — fails)"
+      },
+      {
+        "k": "Online",
+        "v": "#EAF2FE bg · #175CD3 text"
+      },
+      {
+        "k": "Add / Modify",
+        "v": "#F0ECFE bg · #6941C6 text"
+      },
+      {
+        "k": "Service chip",
+        "v": "12px/400 · 5px 12px · #FFF bg · 1px #DDE2EA · #475467"
+      },
+      {
+        "k": "Filter chip on",
+        "v": "#177236 bg · #FFF text = 6.01:1 · 7px 13px · shadow 0 1px 2px rgba(20,80,40,.24)"
+      },
+      {
+        "k": "Filter chip off",
+        "v": "#FFF bg · 1px #D5DBE6 · #475467 / 500"
+      },
+      {
+        "k": "Dismiss ×",
+        "v": "17px circle · #E4E8EF bg → #D5DBE6 hover · glyph #475467 (4.05:1 at #667085 fails)"
+      }
+    ]
+  },
+  {
+    "name": "Tabs",
+    "summary": "underline 2.5px · segmented 3px inset · stage cards 12px radius",
+    "rows": [
+      {
+        "k": "Underline pad",
+        "v": "14px 2px · row gap 22px"
+      },
+      {
+        "k": "Underline type",
+        "v": "13.5px / 700"
+      },
+      {
+        "k": "Marker",
+        "v": "2.5px solid #177236"
+      },
+      {
+        "k": "Active text",
+        "v": "#15803D",
+        "c": "#15803D"
+      },
+      {
+        "k": "Idle tab text",
+        "v": "#5A6577 (5.89:1)"
+      },
+      {
+        "k": "Tab count",
+        "v": "mono 11.5px/500 · pad 2px 7px · radius 9px"
+      },
+      {
+        "k": "Count active",
+        "v": "#E8F6EC bg · #15803D"
+      },
+      {
+        "k": "Count idle",
+        "v": "#F4F6FA bg · #5A6577"
+      },
+      {
+        "k": "Segmented shell",
+        "v": "#F4F6FA · radius 9px · pad 3px · gap 6px"
+      },
+      {
+        "k": "Segment on",
+        "v": "#FFF · radius 7px · 12.5px/700 · shadow 0 1px 2px rgba(16,24,40,.08)"
+      },
+      {
+        "k": "Segment off",
+        "v": "transparent · #667085 / 500"
+      },
+      {
+        "k": "Stage card",
+        "v": "radius 12px · pad 13px 15px 14px · 1px #E4E8EF"
+      },
+      {
+        "k": "Stage active",
+        "v": "1px #25A94E + ring 0 0 0 3px rgba(37,169,78,.12)"
+      },
+      {
+        "k": "Stage figure",
+        "v": "25px / 700 / -0.02em"
+      },
+      {
+        "k": "Stage urgent",
+        "v": "11.5px / 700 · #B42318"
+      }
+    ]
+  },
+  {
+    "name": "Text fields",
+    "summary": "38px · radius 9 · 1px #D5DBE6 · green focus ring",
+    "rows": [
+      {
+        "k": "Height",
+        "v": "38px · pad 0 12px"
+      },
+      {
+        "k": "Radius",
+        "v": "9px"
+      },
+      {
+        "k": "Border",
+        "v": "1px solid #D5DBE6"
+      },
+      {
+        "k": "Value type",
+        "v": "13.5px / 400 · #1E2532"
+      },
+      {
+        "k": "Placeholder",
+        "v": "#667085",
+        "c": "#667085"
+      },
+      {
+        "k": "Label",
+        "v": "12.5px / 500 · #344054 · 6px below"
+      },
+      {
+        "k": "Hint",
+        "v": "12px / 400 · #667085 · 5px above"
+      },
+      {
+        "k": "Focus",
+        "v": "border #25A94E + 0 0 0 3px rgba(37,169,78,.15)"
+      },
+      {
+        "k": "Error",
+        "v": "border #B42318 · hint #B42318"
+      },
+      {
+        "k": "Read only",
+        "v": "bg #F7F9FC · border #E4E8EF · text #8A94A6"
+      },
+      {
+        "k": "Leading icon",
+        "v": "12px ring · gap 8px"
+      },
+      {
+        "k": "Trailing action",
+        "v": "11.5px / 700 · #667085 · pad 6px"
+      },
+      {
+        "k": "Textarea",
+        "v": "pad 11px 12px · line-height 1.55 · resize vertical"
+      },
+      {
+        "k": "Mono values",
+        "v": "JetBrains Mono 13.5px / 400"
+      }
+    ]
+  },
+  {
+    "name": "Dropdowns",
+    "summary": "38px trigger · panel radius 12 · option 9px 10px",
+    "rows": [
+      {
+        "k": "Trigger",
+        "v": "38px · radius 9px · 1px #D5DBE6 · gap 8px"
+      },
+      {
+        "k": "Open trigger",
+        "v": "1px #25A94E + ring rgba(37,169,78,.15)"
+      },
+      {
+        "k": "Value",
+        "v": "13.5px / 500 · #1E2532 · ellipsis"
+      },
+      {
+        "k": "Placeholder",
+        "v": "13.5px / 400 · #667085"
+      },
+      {
+        "k": "Caret",
+        "v": "9px ▾ · #98A2B3 (decorative)"
+      },
+      {
+        "k": "Panel",
+        "v": "top 44px · radius 12px · pad 6px · 1px #E4E8EF"
+      },
+      {
+        "k": "Panel shadow",
+        "v": "0 12px 28px rgba(16,24,40,.14)"
+      },
+      {
+        "k": "Panel max-h",
+        "v": "246px (214px with filter)"
+      },
+      {
+        "k": "Option",
+        "v": "pad 9px 10px · radius 8px · 13.5px / 400"
+      },
+      {
+        "k": "Option selected",
+        "v": "#F2FAF4 bg · #15803D / 700 · ✓ 12px"
+      },
+      {
+        "k": "Checkbox in list",
+        "v": "15px · radius 4px · #177236 when on (white ✓)"
+      },
+      {
+        "k": "Panel filter",
+        "v": "32px field · #F7F9FC · radius 8px"
+      },
+      {
+        "k": "Panel footer",
+        "v": "#FAFBFD · 1px top #EEF1F6 · pad 9px 12px"
+      },
+      {
+        "k": "Inline variant",
+        "v": "34px · radius 8px · 1px #DDE2EA · 12.5px / 700"
+      },
+      {
+        "k": "Menu item",
+        "v": "13.5px / 400 · destructive #B42318 / 700 last"
+      }
+    ]
+  },
+  {
+    "name": "Buttons",
+    "summary": "38 / 34 / 44px · radius 9 (8 compact) · one filled green per region",
+    "rows": [
+      {
+        "k": "Default",
+        "v": "38px · pad 0 16px · radius 9px · 13.5px / 700"
+      },
+      {
+        "k": "Compact",
+        "v": "34px · pad 0 14px · radius 8px · 12.5px"
+      },
+      {
+        "k": "Icon only",
+        "v": "34×34px · radius 8px"
+      },
+      {
+        "k": "Primary",
+        "v": "#177236 bg · #FFF text = 6.01:1 · shadow 0 1px 2px rgba(20,80,40,.25)"
+      },
+      {
+        "k": "Primary hover",
+        "v": "#125A2B (8.35:1)"
+      },
+      {
+        "k": "Secondary",
+        "v": "#FFF bg · 1px #D5DBE6 · #344054 / 500"
+      },
+      {
+        "k": "Secondary hover",
+        "v": "#F4F6FA",
+        "c": "#F4F6FA"
+      },
+      {
+        "k": "Destructive",
+        "v": "#FFF bg · 1px #E4A49C · #B42318 · hover #FEF3F2"
+      },
+      {
+        "k": "Ghost",
+        "v": "transparent · #15803D / 700 · hover #F2FAF4"
+      },
+      {
+        "k": "Disabled",
+        "v": "#F7F9FC bg · 1px #E4E8EF · #B9C1D1"
+      },
+      {
+        "k": "Pending",
+        "v": "#125A2B + 12px spinner, 2px track rgba(255,255,255,.4)"
+      },
+      {
+        "k": "Row gap",
+        "v": "10px (8px in dialogs and cards)"
+      }
+    ]
+  },
+  {
+    "name": "File inputs",
+    "summary": "dashed 1.6px dropzone · file row 10px radius",
+    "rows": [
+      {
+        "k": "Dropzone",
+        "v": "pad 16px · radius 10px · 1.6px dashed #CDD5E2"
+      },
+      {
+        "k": "Dropzone hover",
+        "v": "border #25A94E · bg #F7FCF8"
+      },
+      {
+        "k": "Icon tile",
+        "v": "36×36px · radius 8px · #EEF1F6 · #667085"
+      },
+      {
+        "k": "Primary line",
+        "v": "13.5px / 700"
+      },
+      {
+        "k": "Constraint line",
+        "v": "12px / 400 · #667085"
+      },
+      {
+        "k": "Compact variant",
+        "v": "38px shell · Browse 28px · radius 7px"
+      },
+      {
+        "k": "File row",
+        "v": "pad 12px 14px · radius 10px · 1px #E4E8EF · gap 12px"
+      },
+      {
+        "k": "Type mark",
+        "v": "34×34px · radius 8px · #EEF1F6 · #5A6577 10px / 700"
+      },
+      {
+        "k": "Progress track",
+        "v": "5px · radius 999px · #EEF1F6"
+      },
+      {
+        "k": "Progress fill",
+        "v": "linear-gradient(90deg,#25A94E,#7BC96F)"
+      },
+      {
+        "k": "Done note",
+        "v": "12px / 400 · #15803D"
+      },
+      {
+        "k": "Failed row",
+        "v": "#FEF3F2 bg · 1px #F5CDC7 · mark #FEE2E2/#B42318"
+      },
+      {
+        "k": "Remove",
+        "v": "26px · radius 7px · #667085 → #B42318 hover"
+      }
+    ]
+  },
+  {
+    "name": "Toasts & notices",
+    "summary": "toast 12px radius, 5s timer · notice 32px pill",
+    "rows": [
+      {
+        "k": "Toast width",
+        "v": "372px · stack gap 10px · bottom-right 16px"
+      },
+      {
+        "k": "Toast shell",
+        "v": "radius 12px · pad 13px 12px 15px 13px · #FFF"
+      },
+      {
+        "k": "Toast shadow",
+        "v": "0 8px 24px rgba(16,24,40,.12)"
+      },
+      {
+        "k": "Icon tile",
+        "v": "26×26px · radius 8px · #FFF glyph on the tone TEXT colour (#15803D / #B42318 / #8A5206 / #175CD3) — the lighter dot tones fail with white"
+      },
+      {
+        "k": "Title / body",
+        "v": "13.5px / 700 · 12.5px / 400 #667085"
+      },
+      {
+        "k": "Timer bar",
+        "v": "3px · scaleX 1→0 over 5s · tone fill"
+      },
+      {
+        "k": "Success tone",
+        "v": "dot #17A34A · border #CDEAD6 · text/icon #15803D"
+      },
+      {
+        "k": "Error tone",
+        "v": "dot #E5484D · border #F5CDC7 · text/icon #B42318"
+      },
+      {
+        "k": "Warning tone",
+        "v": "dot #D9A13B · border #F2E0BD · text/icon #8A5206"
+      },
+      {
+        "k": "Info tone",
+        "v": "dot #175CD3 · border #D5E4FA · text/icon #175CD3"
+      },
+      {
+        "k": "Max stack",
+        "v": "3 toasts, newest first"
+      },
+      {
+        "k": "Notice shell",
+        "v": "min-h 32px · radius 16px · pad 4px 10px 4px 4px · gap 12px"
+      },
+      {
+        "k": "Notice label",
+        "v": "24px · radius 16px · pad 0 12px · 12.5px / 400 · 1px tone/200"
+      },
+      {
+        "k": "Notice text",
+        "v": "13px / 400 in tone colour on tone/50 — all four ≥ 4.5:1"
+      },
+      {
+        "k": "Notice fills",
+        "v": "#ECFDF3 · #EFF8FF · #FFFAEB · #FEF3F2"
+      }
+    ]
+  },
+  {
+    "name": "Selection controls",
+    "summary": "17px targets · gap 10px · cards radius 11",
+    "rows": [
+      {
+        "k": "Checkbox",
+        "v": "17×17px · radius 5px · 1.8px border"
+      },
+      {
+        "k": "Checkbox on",
+        "v": "#177236 fill + border · ✓ 10px / 700 #FFF (6.01:1)"
+      },
+      {
+        "k": "Checkbox off",
+        "v": "#FFF fill · 1.8px #C3CAD6"
+      },
+      {
+        "k": "Indeterminate",
+        "v": "same fill, glyph – (dash)"
+      },
+      {
+        "k": "Disabled",
+        "v": "#E9EDF3 fill · 1.8px #DDE2EA · glyph #B9C1D1"
+      },
+      {
+        "k": "Radio",
+        "v": "17×17px circle · 1.8px · inner dot 8px #177236"
+      },
+      {
+        "k": "Label",
+        "v": "13.5px / 400 · #344054 · gap 10px"
+      },
+      {
+        "k": "Row gap",
+        "v": "11px (14px for switches)"
+      },
+      {
+        "k": "Card",
+        "v": "pad 13px 14px · radius 11px · 1px #E4E8EF · gap 11px"
+      },
+      {
+        "k": "Card selected",
+        "v": "1px #25A94E · bg #F7FCF9 · ring rgba(37,169,78,.10)"
+      },
+      {
+        "k": "Switch track",
+        "v": "38×22px · radius 999px · pad 2px"
+      },
+      {
+        "k": "Track on / off",
+        "v": "#177236 / #D5DBE6 · disabled #C3CAD6"
+      },
+      {
+        "k": "Knob",
+        "v": "18px circle #FFF · shadow 0 1px 2px rgba(16,24,40,.2)"
+      },
+      {
+        "k": "Bulk bar",
+        "v": "pad 11px 16px · #FAFBFD idle · #F2FAF4 active"
+      },
+      {
+        "k": "Selected row",
+        "v": "#F7FCF9 bg · 1px top #F5F7FA"
+      }
+    ]
+  },
+  {
+    "name": "Dialog, empty & loading",
+    "summary": "dialog 428px · scrim 42% ink · skeleton 11px bars",
+    "rows": [
+      {
+        "k": "Scrim",
+        "v": "rgba(23,30,44,.42) · pad 24px"
+      },
+      {
+        "k": "Dialog",
+        "v": "max-w 428px · radius 14px · #FFF"
+      },
+      {
+        "k": "Dialog shadow",
+        "v": "0 24px 60px rgba(16,24,40,.28)"
+      },
+      {
+        "k": "Body pad",
+        "v": "22px 24px 18px"
+      },
+      {
+        "k": "Icon tile",
+        "v": "30×30px · radius 9px · #FEF3F2 · 1px #F5CDC7 · #B42318"
+      },
+      {
+        "k": "Title / body",
+        "v": "16.5px / 700 · 13.5px / 400 line-height 1.55"
+      },
+      {
+        "k": "Footer",
+        "v": "#FAFBFD · 1px top #EEF1F6 · pad 14px 24px · gap 8px"
+      },
+      {
+        "k": "Confirm button",
+        "v": "#B42318 → hover #96190F"
+      },
+      {
+        "k": "Empty state",
+        "v": "pad 30px 20px · 1px dashed #DDE2EA · radius 12px"
+      },
+      {
+        "k": "Empty title",
+        "v": "14.5px / 700 · sub 13px #667085"
+      },
+      {
+        "k": "Skeleton bar",
+        "v": "11px · radius 6px · #EEF1F6 · 3 rows max"
+      }
+    ]
+  },
+  {
+    "name": "App shell — sidebar & header",
+    "summary": "rail 244px · item 9px radius · header 12px 32px sticky",
+    "rows": [
+      {
+        "k": "Rail width",
+        "v": "244px expanded · 62px collapsed (transition 160ms ease)"
+      },
+      {
+        "k": "Rail surface",
+        "v": "#FFF · 1px right #E4E8EF · sticky top 0 · h 100vh"
+      },
+      {
+        "k": "Brand block",
+        "v": "pad 16px 16px 13px · 1px bottom #EEF1F6 · gap 10px"
+      },
+      {
+        "k": "Logo tile",
+        "v": "30×30px · radius 9px · #14532D · #D9F2C4 10.5px / 700"
+      },
+      {
+        "k": "Group header",
+        "v": "pad 14px 8px 7px · 10.5px / 700 / 0.1em · #5A6577"
+      },
+      {
+        "k": "Nav item",
+        "v": "pad 8px 10px · radius 9px · gap 10px · 13.5px / 400 #4B5565"
+      },
+      {
+        "k": "Nav active",
+        "v": "linear-gradient(180deg,#177236,#125A2B) · #FFF / 700 = 6.01:1 at the lightest stop"
+      },
+      {
+        "k": "Nav hover",
+        "v": "#F4F6FA bg · #1E2532 text"
+      },
+      {
+        "k": "Item mark",
+        "v": "13px · 1.8px #B3BDCD — square PTC, circle LTO, diamond config"
+      },
+      {
+        "k": "Nav badge",
+        "v": "min-w 20px h 20px · radius 10px · #FEE2E2 / #B42318 11px / 700"
+      },
+      {
+        "k": "Badge on active",
+        "v": "rgba(255,255,255,.25) bg · #FFF text"
+      },
+      {
+        "k": "Collapsed badge",
+        "v": "7px dot #E5484D · 2px #FFF ring · top/right 5px"
+      },
+      {
+        "k": "Rail footer",
+        "v": "pad 12px 14px · #FBFCFE · 1px top #EEF1F6"
+      },
+      {
+        "k": "Header",
+        "v": "pad 12px 32px · rgba(255,255,255,.75) · blur 6px · sticky z 6"
+      },
+      {
+        "k": "Breadcrumb",
+        "v": "13px / 500 #667085 · separator / #CBD3E0 · current #1E2532"
+      },
+      {
+        "k": "Avatar",
+        "v": "34px circle · #DBE4F0 · 2px #FFF · ring 1px #E4E8EF"
+      }
+    ]
+  },
+  {
+    "name": "Tables",
+    "summary": "header 11px 20px · row 13px 20px · expand panel #FAFBFD",
+    "rows": [
+      {
+        "k": "Column header",
+        "v": "pad 11px 20px · #FAFBFD · 10.5px / 700 / 0.08em #5A6577"
+      },
+      {
+        "k": "Header rule",
+        "v": "1px bottom #EEF1F6"
+      },
+      {
+        "k": "Row",
+        "v": "pad 13px 20px · 1px bottom #F5F7FA · grid gap 14px"
+      },
+      {
+        "k": "Row hover",
+        "v": "#FAFBFD · cursor pointer when expandable"
+      },
+      {
+        "k": "Row title",
+        "v": "14px / 700 / -0.005em · ellipsis single line"
+      },
+      {
+        "k": "Row sub",
+        "v": "12px / 400 #667085 · 3px above"
+      },
+      {
+        "k": "Numeric cell",
+        "v": "mono 12.5px / 400 · #15803D for LTO numbers"
+      },
+      {
+        "k": "Caret cell",
+        "v": "44px wide · 13px ▸/▾ · #98A2B3 (decorative) · right aligned"
+      },
+      {
+        "k": "Expanded panel",
+        "v": "#FAFBFD · pad 16px 20px 20px · auto-fit minmax(260px,1fr) gap 22px"
+      },
+      {
+        "k": "Panel label",
+        "v": "10.5px / 700 / 0.08em #5A6577 · 8px below"
+      },
+      {
+        "k": "Min table width",
+        "v": "1020–1180px inside overflow-x:auto"
+      },
+      {
+        "k": "Footer bar",
+        "v": "pad 13px 20px · #FAFBFD · 12.5px #667085"
+      },
+      {
+        "k": "Pagination",
+        "v": "34×32px · radius 8px · active #177236/#FFF · idle 1px #D5DBE6"
+      },
+      {
+        "k": "Result pill",
+        "v": "pad 8px 12px · radius 999px · #E8F6EC / #15803D 12.5px / 700 (4.50:1)"
+      }
+    ]
+  },
+  {
+    "name": "Stat cards & meters",
+    "summary": "card 12px radius · dot 8px · meter 6px track",
+    "rows": [
+      {
+        "k": "Grid",
+        "v": "auto-fit minmax(190px,1fr) · gap 12px"
+      },
+      {
+        "k": "Card",
+        "v": "pad 14px 16px · radius 12px · #FFF · 1px #E4E8EF"
+      },
+      {
+        "k": "Card selected",
+        "v": "1px #25A94E + 0 0 0 3px rgba(37,169,78,.12)"
+      },
+      {
+        "k": "Muted card",
+        "v": "#FBFCFE bg · figure #5A6577 (data, so AA applies)"
+      },
+      {
+        "k": "Label",
+        "v": "12px / 500 #667085 · dot 8px · gap 7px"
+      },
+      {
+        "k": "Figure",
+        "v": "23px / 700 / -0.01em · 5px above"
+      },
+      {
+        "k": "Hint",
+        "v": "11.5px / 400 #667085 · urgent 700 #B42318"
+      },
+      {
+        "k": "Stage number",
+        "v": "19×19px · radius 6px · idle #EEF1F6/#5A6577 · active #177236/#FFF"
+      },
+      {
+        "k": "Meter track",
+        "v": "6px · radius 999px · #EEF1F6"
+      },
+      {
+        "k": "Meter fill",
+        "v": "linear-gradient(90deg,#25A94E,#7BC96F)"
+      },
+      {
+        "k": "Meter caption",
+        "v": "12px / 400 #667085 · value 700 #15803D · 7px above"
+      },
+      {
+        "k": "Expiry pill",
+        "v": "≤60d #FEE2E2/#B42318 · ≤180d #FEF2E0/#A16207 · else #EEF1F6/#667085"
+      }
+    ]
+  },
+  {
+    "name": "Motion, states & z-index",
+    "summary": "120–160ms · one focus ring · z 6/12/40",
+    "rows": [
+      {
+        "k": "Hover / fill",
+        "v": "transition background 120ms"
+      },
+      {
+        "k": "Border change",
+        "v": "transition border-color 120ms"
+      },
+      {
+        "k": "Switch",
+        "v": "transition background 140ms + justify-content 140ms"
+      },
+      {
+        "k": "Rail collapse",
+        "v": "transition width 160ms ease"
+      },
+      {
+        "k": "Toast timer",
+        "v": "@keyframes toastTimer scaleX 1→0, 5s linear forwards"
+      },
+      {
+        "k": "Spinner",
+        "v": "@keyframes spin 700ms linear infinite"
+      },
+      {
+        "k": "Focus ring",
+        "v": "0 0 0 3px rgba(37,169,78,.15) + border #25A94E — every focusable"
+      },
+      {
+        "k": "Disabled",
+        "v": "surface #F7F9FC · border #E4E8EF · text #B9C1D1 (--ink-200, the only disabled text value) · cursor not-allowed"
+      },
+      {
+        "k": "Empty value",
+        "v": "em dash — in #C3CAD6 (decorative, has a text equivalent in the header)"
+      },
+      {
+        "k": "Sticky header",
+        "v": "z-index 6"
+      },
+      {
+        "k": "Dropdown / menu",
+        "v": "z-index 12 · top 44px (40px for 34px triggers)"
+      },
+      {
+        "k": "Dialog + scrim",
+        "v": "z-index 40 · position fixed inset 0"
+      },
+      {
+        "k": "Reduced motion",
+        "v": "drop timer + spinner animations, keep state colours"
+      }
+    ]
+  },
+  {
+    "name": "Keyboard & focus",
+    "summary": "every control reachable · one visible ring · Esc always closes",
+    "rows": [
+      {
+        "k": "Focus ring",
+        "v": ":focus-visible → border #25A94E + 0 0 0 3px rgba(37,169,78,.15)"
+      },
+      {
+        "k": "Never",
+        "v": "outline:none without replacing the ring"
+      },
+      {
+        "k": "Tab order",
+        "v": "DOM order = visual order; no positive tabindex anywhere"
+      },
+      {
+        "k": "Chips (filter)",
+        "v": "role=button tabindex=0 · Space/Enter toggles"
+      },
+      {
+        "k": "Chips (dismiss)",
+        "v": "× is a real <button> with aria-label='Remove {filter}'"
+      },
+      {
+        "k": "Underline tabs",
+        "v": "←/→ moves and selects · Home/End jumps · only active tab tabbable"
+      },
+      {
+        "k": "Segmented",
+        "v": "radiogroup semantics · ←/→ changes selection"
+      },
+      {
+        "k": "Stage cards",
+        "v": "tabbable buttons · Enter/Space selects · ←/→ optional"
+      },
+      {
+        "k": "Dropdown open",
+        "v": "Enter/Space/↓ opens and focuses first option"
+      },
+      {
+        "k": "Dropdown nav",
+        "v": "↑/↓ moves · Enter picks · Esc closes and returns focus to trigger"
+      },
+      {
+        "k": "Multi-select",
+        "v": "Space toggles without closing · Tab reaches Clear/Apply"
+      },
+      {
+        "k": "Typeahead",
+        "v": "typing in an open panel filters, does not jump-select"
+      },
+      {
+        "k": "Row menu",
+        "v": "Esc closes · click-outside closes · focus returns to ⋯"
+      },
+      {
+        "k": "Dialog",
+        "v": "focus moves to dialog on open, traps inside, returns to trigger on close"
+      },
+      {
+        "k": "Dialog keys",
+        "v": "Esc = cancel · Enter on focused button only (never auto-confirm)"
+      },
+      {
+        "k": "Toast focus",
+        "v": "never steals focus · action reachable by Tab while visible"
+      },
+      {
+        "k": "Toast timing",
+        "v": "pause auto-dismiss on hover/focus-within; resume on leave"
+      },
+      {
+        "k": "Table rows",
+        "v": "expandable row = button with aria-expanded; caret is decorative"
+      },
+      {
+        "k": "Bulk select",
+        "v": "header checkbox is aria-checked=mixed when partial"
+      },
+      {
+        "k": "Skip link",
+        "v": "first tab stop jumps past the rail to <main>"
+      }
+    ]
+  },
+  {
+    "name": "ARIA & semantics",
+    "summary": "native elements first · aria only where markup can't say it",
+    "rows": [
+      {
+        "k": "Buttons",
+        "v": "<button type=button> — never a div with onClick"
+      },
+      {
+        "k": "Fields",
+        "v": "<label for> or aria-label; hint via aria-describedby"
+      },
+      {
+        "k": "Error state",
+        "v": "aria-invalid=true + aria-describedby pointing at the error text"
+      },
+      {
+        "k": "Required",
+        "v": "required attr; asterisk optional, never the only signal"
+      },
+      {
+        "k": "Tabs",
+        "v": "role=tablist / tab / tabpanel · aria-selected · aria-controls"
+      },
+      {
+        "k": "Segmented",
+        "v": "role=radiogroup with role=radio children + aria-checked"
+      },
+      {
+        "k": "Dropdown",
+        "v": "role=combobox aria-expanded aria-haspopup=listbox + role=listbox/option"
+      },
+      {
+        "k": "Multi-select",
+        "v": "aria-multiselectable=true · aria-selected per option"
+      },
+      {
+        "k": "Row menu",
+        "v": "aria-haspopup=menu · role=menu / menuitem"
+      },
+      {
+        "k": "Dialog",
+        "v": "role=dialog aria-modal=true aria-labelledby + aria-describedby"
+      },
+      {
+        "k": "Toast region",
+        "v": "aria-live=polite (assertive for error) · role=status · aria-atomic=true"
+      },
+      {
+        "k": "Inline notice",
+        "v": "role=status; error notice role=alert"
+      },
+      {
+        "k": "Switch",
+        "v": "role=switch aria-checked — not a checkbox"
+      },
+      {
+        "k": "Chips as status",
+        "v": "plain text, no role; the word carries the meaning, colour never alone"
+      },
+      {
+        "k": "Counts",
+        "v": "badge text needs context: aria-label='10 applications for checking'"
+      },
+      {
+        "k": "Progress",
+        "v": "role=progressbar aria-valuenow/min/max on upload + expiry meters"
+      },
+      {
+        "k": "Skeletons",
+        "v": "aria-hidden=true inside an aria-busy=true container"
+      },
+      {
+        "k": "Icon-only",
+        "v": "aria-label required (⋯ = 'Row actions', × = 'Dismiss')"
+      },
+      {
+        "k": "Nav",
+        "v": "<nav aria-label='Primary'> · active item aria-current=page"
+      },
+      {
+        "k": "Tables",
+        "v": "real <table> with <th scope=col>; grid CSS is fine, faked headers are not"
+      }
+    ]
+  },
+  {
+    "name": "Responsive & touch",
+    "summary": "single rail breakpoint · tables scroll · 44px on touch",
+    "rows": [
+      {
+        "k": "≥1280px",
+        "v": "full layout · content max-w 1280px (tables 1560px)"
+      },
+      {
+        "k": "1024–1279px",
+        "v": "stat grids reflow via auto-fit minmax(190px,1fr)"
+      },
+      {
+        "k": "<1024px",
+        "v": "rail collapses to 62px; two-column detail becomes one"
+      },
+      {
+        "k": "<768px",
+        "v": "rail off-canvas behind a 44px toggle; header stays sticky"
+      },
+      {
+        "k": "Tables",
+        "v": "never reflow — overflow-x:auto with min-width 1020–1180px"
+      },
+      {
+        "k": "Table on mobile",
+        "v": "row becomes a stacked card: title, chips, then key/value pairs"
+      },
+      {
+        "k": "Filter bar",
+        "v": "wraps: search 1 1 280px, segmented and sort drop to a second line"
+      },
+      {
+        "k": "Toasts",
+        "v": "width 372px desktop · calc(100% - 32px) below 420px"
+      },
+      {
+        "k": "Dialog",
+        "v": "max-w 428px · full-width minus 24px scrim padding on mobile"
+      },
+      {
+        "k": "Touch targets",
+        "v": "44×44px minimum — 34px controls get padding, not a smaller box"
+      },
+      {
+        "k": "Checkbox / radio",
+        "v": "17px box inside a 44px tappable row on touch"
+      },
+      {
+        "k": "Hover styles",
+        "v": "guard with @media (hover:hover) so touch doesn't stick them"
+      },
+      {
+        "k": "Reduced motion",
+        "v": "@media (prefers-reduced-motion:reduce) → animation/transition none; toast timer becomes a static bar"
+      },
+      {
+        "k": "Zoom",
+        "v": "layout holds to 200% zoom; no fixed heights on text containers"
+      },
+      {
+        "k": "Dark on white",
+        "v": "#1E2532 15.37:1 · #344054 10.46:1 · #475467 7.69:1 · #667085 4.97:1 — all pass"
+      },
+      {
+        "k": "Column headers",
+        "v": "#5A6577 = 5.89:1 on #FFF (10.5px is normal text — the large-text exemption needs ≥18.66px bold)"
+      },
+      {
+        "k": "On tinted surfaces",
+        "v": "canvas #EEF1F6 costs ~0.6 — #667085 drops to 4.39:1 and FAILS there; use #5A6577 (5.21:1) for page subtitles, breadcrumbs, footers, and text on #EEF1F6 tiles"
+      },
+      {
+        "k": "Hints & meta",
+        "v": "#667085 inside white cards only — 12px meta is still normal text"
+      },
+      {
+        "k": "Muted figures",
+        "v": "25px/700 muted stat = #5A6577; #98A2B3 is 2.51:1 on #FBFCFE and misses even the 3:1 large-text bar"
+      },
+      {
+        "k": "Placeholder",
+        "v": "#667085 — placeholder is in scope for 1.4.3"
+      },
+      {
+        "k": "Decorative greys",
+        "v": "#8A94A6 3.06:1 · #98A2B3 2.58:1 · #C3CAD6 1.66:1 — icons, carets, dots, em-dashes only; never readable text"
+      },
+      {
+        "k": "Disabled",
+        "v": "#B9C1D1 1.81:1 — allowed, 1.4.3 exempts disabled controls"
+      },
+      {
+        "k": "White on green",
+        "v": "only on #177236 (6.01:1) or darker — #1D8F42 is 4.15:1, #17A34A 3.29:1, #25A94E 3.06:1 and all fail with white text"
+      },
+      {
+        "k": "Tone text on tint",
+        "v": "#8A5206/#FEF2E0 5.77 · #B42318/#FEE2E2 5.38 · #175CD3/#EAF2FE 5.31 · #5A6577/#EEF1F6 5.21 · #15803D/#E8F6EC 4.50 — passes with zero headroom, so never lighten either side"
+      },
+      {
+        "k": "Colour alone",
+        "v": "never the only signal — every tone pairs with a word (Approved, Legacy, Returned)"
+      },
+      {
+        "k": "Focus ring",
+        "v": "#25A94E on #FFF = 3.06:1 · #2FB25F on #161C26 = 6.23:1 — both meet 1.4.11"
+      },
+      {
+        "k": "1.4.11 exception",
+        "v": "resting control BORDERS do not reach 3:1 in either theme — light #C3CAD6/#FFF 1.65, #D5DBE6/#FFF 1.39; dark #55606F/#161C26 2.68, #384556 1.75. Known, deliberate: state is carried by the filled/focused state (both ≥ 3:1) and by an always-visible label, never by the resting border alone"
+      }
+    ]
+  },
+  {
+    "name": "Dark mode",
+    "summary": "data-theme=\\\"dark\\\" · same geometry · dark text on the green fill",
+    "rows": [
+      {
+        "k": "Canvas",
+        "v": "#0F141C",
+        "c": "#0F141C"
+      },
+      {
+        "k": "Card",
+        "v": "#161C26 · 1px #2A3441 · shadow none"
+      },
+      {
+        "k": "Sunken strip",
+        "v": "#1C242F — header, footer, expanded row"
+      },
+      {
+        "k": "Field well",
+        "v": "#10161F · 1px #384556"
+      },
+      {
+        "k": "Control shell",
+        "v": "#222B38 · segmented active #2A3441"
+      },
+      {
+        "k": "Muted card",
+        "v": "#141A23 · row hover #1A212B"
+      },
+      {
+        "k": "Divider",
+        "v": "1px #222B38 (card border #2A3441)"
+      },
+      {
+        "k": "Text",
+        "v": "#E8ECF3 14.43:1 · #C3CCDA 10.56:1 · #9AA5B5 6.86:1 — all on #161C26"
+      },
+      {
+        "k": "Decorative",
+        "v": "#6F7B8C 3.98:1 · disabled #55606F 2.36:1 (exempt)"
+      },
+      {
+        "k": "Green fill",
+        "v": "#2FB25F with #0B1017 text = 6.95:1 (white would be 2.74:1) — read --green-on-fill"
+      },
+      {
+        "k": "Green hover",
+        "v": "#3FC26E",
+        "c": "#3FC26E"
+      },
+      {
+        "k": "Green text",
+        "v": "#6FDC96 = 10.06:1 — links, active tab, mono numbers"
+      },
+      {
+        "k": "Focus ring",
+        "v": "1px #2FB25F + 0 0 0 3px rgba(47,178,95,.18)"
+      },
+      {
+        "k": "Amber",
+        "v": "text #F0C070 · tint rgba(217,161,59,.18)"
+      },
+      {
+        "k": "Red",
+        "v": "text #FF9B95 · tint rgba(229,72,77,.18)"
+      },
+      {
+        "k": "Blue",
+        "v": "text #8FB8FF · tint rgba(23,92,211,.24)"
+      },
+      {
+        "k": "Violet",
+        "v": "text #C4B2FF · tint rgba(140,110,240,.22)"
+      },
+      {
+        "k": "Neutral tint",
+        "v": "rgba(255,255,255,.07) with #C3CCDA text"
+      },
+      {
+        "k": "Elevation",
+        "v": "card/button none · toast 0 8px 24px rgba(0,0,0,.50) · panel .45 · dialog .60"
+      },
+      {
+        "k": "Scrim",
+        "v": "rgba(4,7,12,.62)"
+      },
+      {
+        "k": "Selected surfaces",
+        "v": "option row rgba(47,178,95,.12) · selected card #1C242F (light #F2FAF4 / #F7FCF9 have no place on dark)"
+      },
+      {
+        "k": "Notice fills",
+        "v": "green .14 · amber .14 · red .16 · blue .16 over the surface"
+      },
+      {
+        "k": "Soft border",
+        "v": "#384556 — service chips and inline filters (light #DDE2EA)"
+      },
+      {
+        "k": "Destructive",
+        "v": "outline border rgba(255,155,149,.45) · filled #FF9B95 with #2A0806 text"
+      },
+      {
+        "k": "Dialog",
+        "v": "#161C26 · 1px #2A3441 · shadow 0 24px 60px rgba(0,0,0,.60) · scrim rgba(4,7,12,.62)"
+      },
+      {
+        "k": "Empty state",
+        "v": "1px dashed #384556 · title #E8ECF3 · sub #9AA5B5 (1.6px dashed is the dropzone only)"
+      },
+      {
+        "k": "Skeleton",
+        "v": "11px bars #222B38 on #161C26 · 3 rows max"
+      },
+      {
+        "k": "Pagination",
+        "v": "active #2FB25F/#0B1017 · idle 1px #384556/#C3CCDA · disabled #6F7B8C"
+      },
+      {
+        "k": "Unchanged",
+        "v": "every height, radius, padding, gap, weight and font — palette only"
+      }
+    ]
+  },
+  {
+    "name": "Type & layout",
+    "summary": "DM Sans 400/500/700 · JetBrains Mono for copyable values",
+    "rows": [
+      {
+        "k": "Family",
+        "v": "'DM Sans', system-ui, sans-serif"
+      },
+      {
+        "k": "Mono",
+        "v": "'JetBrains Mono', monospace"
+      },
+      {
+        "k": "Page title",
+        "v": "26px / 700 / -0.015em"
+      },
+      {
+        "k": "Section title",
+        "v": "17px / 700"
+      },
+      {
+        "k": "Card figure",
+        "v": "23px / 700 / -0.01em"
+      },
+      {
+        "k": "Row title",
+        "v": "14px / 700"
+      },
+      {
+        "k": "Body",
+        "v": "13.5px / 400 / 1.55 · #475467 (7.69:1)"
+      },
+      {
+        "k": "Field label",
+        "v": "12.5px / 500 · #344054"
+      },
+      {
+        "k": "Meta",
+        "v": "12px / 400 · #667085"
+      },
+      {
+        "k": "Column header",
+        "v": "10.5px / 700 / 0.08em uppercase · #5A6577"
+      },
+      {
+        "k": "Page canvas",
+        "v": "#EEF1F6",
+        "c": "#EEF1F6"
+      },
+      {
+        "k": "Card",
+        "v": "#FFF · 1px #E4E8EF · radius 14px · shadow 0 1px 2px rgba(16,24,40,.04)"
+      },
+      {
+        "k": "Section gutter",
+        "v": "24px x · 22px between cards"
+      },
+      {
+        "k": "Content max-w",
+        "v": "1320px detail · 1560px tables · gutter 32px"
+      },
+      {
+        "k": "Table row",
+        "v": "pad 13px 20px · 1px #F5F7FA · hover #FAFBFD"
+      }
+    ]
+  }
+]

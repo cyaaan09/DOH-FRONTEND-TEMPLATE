@@ -197,11 +197,6 @@ describe('SpecsSection hosts the components the artifact only redlines', () => {
     expect(wrapper.text()).toContain('Uploaded')
   })
 
-  it('still renders its SpecTables gap', () => {
-    // The spec-table component itself is still unbuilt; hosting StatCard here
-    // must not disturb that marker.
-    expect(mount(SpecsSection).findAll('[data-gap]')).toHaveLength(1)
-  })
 
   it('insets the stat block by the card padding, like every sibling block', () => {
     // Regression: this block first shipped as a bare child of DemoCard's slot,
@@ -835,5 +830,45 @@ describe('FoundationsSection is complete', () => {
     expect(scales[0].findAll('[data-sample]')).toHaveLength(7)
     expect(scales[1].findAll('[data-sample]')).toHaveLength(0)
     expect(scales[0].findAll('[data-sample]')[0].attributes('style')).toContain('999px')
+  })
+})
+
+describe('SpecsSection renders Appendix C as an accordion', () => {
+  it('lists all 19 redline groups and opens Chips by default', () => {
+    const wrapper = mount(SpecsSection)
+    expect(wrapper.findAll('[data-gap]')).toHaveLength(0)
+    expect(wrapper.findAll('[data-spec-group]')).toHaveLength(19)
+    const open = wrapper.findAll('[data-spec-toggle]').filter(
+      (t) => t.attributes('aria-expanded') === 'true',
+    )
+    expect(open).toHaveLength(1)
+    expect(open[0].get('[data-spec-name]').text()).toBe('Chips')
+  })
+
+  it('expands and collapses a group', async () => {
+    const wrapper = mount(SpecsSection)
+    const first = wrapper.findAll('[data-spec-toggle]')[0]
+    expect(first.attributes('aria-expanded')).toBe('false')
+    await first.trigger('click')
+    expect(wrapper.findAll('[data-spec-toggle]')[0].attributes('aria-expanded')).toBe('true')
+    expect(wrapper.findAll('[data-spec-body]').length).toBe(2)
+  })
+
+  it('partitions rows between the Geometry and Colour filters', async () => {
+    // The two filters are exact complements, so no row can be dropped by
+    // both — which is the failure a per-filter count alone would not catch.
+    const wrapper = mount(SpecsSection)
+    const rowCount = () => wrapper.findAll('[data-spec-row]').length
+    const all = rowCount()
+
+    const [, geometry, colour] = wrapper.findAll('[data-filter-option]')
+    await geometry.trigger('click')
+    const geometryRows = rowCount()
+    await colour.trigger('click')
+    const colourRows = rowCount()
+
+    expect(geometryRows).toBeGreaterThan(0)
+    expect(colourRows).toBeGreaterThan(0)
+    expect(geometryRows + colourRows).toBe(all)
   })
 })

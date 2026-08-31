@@ -1,7 +1,6 @@
 <script setup>
 import DemoCard from '../chrome/DemoCard.vue'
-import DemoBlocks from '../chrome/DemoBlocks.vue'
-import DemoGap from '../chrome/DemoGap.vue'
+import SpecTables from '../chrome/SpecTables.vue'
 import { StatCard, Meter } from '@/design-system'
 </script>
 
@@ -31,9 +30,9 @@ import { StatCard, Meter } from '@/design-system'
         <Meter :value="62" :max="100" label="Upload progress" caption="Uploaded" />
       </div>
     </div>
-    <DemoBlocks>
-      <DemoGap component="SpecTables" />
-    </DemoBlocks>
+    <!-- Appendix D.1 — the redline accordion IS Appendix C, generated into
+         src/design-system/demo/data/specs.js so the two cannot drift. -->
+    <SpecTables />
   </DemoCard>
 </template>
 
