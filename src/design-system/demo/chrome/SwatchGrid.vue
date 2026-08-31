@@ -46,7 +46,7 @@ defineProps({
    rather than stretching three of them across the whole card. */
 .swatch-group__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(146px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(146px, 100%), 1fr));
   gap: 8px;
 }
 

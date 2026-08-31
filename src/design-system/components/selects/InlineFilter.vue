@@ -63,9 +63,11 @@ const collection = computed(() => createListCollection({ items: labels.value }))
           :key="option.label"
           :item="option.label"
           class="inline-filter__option flex items-center gap-2 rounded-control text-body"
-          :class="option.label === modelValue
+          :class="
+            option.label === modelValue
               ? 'bg-green-tint text-green-text font-bold'
-              : 'text-ink-700 font-normal'"
+              : 'text-ink-700 font-normal'
+          "
         >
           <!-- Appendix D.1 — the status dot. Decorative: the label beside it
                carries the meaning, so it is hidden from assistive tech. -->

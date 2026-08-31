@@ -81,8 +81,10 @@ defineEmits(['fileAccept'])
   transition: background-color var(--t-control) ease;
 }
 
-.filecompact__trigger:hover {
-  background: var(--surface-muted);
+@media (hover: hover) {
+  .filecompact__trigger:hover {
+    background: var(--surface-muted);
+  }
 }
 
 .filecompact__hint {

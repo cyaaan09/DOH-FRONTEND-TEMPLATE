@@ -1,5 +1,12 @@
 <script setup>
-import { MenuRoot, MenuTrigger, MenuPositioner, MenuContent, MenuItem, MenuSeparator } from '@ark-ui/vue/menu'
+import {
+  MenuRoot,
+  MenuTrigger,
+  MenuPositioner,
+  MenuContent,
+  MenuItem,
+  MenuSeparator,
+} from '@ark-ui/vue/menu'
 
 defineProps({
   /** Items as `{ value, label, destructive? }`, destructive last. */
@@ -51,8 +58,10 @@ const emit = defineEmits(['select'])
   cursor: pointer;
 }
 
-.rowmenu__trigger:hover {
-  background: var(--surface-muted);
+@media (hover: hover) {
+  .rowmenu__trigger:hover {
+    background: var(--surface-muted);
+  }
 }
 
 .rowmenu__trigger:focus-visible {

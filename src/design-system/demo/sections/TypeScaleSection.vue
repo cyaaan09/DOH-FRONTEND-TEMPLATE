@@ -129,4 +129,15 @@ const ROWS = [
   padding-top: 15px;
   padding-bottom: 15px;
 }
+
+/* The 132px + 210px fixed columns need 342px before the sample gets any
+   width at all, so below the phone breakpoint the table becomes a stack:
+   token, sample, spec, one per line. A table that scrolls sideways to read
+   three short values would be worse than one that stacks. */
+@media (max-width: 640px) {
+  .type-scale__row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}
 </style>

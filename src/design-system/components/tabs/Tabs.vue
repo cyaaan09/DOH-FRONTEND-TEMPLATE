@@ -81,4 +81,17 @@ const emit = defineEmits(['update:modelValue'])
   padding: 2px 7px;
   border-radius: var(--r-field);
 }
+
+/* Redline "Responsive · Tables never reflow" is about tables, but the same
+   logic governs a nowrap tab row: at 390px the labels are 126px wider than
+   the card and there is nothing to wrap. Scrolling keeps every tab reachable;
+   wrapping would stack them into a block that no longer reads as one row. */
+.tabs__list {
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabs__list::-webkit-scrollbar {
+  display: none;
+}
 </style>

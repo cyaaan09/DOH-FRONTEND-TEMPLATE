@@ -154,8 +154,10 @@ const BADGE = {
   transition: background-color var(--t-rail);
 }
 
-.accordion__header:hover {
-  background: var(--surface-sunken);
+@media (hover: hover) {
+  .accordion__header:hover {
+    background: var(--surface-sunken);
+  }
 }
 
 /* Redline "Open header · background --surface-sunken". */
@@ -216,7 +218,7 @@ const BADGE = {
 /* Redline "Body grid · auto-fit minmax(180px,1fr) · gap 14px 22px". */
 .accordion__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
   gap: 14px 22px;
 }
 </style>

@@ -18,7 +18,9 @@ defineProps({
 
 <template>
   <div data-token-block class="tokenblock overflow-hidden rounded-panel border border-hairline">
-    <div class="tokenblock__bar flex items-center justify-between border-b border-divider bg-surface-sunken">
+    <div
+      class="tokenblock__bar flex items-center justify-between border-b border-divider bg-surface-sunken"
+    >
       <div data-filename class="font-mono text-hint font-medium text-ink-600">{{ filename }}</div>
       <div data-hint class="tokenblock__hint text-text-meta">{{ hint }}</div>
     </div>

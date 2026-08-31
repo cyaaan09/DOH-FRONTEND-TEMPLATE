@@ -132,6 +132,16 @@ const listId = 'search-results'
   border-radius: 11px;
 }
 
+/* Redline "Never · outline:none without replacing the ring". The input drops
+   its own outline so the FIELD carries the ring, but the field's ring was
+   tied to `open` — with focus in an empty field there were no results, so no
+   ring, so no visible focus at all. :focus-within is the state that actually
+   matters here. */
+.search__field:focus-within {
+  border-color: var(--green-500);
+  box-shadow: var(--ring-focus);
+}
+
 .search__field--open {
   border-radius: 11px 11px 0 0;
   border-bottom-color: transparent;
@@ -191,8 +201,10 @@ const listId = 'search-results'
   cursor: pointer;
 }
 
-.search__row:hover:not(.search__row--active) {
-  background: var(--surface-muted);
+@media (hover: hover) {
+  .search__row:hover:not(.search__row--active) {
+    background: var(--surface-muted);
+  }
 }
 
 /* Redline "Active row · --green-100 with a --surface type tile ·

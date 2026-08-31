@@ -16,7 +16,7 @@ defineProps({
 </script>
 
 <template>
-  <header data-app-header class="app-header flex items-center border-b border-hairline">
+  <header data-app-header class="app-header flex flex-wrap items-center border-b border-hairline">
     <nav
       v-if="breadcrumb.length"
       data-breadcrumb
@@ -52,6 +52,9 @@ defineProps({
 <style scoped>
 .app-header {
   gap: 16px;
+  /* Redline "Header · pad 12px 32px" — the 32px gutter is a desktop value;
+     below the rail's own breakpoint it costs 64px of a 390px viewport, which
+     is what pushed the avatar past the card. */
   padding: 12px 32px;
   position: sticky;
   top: 0;
@@ -73,6 +76,12 @@ defineProps({
 .app-header__end {
   gap: 12px;
   margin-left: auto;
+}
+
+@media (max-width: 767px) {
+  .app-header {
+    padding: 12px 16px;
+  }
 }
 
 /* Redline "Avatar · 34px circle · --avatar-bg · ring 1px --border-card". */

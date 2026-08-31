@@ -66,17 +66,17 @@ const selected = computed(() => (props.modelValue ? [props.modelValue] : []))
 
     <SelectPositioner class="select__positioner">
       <!-- Redline "Panel" and "Panel max-h" — radius 12, pad 6, hairline, 246px. -->
-      <SelectContent
-        class="select__panel rounded-panel border border-hairline bg-surface p-1.5"
-      >
+      <SelectContent class="select__panel rounded-panel border border-hairline bg-surface p-1.5">
         <SelectItem
           v-for="option in options"
           :key="option"
           :item="option"
           class="select__option flex items-center gap-2 rounded-control text-body"
-          :class="option === modelValue
+          :class="
+            option === modelValue
               ? 'bg-green-tint text-green-text font-bold'
-              : 'text-ink-700 font-normal'"
+              : 'text-ink-700 font-normal'
+          "
         >
           <SelectItemText class="min-w-0 flex-1 truncate">{{ option }}</SelectItemText>
           <!-- Redline "Option selected" — the check is 12px/700. -->

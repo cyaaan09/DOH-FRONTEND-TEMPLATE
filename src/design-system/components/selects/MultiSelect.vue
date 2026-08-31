@@ -92,9 +92,7 @@ const isOn = (option) => props.modelValue.includes(option)
     </SelectControl>
 
     <SelectPositioner class="multiselect__positioner">
-      <SelectContent
-        class="multiselect__panel rounded-panel border border-hairline bg-surface"
-      >
+      <SelectContent class="multiselect__panel rounded-panel border border-hairline bg-surface">
         <!-- Redline "Panel filter" (32px field on the input surface) plus Appendix
              D.1: the field sits in its own section under a hairline rule, and
              carries a decorative leading glyph before the input. -->
@@ -102,7 +100,11 @@ const isOn = (option) => props.modelValue.includes(option)
           <div
             class="multiselect__filter-field flex items-center gap-2 rounded-control border border-hairline bg-surface-input"
           >
-            <span data-filter-glyph aria-hidden="true" class="multiselect__filter-glyph flex-none" />
+            <span
+              data-filter-glyph
+              aria-hidden="true"
+              class="multiselect__filter-glyph flex-none"
+            />
             <input
               v-model="query"
               data-filter
@@ -330,8 +332,10 @@ const isOn = (option) => props.modelValue.includes(option)
   cursor: pointer;
 }
 
-.multiselect__apply:hover {
-  background: var(--green-fill-hover);
+@media (hover: hover) {
+  .multiselect__apply:hover {
+    background: var(--green-fill-hover);
+  }
 }
 
 /* Redline "Focus ring" — every focusable gets one; never outline:none

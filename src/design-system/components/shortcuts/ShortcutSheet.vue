@@ -156,7 +156,7 @@ function joinerText(joiner) {
 /* Redline "Sheet · groups auto-fit minmax(250px,1fr)". */
 .sheet__body {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
   gap: 4px 28px;
   padding: 16px 18px 18px;
 }

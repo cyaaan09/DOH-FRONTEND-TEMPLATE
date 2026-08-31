@@ -226,9 +226,11 @@ const maxValue = computed(() => (props.max ? parseDate(props.max) : undefined))
   cursor: pointer;
 }
 
-.dp__trigger:hover {
-  background: var(--surface-muted);
-  color: var(--ink-900);
+@media (hover: hover) {
+  .dp__trigger:hover {
+    background: var(--surface-muted);
+    color: var(--ink-900);
+  }
 }
 
 /* Redline "Popover · 280px · pad 12px · radius --r-panel · --sh-panel". */
@@ -273,8 +275,10 @@ const maxValue = computed(() => (props.max ? parseDate(props.max) : undefined))
   cursor: pointer;
 }
 
-.dp__nav:hover {
-  background: var(--surface-muted);
+@media (hover: hover) {
+  .dp__nav:hover {
+    background: var(--surface-muted);
+  }
 }
 
 /* Redline "Range · two months side by side, gap 16px". */
@@ -307,8 +311,10 @@ const maxValue = computed(() => (props.max ? parseDate(props.max) : undefined))
   cursor: pointer;
 }
 
-.dp__day:hover:not([data-selected]) {
-  background: var(--surface-muted);
+@media (hover: hover) {
+  .dp__day:hover:not([data-selected]) {
+    background: var(--surface-muted);
+  }
 }
 
 /* Redline "Day states". One rule per state, each naming what it owns. */

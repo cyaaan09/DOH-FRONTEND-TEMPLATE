@@ -168,9 +168,11 @@ const MARK_SHAPE = {
   cursor: pointer;
 }
 
-.rail__icon-btn:hover {
-  background: var(--surface-muted);
-  color: var(--ink-900);
+@media (hover: hover) {
+  .rail__icon-btn:hover {
+    background: var(--surface-muted);
+    color: var(--ink-900);
+  }
 }
 
 .rail__body {
@@ -198,9 +200,11 @@ const MARK_SHAPE = {
   text-align: left;
 }
 
-.nav:hover:not(.nav--active) {
-  background: var(--surface-muted);
-  color: var(--ink-900);
+@media (hover: hover) {
+  .nav:hover:not(.nav--active) {
+    background: var(--surface-muted);
+    color: var(--ink-900);
+  }
 }
 
 /* Redline "Nav active · --grad-primary · --green-on-fill / 700, 6.01:1 at

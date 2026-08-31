@@ -126,8 +126,10 @@ function toggle(name) {
   transition: background-color var(--t-control) ease;
 }
 
-.spectables__head:hover {
-  background: var(--surface-muted);
+@media (hover: hover) {
+  .spectables__head:hover {
+    background: var(--surface-muted);
+  }
 }
 
 .spectables__caret {
@@ -143,7 +145,7 @@ function toggle(name) {
    not. The 28px is a COLUMN gap only — rows keep their own 8px rhythm. */
 .spectables__rows {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
   gap: 0 28px;
 }
 

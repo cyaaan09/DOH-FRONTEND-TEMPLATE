@@ -40,7 +40,7 @@ import { StatCard, Meter } from '@/design-system'
 /* Redline "Grid" (Stat cards & meters) — auto-fit at a 190px minimum. */
 .specs-section__stat-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr));
   gap: 12px; /* redline "Grid" — gap 12px; no spacing token for it */
 }
 </style>

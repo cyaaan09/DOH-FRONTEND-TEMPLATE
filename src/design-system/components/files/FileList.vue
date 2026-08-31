@@ -164,9 +164,11 @@ function noteText(file) {
     color var(--t-control) ease;
 }
 
-.filelist__remove:hover {
-  background: var(--surface-muted);
-  color: var(--red-700);
+@media (hover: hover) {
+  .filelist__remove:hover {
+    background: var(--surface-muted);
+    color: var(--red-700);
+  }
 }
 
 /* Redline "Empty" — dashed hairline panel at the row radius. */

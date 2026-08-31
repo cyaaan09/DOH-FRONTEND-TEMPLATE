@@ -66,8 +66,10 @@ defineEmits(['remove'])
   font-weight: 700;
 }
 
-.token__remove:hover {
-  opacity: 1;
+@media (hover: hover) {
+  .token__remove:hover {
+    opacity: 1;
+  }
 }
 
 .token-field__placeholder {

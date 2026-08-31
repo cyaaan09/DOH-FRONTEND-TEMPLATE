@@ -184,9 +184,11 @@ const hasAction = computed(() => Boolean(props.toast.action?.label))
     color var(--t-control) ease;
 }
 
-.toast__close:hover {
-  background: var(--surface-muted);
-  color: var(--text-meta);
+@media (hover: hover) {
+  .toast__close:hover {
+    background: var(--surface-muted);
+    color: var(--text-meta);
+  }
 }
 
 .toast__timer {

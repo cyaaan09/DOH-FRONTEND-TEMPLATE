@@ -34,7 +34,7 @@ defineProps({
  * for an auto-fit track list, so it is expressed here. */
 .demo-blocks {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--db-min, 268px), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(var(--db-min, 268px), 100%), 1fr));
   gap: var(--db-gap, 24px);
   padding-top: var(--db-pt, 18px);
   padding-bottom: var(--db-pb, 6px);

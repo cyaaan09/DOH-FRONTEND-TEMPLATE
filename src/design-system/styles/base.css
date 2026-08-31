@@ -55,3 +55,26 @@ textarea::placeholder {
     transform: scaleX(0);
   }
 }
+
+/* Redline "Reduced motion · @media (prefers-reduced-motion:reduce) →
+   animation/transition none; toast timer becomes a static bar".
+
+   Global rather than per-component: 15 component files animate something,
+   and a preference this categorical is not each component's to remember —
+   one that forgets is silently non-compliant, and nothing renders wrong.
+
+   0.01ms rather than `none`: a zero duration cancels transitionend and
+   animationend, and any code waiting on one would hang. This runs them so
+   fast they are imperceptible while the events still fire. `!important`
+   because a preference set at the OS level must beat a component's own
+   declaration — the one case where losing to specificity would be wrong. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

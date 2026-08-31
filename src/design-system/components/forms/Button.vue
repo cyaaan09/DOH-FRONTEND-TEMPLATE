@@ -122,8 +122,10 @@ const busyClass = computed(() => (props.busy ? 'btn--busy' : ''))
   box-shadow: var(--sh-primary);
 }
 
-.btn--primary:hover:not(:disabled) {
-  background: var(--green-fill-hover);
+@media (hover: hover) {
+  .btn--primary:hover:not(:disabled) {
+    background: var(--green-fill-hover);
+  }
 }
 
 /* Redline "Pending": the primary fill sits at its hover green while busy,

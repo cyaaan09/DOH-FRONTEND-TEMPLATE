@@ -67,9 +67,11 @@ const emit = defineEmits(['update:modelValue'])
   line-height: 1;
 }
 
-.field__clear:hover {
-  color: var(--ink-700);
-  background: var(--surface-muted);
+@media (hover: hover) {
+  .field__clear:hover {
+    color: var(--ink-700);
+    background: var(--surface-muted);
+  }
 }
 
 .field__clear:focus-visible {

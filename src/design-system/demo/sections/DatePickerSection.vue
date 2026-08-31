@@ -82,8 +82,10 @@ const RULES = [
   cursor: pointer;
 }
 
-.datepicker-section__preset:hover {
-  background: var(--surface-muted);
+@media (hover: hover) {
+  .datepicker-section__preset:hover {
+    background: var(--surface-muted);
+  }
 }
 
 .datepicker-section__preset--on {

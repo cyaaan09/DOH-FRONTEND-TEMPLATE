@@ -228,8 +228,10 @@ function fire(kind) {
   transition: background-color var(--t-control) ease;
 }
 
-.notices__dismiss-all:hover {
-  background: var(--surface-muted);
+@media (hover: hover) {
+  .notices__dismiss-all:hover {
+    background: var(--surface-muted);
+  }
 }
 
 /* Appendix D.1 gives this surface `min-height: 316px`, which cannot hold the
@@ -257,7 +259,7 @@ function fire(kind) {
 
 .notices__rules {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr));
   gap: 18px;
   margin-top: 16px;
 }

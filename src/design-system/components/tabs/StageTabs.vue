@@ -77,7 +77,7 @@ const emit = defineEmits(['update:modelValue'])
  * (review Finding 1) instead of collapsing to one column. */
 .stage-tabs__list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
   gap: 10px;
 }
 

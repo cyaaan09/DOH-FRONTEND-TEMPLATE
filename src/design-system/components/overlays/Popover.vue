@@ -101,9 +101,11 @@ defineEmits(['action'])
   cursor: pointer;
 }
 
-.popover__close:hover {
-  background: var(--surface-muted);
-  color: var(--ink-900);
+@media (hover: hover) {
+  .popover__close:hover {
+    background: var(--surface-muted);
+    color: var(--ink-900);
+  }
 }
 
 .popover__body {

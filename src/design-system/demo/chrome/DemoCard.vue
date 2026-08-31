@@ -9,7 +9,9 @@ defineProps({
 </script>
 
 <template>
-  <section class="mb-section overflow-hidden rounded-card border border-hairline bg-surface shadow-card">
+  <section
+    class="mb-section overflow-hidden rounded-card border border-hairline bg-surface shadow-card"
+  >
     <!-- Spec §17.1 — section card: radius 14, hairline, card shadow.
          Header pad 20/24/4, title at section-title scale, description at body. -->
     <div class="px-card-x pt-5 pb-1">

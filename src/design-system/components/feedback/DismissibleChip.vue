@@ -46,8 +46,10 @@ const emit = defineEmits(['dismiss'])
   line-height: 1;
 }
 
-.chip__remove:hover {
-  background: var(--border-field);
+@media (hover: hover) {
+  .chip__remove:hover {
+    background: var(--border-field);
+  }
 }
 
 .chip__remove:focus-visible {

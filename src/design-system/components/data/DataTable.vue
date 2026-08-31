@@ -54,7 +54,10 @@ const STRIPE = {
 </script>
 
 <template>
-  <div data-data-table class="dtable overflow-hidden rounded-card border border-hairline bg-surface">
+  <div
+    data-data-table
+    class="dtable overflow-hidden rounded-card border border-hairline bg-surface"
+  >
     <slot name="toolbar" />
 
     <!-- Redline "Bulk bar · 8px 20px · --green-tint-2 · 1px bottom, 12.5px
@@ -269,8 +272,10 @@ button.table__head-cell {
   color: var(--ink-700);
 }
 
-.table__row--body:hover {
-  background: var(--row-hover);
+@media (hover: hover) {
+  .table__row--body:hover {
+    background: var(--row-hover);
+  }
 }
 
 /* Redline "Selected row · --green-tint-2". */
@@ -305,9 +310,11 @@ button.table__head-cell {
   cursor: pointer;
 }
 
-.table__icon-btn:hover {
-  background: var(--surface-muted);
-  color: var(--ink-900);
+@media (hover: hover) {
+  .table__icon-btn:hover {
+    background: var(--surface-muted);
+    color: var(--ink-900);
+  }
 }
 
 .table__icon-btn:focus-visible,
@@ -325,7 +332,7 @@ button.table__head-cell {
 
 .table__panel-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
   gap: 22px;
 }
 
