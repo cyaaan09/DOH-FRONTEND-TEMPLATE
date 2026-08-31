@@ -148,15 +148,55 @@ describe('TextField — Appendix C conformance', () => {
     expect(wrapper.get('p').classes()).toContain('mt-1.25')
   })
 
-  it('renders the trailing suffix at 11.5px/700 in the meta grey with 6px padding', () => {
-    // Redline "Trailing action · 11.5px / 700 · #667085 · pad 6px"
-    const classes = mount(TextField, { props: { label: 'A', suffix: 'beds' } }).get('span').classes()
-    expect(classes).toContain('text-stat-hint')
-    expect(classes).toContain('font-bold')
-    expect(classes).toContain('text-text-meta')
-    expect(classes).toContain('p-1.5')
-    expect(classes).not.toContain('text-hint')
-    expect(classes).not.toContain('text-ink-500')
+  it('keeps the three trailing treatments distinct', () => {
+    // Appendix D.1 — the artifact gives this field three different trailing
+    // elements and they are NOT interchangeable. `suffix` previously carried
+    // the "Trailing action" redline, so the static unit `beds` rendered as
+    // though it were a control.
+    const unit = mount(TextField, { props: { label: 'A', suffix: 'beds' } }).get('[data-suffix]')
+    expect([...unit.element.classList]).toContain('text-hint')
+    expect([...unit.element.classList]).not.toContain('font-bold')
+    expect(unit.element.tagName).toBe('SPAN')
+
+    const badge = mount(TextField, { props: { label: 'A', badge: 'SYNCED' } }).get('[data-badge]')
+    expect([...badge.element.classList]).toContain('text-chip')
+    expect(badge.element.tagName).toBe('SPAN')
+
+    // Redline "Trailing action · 11.5px / 700 · pad 6px" — the only one of
+    // the three that is a control.
+    const action = mount(TextField, { props: { label: 'A', action: 'SHOW' } }).get('[data-action]')
+    const cls = [...action.element.classList]
+    expect(action.element.tagName).toBe('BUTTON')
+    expect(cls).toContain('text-stat-hint')
+    expect(cls).toContain('font-bold')
+    expect(cls).toContain('p-1.5')
+  })
+
+  it('emits action when the trailing button is clicked', async () => {
+    const wrapper = mount(TextField, { props: { label: 'A', action: 'SHOW' } })
+    await wrapper.get('[data-action]').trigger('click')
+    expect(wrapper.emitted('action')).toHaveLength(1)
+  })
+
+  it('gives an error a ring glyph that a hint never gets', () => {
+    // Appendix D.1 — the error row is a glyph plus text; a hint is text
+    // alone. Both rendered through one <p> before, so the glyph was absent.
+    const err = mount(TextField, { props: { label: 'A', error: 'Must be at least 1.' } })
+    expect(err.find('[data-error-glyph]').exists()).toBe(true)
+    expect(err.get('[data-error-glyph]').attributes('aria-hidden')).toBe('true')
+    expect(mount(TextField, { props: { label: 'A', hint: 'h' } }).find('[data-error-glyph]').exists()).toBe(false)
+  })
+
+  it('appends a muted qualifier inside the label', () => {
+    // Appendix D.1 — `Search · with leading icon`. Inside the <label> so it
+    // stays part of the field's accessible name, as the artifact reads it.
+    const wrapper = mount(TextField, {
+      props: { label: 'Search', qualifier: '· with leading icon' },
+    })
+    const q = wrapper.get('[data-qualifier]')
+    expect([...q.element.classList]).toContain('text-ink-500')
+    expect(q.element.closest('label')).toBe(wrapper.get('label').element)
+    expect(wrapper.get('label').text().replace(/\s+/g, ' ')).toBe('Search · with leading icon')
   })
 })
 

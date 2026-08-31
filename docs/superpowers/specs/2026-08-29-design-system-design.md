@@ -1126,6 +1126,17 @@ _DM Sans 400/500/700 · JetBrains Mono for copyable values_
   Selection-controls fix would silently move every other section. Wants its own pass, with §17.1
   corrected to a per-section value.
 
+- **2026-08-31 — the `LTO number` field is not permanently focused.** The artifact renders that one
+  demo with the focus ring always on, to show it; its hint says so (`Focus · 3px ring at 15%
+  green`). Reproducing that needs a `focused` prop on a production field component whose only
+  purpose is to lie about a browser state, so ours shows the ring on real focus instead. The hint
+  text is the artifact's, unchanged.
+- **2026-08-31 — `SearchField` takes its visible label, qualifier and hint from section chrome.**
+  It draws neither label nor hint of its own, because its other use is a filter bar where no label
+  is drawn; its `label` prop is the aria-label. `DropdownsSection` wraps `Select` and `RowMenu` the
+  same way for the same reason. Inside Text fields this means one demo's label comes from a
+  sibling div while six come from the component, though both render identically.
+
 ## Appendix D — demo page content
 
 Extracted verbatim from the source artifact. This is the content authority for the
@@ -1303,6 +1314,45 @@ marker. So the control-to-text gap is the card's own `gap`, never a `margin-left
 font-weight: 700` — i.e. `--green-100` on `--green-text` at the chip step. It was built as a
 block *below* the hint, which is what put it under the text in the screenshot.
 
+
+#### Text fields → the seven demos
+
+Extracted from the artifact on 2026-08-31 during the carry-forward audit. The section had been
+built from Appendix C's redlines alone: six demos in a different order, every hint rewritten to a
+fragment, and the password demo absent. Section body is a grid — `repeat(auto-fit, minmax(280px,
+1fr))`, `gap: 20px 24px`, padding `18px 24px 24px`.
+
+Each demo is `label (12.5/500 #344054, margin-bottom 6px)` → control → `hint (12px #667085,
+margin-top 5px)`. Two labels carry a muted `#667085` qualifier after a space. The hint slot is the
+only message slot: a demo shows a hint **or** an error, never both.
+
+| # | Label | Qualifier | Control state | Hint / error |
+|---|---|---|---|---|
+| 1 | `Facility name` | — | placeholder `e.g. Carmen RHU` | `Default · rests on a hairline border.` |
+| 2 | `LTO number` | — | **focused**, mono, value `16-015-2527-PCF-1` | `Focus · 3px ring at 15% green. Mono for reference numbers.` |
+| 3 | `Search` | `· with leading icon` | leading 12px ring, gap 8px, placeholder `Search facility or LTO number`, clear button at 18px | `Clear button appears only once there's a value.` |
+| 4 | `Certificate password` | — | placeholder `Required to unlock the .p12`, trailing action, pad `0 10px 0 12px` | `Trailing text action instead of an eye icon.` |
+| 5 | `Bed capacity` | — | **error**, value `0`, unit `beds` | **error** `Must be at least 1 for an infirmary.` |
+| 6 | `NHFR code` | `· read only` | readonly, mono, value `37720`, badge `SYNCED` | `Disabled fields lose their white surface, never their border.` |
+| 7 | `Reviewer remarks` | — | `grid-column: 1 / -1`, 3 rows, counter `<n> / 400`, placeholder `Explain what the facility needs to correct before resubmitting.` | `Textarea keeps the field radius; min 3 rows, resizable vertically only.` |
+
+**Three distinct trailing treatments**, which the build had collapsed into one. Appendix C carries
+only the third:
+
+| Treatment | Type | Element | Example |
+|---|---|---|---|
+| Unit | 12px / 400 `#667085` | static span | `beds` |
+| Badge | 11px / 700 `#667085` | static span | `SYNCED` |
+| **Trailing action** (Appendix C) | 11.5px / 700 `#667085`, pad 6px | **button** | `SHOW` / `HIDE` |
+
+`suffix` had been styled to the Trailing-action row and used for `beds`, so a static unit rendered
+as though it were a control. The password button toggles `showPw`, which drives both the label
+(`HIDE` when open, else `SHOW`) and the input type (`text` when open, else `password`).
+
+**An error carries a glyph; a hint does not.** The error row is
+`display: flex; gap: 7px; margin-top: 5px` holding a 13px ring (`1.6px solid #B42318`,
+`margin-top: 1px`) and then the text at `12px / 1.45` in the same red. Built as one `<p>` serving
+both messages, the glyph was absent.
 
 #### Dropdowns → the four inline demos
 

@@ -140,7 +140,7 @@ const selectedFacilities = ref([])
 
     <!-- Appendix D.1 — the card row is its own grid at a 300px track, so it
          holds two columns where the row above holds three. -->
-    <DemoBlocks min="300px" tail>
+    <DemoBlocks min="300px" pt="6px" pb="22px">
       <DemoBlock label="CHECKBOX CARDS · MULTI">
         <div class="card-stack flex flex-col">
           <CheckboxCard

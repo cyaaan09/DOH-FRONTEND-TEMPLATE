@@ -56,12 +56,26 @@ describe('DemoBlocks', () => {
     expect(wrapper.find('.block-probe').exists()).toBe(true)
   })
 
-  it('pads at spec §17.1: 18px top, 24px sides, 6px bottom', () => {
-    // Redlined pad "18px 24px 6px" (px-card-x=24, pt-4.5=18, pb-1.5=6).
-    const classes = mount(DemoBlocks, { slots: { default: '<span />' } }).classes()
-    expect(classes).toContain('px-card-x')
-    expect(classes).toContain('pt-4.5')
-    expect(classes).toContain('pb-1.5')
+  it('pads at spec §17.1 by default, and takes per-section overrides', () => {
+    // Appendix D.1 — the horizontal 24px stays on the --pad-card-x token;
+    // track minimum, gap and vertical padding vary by section and arrive as
+    // custom properties, so there is exactly one declaration per property.
+    const base = mount(DemoBlocks, { slots: { default: '<span />' } })
+    expect(base.classes()).toContain('px-card-x')
+    const style = base.attributes('style')
+    expect(style).toContain('--db-pt: 18px')
+    expect(style).toContain('--db-pb: 6px')
+    expect(style).toContain('--db-min: 268px')
+    expect(style).toContain('--db-gap: 24px')
+
+    const over = mount(DemoBlocks, {
+      props: { min: '280px', gap: '20px 24px', pb: '24px', alignStart: true },
+      slots: { default: '<span />' },
+    })
+    expect(over.attributes('style')).toContain('--db-min: 280px')
+    expect(over.attributes('style')).toContain('--db-gap: 20px 24px')
+    expect(over.attributes('style')).toContain('--db-pb: 24px')
+    expect(over.classes()).toContain('items-start')
   })
 })
 

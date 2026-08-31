@@ -476,3 +476,56 @@ describe('SelectionSection follows the artifact arrangement', () => {
     expect(grids[1].attributes('style')).toContain('300px')
   })
 })
+
+describe('FieldsSection carries the artifact\'s seven demos', () => {
+  // Appendix D.1 — the section shipped six demos in a different order with
+  // the hints rewritten to fragments and the password demo absent. Asserting
+  // the full ordered list, not just presence: a reordered or re-worded set
+  // is exactly what shipped, and a contains-check would have passed it.
+  it('renders every label in the artifact order, with its qualifier', () => {
+    const labels = mount(FieldsSection)
+      .findAll('label, .text-field-label')
+      .map((el) => el.text().replace(/\s+/g, ' ').trim())
+      .filter(Boolean)
+    expect(labels).toEqual([
+      'Facility name',
+      'LTO number',
+      'Search · with leading icon',
+      'Certificate password',
+      'Bed capacity',
+      'NHFR code · read only',
+      'Reviewer remarks',
+    ])
+  })
+
+  it('carries each demo\'s hint verbatim', () => {
+    const text = mount(FieldsSection).text()
+    for (const hint of [
+      'Default · rests on a hairline border.',
+      'Focus · 3px ring at 15% green. Mono for reference numbers.',
+      "Clear button appears only once there's a value.",
+      'Trailing text action instead of an eye icon.',
+      'Must be at least 1 for an infirmary.',
+      'Disabled fields lose their white surface, never their border.',
+      'Textarea keeps the field radius; min 3 rows, resizable vertically only.',
+    ]) {
+      expect(text).toContain(hint)
+    }
+  })
+
+  it('wires the password reveal through the trailing action', async () => {
+    const wrapper = mount(FieldsSection)
+    const field = wrapper.findAll('input').find((i) => i.attributes('type') === 'password')
+    expect(field).toBeDefined()
+    const button = wrapper.findAll('[data-action]')[0]
+    expect(button.text()).toBe('SHOW')
+    await button.trigger('click')
+    expect(wrapper.findAll('[data-action]')[0].text()).toBe('HIDE')
+  })
+
+  it('runs the 280px track and spans the textarea across it', () => {
+    const wrapper = mount(FieldsSection)
+    expect(wrapper.get('.demo-blocks').attributes('style')).toContain('--db-min: 280px')
+    expect(wrapper.find('.fields-section__wide').exists()).toBe(true)
+  })
+})
