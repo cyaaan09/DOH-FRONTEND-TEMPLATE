@@ -16,7 +16,9 @@ const props = defineProps({
    * Names the group for assistive technology, via aria-label on the
    * [role="radiogroup"] root. NOT rendered (§8.1). Ark's own RadioGroupLabel
    * part is deliberately unused: it renders a visible element, and this
-   * component's label never draws.
+   * component's label never draws. getRootProps() also always sets
+   * aria-labelledby to that unrendered label's id, which would otherwise
+   * dangle; the template neutralises it (see the comment there).
    */
   label: { type: String, required: true },
 })
@@ -54,9 +56,20 @@ function dotClass(option) {
   <RadioGroupRoot
     :model-value="modelValue"
     :aria-label="label"
+    :aria-labelledby="undefined"
     class="radio flex flex-col"
     @update:model-value="(value) => emit('update:modelValue', value)"
   >
+    <!-- aria-labelledby above overrides Ark's own getRootProps() value (the
+         id of the RadioGroupLabel this component never renders) through the
+         same attrs-fallthrough mechanism that delivers aria-label itself:
+         Vue's cloneVNode(root, fallthroughAttrs) merges consumer attrs after
+         the part's own props, so they win on shared keys, and patchAttr
+         treats an undefined value as "remove the attribute" rather than the
+         literal string "undefined". Left alone, aria-labelledby would
+         dangle — pointing at an id with no matching element anywhere in the
+         DOM. Verified in Radio.spec.js "names the group without drawing the
+         name"; do not remove this without re-checking that assertion. -->
     <RadioGroupItem
       v-for="option in options"
       :key="option.value"

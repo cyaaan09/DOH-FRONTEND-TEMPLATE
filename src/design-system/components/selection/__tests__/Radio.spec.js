@@ -23,6 +23,14 @@ describe('Radio', () => {
   it('names the group without drawing the name', () => {
     const wrapper = mountRadio()
     expect(wrapper.get('[role="radiogroup"]').attributes('aria-label')).toBe('Drawing type')
+    // Ark's own getRootProps() always sets aria-labelledby to an id that
+    // only resolves if RadioGroupLabel is rendered, which this component
+    // deliberately never does (label is aria-label only, per §8.1). Left
+    // alone that reference would dangle — flagged by automated a11y
+    // rubrics by default, even though the WAI-ARIA accname algorithm itself
+    // falls back to aria-label when aria-labelledby does not resolve.
+    // Radio.vue neutralises it via :aria-labelledby="undefined".
+    expect(wrapper.get('[role="radiogroup"]').attributes('aria-labelledby')).toBeUndefined()
     expect(wrapper.text()).not.toContain('Drawing type')
   })
 
