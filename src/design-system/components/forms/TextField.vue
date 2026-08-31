@@ -37,6 +37,13 @@ const props = defineProps({
    * of the field's accessible name, which is how the artifact reads it.
    */
   qualifier: { type: String, default: '' },
+  /**
+   * Render the control alone — no label, no message. `FormField` owns both
+   * inside a form grid, where the message slot is a RESERVED two-line box
+   * shared with the error and the error badge is filled rather than an
+   * outline ring. Drawing either here as well would double them.
+   */
+  bare: { type: Boolean, default: false },
 })
 
 defineEmits(['update:modelValue', 'action'])
@@ -52,7 +59,7 @@ const message = computed(() => props.error || props.hint)
          muted span, both inside the <label>, so `Search · with leading icon`
          reads as one accessible name. The space must sit on this line: Vue's
          whitespace: 'condense' drops any run that contains a newline. -->
-    <label :for="id" class="text-field-label text-ink-700 mb-1.5">
+    <label v-if="!bare" :for="id" class="text-field-label text-ink-700 mb-1.5">
       {{ label }} <span v-if="qualifier" data-qualifier class="text-ink-500">{{ qualifier }}</span>
     </label>
 
@@ -67,15 +74,9 @@ const message = computed(() => props.error || props.hint)
           // property. Appendix C has no row for error+readonly together;
           // error wins because a field showing a validation error should
           // look like it — that is the more urgent signal.
-          error
-            ? 'border-red-700'
-            : disabled || readonly
-              ? 'border-hairline'
-              : 'border-field',
+          error ? 'border-red-700' : disabled || readonly ? 'border-hairline' : 'border-field',
           // Redline 'Read only' — input well surface, muted text.
-          disabled || readonly
-            ? 'bg-surface-input text-ink-400'
-            : 'bg-surface text-ink-900',
+          disabled || readonly ? 'bg-surface-input text-ink-400' : 'bg-surface text-ink-900',
           mono ? 'font-mono' : '',
           suffix || badge || action ? 'pr-14' : '',
         ]"
@@ -112,11 +113,11 @@ const message = computed(() => props.error || props.hint)
     <!-- Appendix D.1 — an ERROR carries a 13px ring glyph before its text at
          a 7px gap; a hint is text alone. Built as one <p> for both, the
          error lost its glyph. -->
-    <div v-if="error" :id="messageId" class="field__error mt-1.25 flex">
+    <div v-if="error && !bare" :id="messageId" class="field__error mt-1.25 flex">
       <span data-error-glyph aria-hidden="true" class="field__error-glyph flex-none rounded-pill" />
       <span class="field__error-text text-hint text-red-700">{{ error }}</span>
     </div>
-    <p v-else-if="hint" :id="messageId" class="text-hint text-text-meta mt-1.25">
+    <p v-else-if="hint && !bare" :id="messageId" class="text-hint text-text-meta mt-1.25">
       {{ hint }}
     </p>
   </div>

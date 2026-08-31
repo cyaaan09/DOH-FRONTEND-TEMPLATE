@@ -11,6 +11,13 @@ const props = defineProps({
   readonly: { type: Boolean, default: false },
   rows: { type: Number, default: 3 },
   maxlength: { type: Number, default: 0 },
+  /**
+   * Render the control alone — no label, no message. `FormField` owns both
+   * inside a form grid, where the message slot is a RESERVED two-line box
+   * shared with the error and the error badge is filled rather than an
+   * outline ring. Drawing either here as well would double them.
+   */
+  bare: { type: Boolean, default: false },
 })
 
 defineEmits(['update:modelValue'])
@@ -25,7 +32,7 @@ const counter = computed(() =>
 
 <template>
   <div class="flex flex-col">
-    <div class="flex items-baseline justify-between gap-3">
+    <div v-if="!bare" class="flex items-baseline justify-between gap-3">
       <label :for="id" class="text-field-label text-ink-700 mb-1.5">{{ label }}</label>
       <span v-if="counter" class="text-hint text-text-meta">{{ counter }}</span>
     </div>
@@ -40,15 +47,9 @@ const counter = computed(() =>
         // property. Appendix C has no row for error+readonly together;
         // error wins because a field showing a validation error should
         // look like it — that is the more urgent signal.
-        error
-          ? 'border-red-700'
-          : disabled || readonly
-            ? 'border-hairline'
-            : 'border-field',
+        error ? 'border-red-700' : disabled || readonly ? 'border-hairline' : 'border-field',
         // Redline 'Read only' — input well surface, muted text.
-        disabled || readonly
-          ? 'bg-surface-input text-ink-400'
-          : 'bg-surface text-ink-900',
+        disabled || readonly ? 'bg-surface-input text-ink-400' : 'bg-surface text-ink-900',
       ]"
       :rows="rows"
       :value="modelValue"

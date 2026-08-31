@@ -22,7 +22,7 @@ export const SECTIONS = [
   // Added by the 2026-08-31 artifact update — five new sections.
   { id: 'layout', title: 'Layout primitives — Row, Column & containers', complete: true },
   { id: 'stepper', title: 'Stepper', complete: true },
-  { id: 'form-layout', title: 'Form layout', complete: false },
+  { id: 'form-layout', title: 'Form layout', complete: true },
   { id: 'app-shell', title: 'App shell — side navigation', complete: false },
   { id: 'data-table', title: 'Data table', complete: false },
   { id: 'type-scale', title: 'Type scale', complete: true },

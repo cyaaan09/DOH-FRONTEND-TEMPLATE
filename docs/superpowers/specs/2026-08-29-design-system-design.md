@@ -1896,6 +1896,12 @@ demo folder is exempt from the raw-hex guard precisely so blocks like this can q
 - `LOCATION & SERVICES`
 - `DARK`
 
+**Rule cards:**
+
+- **Errors replace, never insert** — Help text and error text share one 11.5px slot with a 5px offset, so validating a field never reflows the fields below it.
+- **Required is the exception** — Most fields are required, so mark the few that aren't with a grey optional and keep the red asterisk for the rest.
+- **Sections are rules, not cards** — One card per form. Fieldsets are a 10.5px caps label plus a 1px hairline — nesting cards inside cards doubles the borders and halves the clarity.
+
 
 #### App shell — side navigation
 
