@@ -1492,6 +1492,17 @@ _DM Sans 400/500/700 · JetBrains Mono for copyable values_
   outside it. Reaching for a `getWeeks` that does not exist threw `RangeError: Invalid array
   length`.
 
+- **2026-08-31 — an always-open `role="listbox"` broke a locator two sections away.** The Search
+  demo shows its panel open, so `page.locator('[role="listbox"]:visible')` in the Dropdowns
+  multi-select test began matching two panels and failed on strict mode. Scoped to the Zag part
+  (`[data-scope="select"][data-part="content"]`) instead. **A role locator is page-global; adding a
+  section can break a test that never mentions it.**
+- **2026-08-31 — a rotated box overflows its card even when the parent clips it.** The unsigned
+  watermark rotated `-24deg` at `inset: 0`, which widens its own bounding rect past the A4 sheet.
+  The sheet's `overflow: hidden` means nothing is visible, but the layout gate measures rects. The
+  rotation moved to a child inside an `overflow: hidden` wrapper. Loosening the guard to excuse
+  `overflow: hidden` was the wrong fix — that is exactly how the original Tabs underline bug hid.
+
 ## Appendix D — demo page content
 
 Extracted verbatim from the source artifact. This is the content authority for the
@@ -2203,12 +2214,8 @@ demo folder is exempt from the raw-hex guard precisely so blocks like this can q
 
 **Description:** The sheet is the contract: if a key is listed here it works on every screen, and if it is not listed it is not bound. Opened with question mark, closed with Esc, and reachable from the account menu for anyone who never guesses at question mark.
 
-**Sub-blocks:**
-
-- `GLOBAL`
-- `NAVIGATE`
-- `TABLE`
-- `RECORD`
+**Sub-blocks:** none — the section is one sheet. `GLOBAL`, `NAVIGATE`, `TABLE` and `RECORD` are
+group labels INSIDE it, and the sheet is closed until `?` opens it.
 
 **Rule cards:**
 

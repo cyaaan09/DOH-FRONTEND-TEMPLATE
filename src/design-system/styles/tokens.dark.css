@@ -124,4 +124,11 @@
      #14532D/#D9F2C4 pair goes muddy on dark". */
   --green-900: #2FB25F;
   --logo-ink: #0B1017;
+
+  /* Allowlisted as "no consumer" until PrintPreview's unsigned sheet used
+     --toast-bg-amber on 2026-08-31. Both take the translucent-tone treatment
+     every other tint here uses, so an unsigned certificate reads as tinted
+     rather than as a near-white sheet on the dark desk. */
+  --toast-bg-amber: rgba(217,161,59,.12);
+  --toast-bg-blue:  rgba(23,92,211,.12);
 }

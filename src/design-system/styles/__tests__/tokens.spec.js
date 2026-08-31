@@ -74,8 +74,6 @@ describe('design tokens', () => {
       'toast-border-green': '#CDEAD6',
       'toast-border-amber': '#F2E0BD',
       'toast-border-blue': '#D5E4FA',
-      'toast-bg-amber': '#FFFBF2',
-      'toast-bg-blue': '#F5F9FF',
       'dot-green': '#17A34A',
       'border-dashed': '#CDD5E2',
       'dropzone-hover': '#F7FCF8',
@@ -149,8 +147,6 @@ describe('spec Appendix A parity', () => {
     'amber-400': 'status DOT fill — a saturated dot reads on both surfaces',
     'red-500': 'status DOT fill — same',
     'dot-green': 'status DOT fill — same; the redline gives no dark value',
-    'toast-bg-amber': 'no consumer — Toast dresses with a tone border on --surface',
-    'toast-bg-blue': 'no consumer — same',
     'green-link-hover': 'no consumer',
   }
 

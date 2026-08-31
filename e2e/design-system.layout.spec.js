@@ -71,7 +71,10 @@ test.describe('layout regressions caught by eye, not by jsdom', () => {
     const triggerBox = await trigger.boundingBox()
     await trigger.click()
 
-    const panel = page.locator('[role="listbox"]:visible')
+    // Scoped to the OPEN portalled panel by its Zag part, not by role: the
+    // Search section renders an always-open role="listbox" of its own, so a
+    // bare role locator now matches two panels on this page.
+    const panel = page.locator('[data-scope="select"][data-part="content"]:visible')
     await expect(panel).toBeVisible()
 
     // toBeVisible() proves the panel exists, not that its width has settled:

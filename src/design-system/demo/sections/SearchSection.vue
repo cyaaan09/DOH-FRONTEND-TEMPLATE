@@ -1,15 +1,60 @@
 <script setup>
+import { ref } from 'vue'
+import { Chip, SearchResults } from '@/design-system'
 import DemoCard from '../chrome/DemoCard.vue'
-import DemoBlocks from '../chrome/DemoBlocks.vue'
-import DemoBlock from '../chrome/DemoBlock.vue'
-import DemoGap from '../chrome/DemoGap.vue'
 import DemoRules from '../chrome/DemoRules.vue'
 
-// Added by the second 2026-08-31 artifact update. Spec §17.2 — the slot is
-// visible from the start, so the page stays a live checklist. Everything
-// here is generated from Appendix D: the rule cards are CONTENT the artifact
-// shows, so a skeleton renders them for real even while its component slot
-// is still a gap.
+// Appendix D.1, "Search with results". The panel is shown OPEN because the
+// section's whole subject is what the open state looks like — grouping, the
+// row cap, the preselected row, and the keycap footer.
+const query = ref('carmen')
+const active = ref('carmen-rhu')
+
+const GROUPS = [
+  {
+    label: 'FACILITIES',
+    count: 3,
+    rows: [
+      {
+        id: 'carmen-rhu',
+        tile: 'PCF',
+        title: 'Carmen Rural Health Unit',
+        meta: '16-015-2527-PCF-1',
+        status: 'green',
+      },
+      {
+        id: 'carmen-bh',
+        tile: 'BH',
+        title: 'Carmen Birthing Home',
+        meta: '16-015-2419-BH-2',
+        status: 'amber',
+      },
+      // Redline "Missing meta · states the absence in words — never an empty
+      // second line".
+      {
+        id: 'carmen-lab',
+        tile: 'CL',
+        title: 'Carmen Diagnostic Laboratory',
+        meta: 'no LTO on file',
+      },
+    ],
+  },
+  {
+    label: 'APPLICATIONS',
+    count: 1,
+    rows: [
+      {
+        id: 'renewal',
+        tile: 'APP',
+        title: 'Renewal — Carmen RHU',
+        meta: 'filed 19 Aug 2026 · inspection stage',
+      },
+    ],
+  },
+]
+
+const LABELS = { green: 'Active', amber: 'Expiring' }
+
 const RULES = [
   {
     title: 'Grouped, capped, counted',
@@ -35,16 +80,30 @@ const RULES = [
     title="Search with results"
     description="One field, results grouped by what they are, and a keyboard path from first keystroke to open record. Distinct from the plain filter field in the table toolbar, which narrows a list already on screen."
   >
-    <DemoBlocks>
-      <DemoBlock label="FACILITIES · 3">
-        <DemoGap component="SearchResults" group="Search with results" />
-      </DemoBlock>
-
-      <DemoBlock label="APPLICATIONS · 1">
-        <DemoGap component="SearchResults" group="Search with results" />
-      </DemoBlock>
-    </DemoBlocks>
+    <div class="search-section__well px-card-x pt-4.5 pb-6">
+      <SearchResults
+        v-model="query"
+        :groups="GROUPS"
+        :active="active"
+        label="Search facilities and applications"
+        placeholder="Search"
+        total-label="See all 12 matches"
+        @select="(row) => (active = row.id)"
+      >
+        <template #row-end="{ row }">
+          <Chip v-if="row.status" :tone="row.status" dot>{{ LABELS[row.status] }}</Chip>
+        </template>
+      </SearchResults>
+    </div>
 
     <DemoRules :rules="RULES" />
   </DemoCard>
 </template>
+
+<style scoped>
+/* The panel is absolutely positioned, so the demo reserves room for it rather
+   than letting it overlap the rule cards below. */
+.search-section__well {
+  min-height: 380px;
+}
+</style>

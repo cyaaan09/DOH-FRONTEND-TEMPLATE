@@ -1,15 +1,86 @@
 <script setup>
+import { ActivityFeed, NotificationCentre } from '@/design-system'
 import DemoCard from '../chrome/DemoCard.vue'
 import DemoBlocks from '../chrome/DemoBlocks.vue'
 import DemoBlock from '../chrome/DemoBlock.vue'
-import DemoGap from '../chrome/DemoGap.vue'
 import DemoRules from '../chrome/DemoRules.vue'
 
-// Added by the second 2026-08-31 artifact update. Spec §17.2 — the slot is
-// visible from the start, so the page stays a live checklist. Everything
-// here is generated from Appendix D: the rule cards are CONTENT the artifact
-// shows, so a skeleton renders them for real even while its component slot
-// is still a gap.
+// Appendix D.1, "Notification centre & activity feed". Two components side by
+// side precisely because the section's first rule is that they are two jobs.
+const NOTIFICATIONS = [
+  {
+    id: 'hipol',
+    tone: 'error',
+    glyph: '!',
+    subject: 'Hipol Family Hospital',
+    body: 'expires in 36 days and has no renewal on file.',
+    time: '12 min ago',
+    action: 'Open record',
+    unread: true,
+  },
+  {
+    id: 'trento',
+    tone: 'portal',
+    glyph: '↑',
+    subject: 'Trento Birthing Home',
+    body: 'resubmitted 4 documents after return.',
+    time: '1 hour ago',
+    action: 'Review',
+    unread: true,
+  },
+  {
+    id: 'sanluis',
+    tone: 'done',
+    glyph: '✓',
+    body: 'Inspection result recorded for San Luis Diagnostic Center.',
+    time: '3 hours ago',
+    unread: true,
+  },
+  {
+    id: 'cert',
+    tone: 'system',
+    glyph: '◔',
+    body: 'Your signing certificate expires in 60 days.',
+    time: 'Yesterday',
+    action: 'Renew',
+  },
+]
+
+const EVENTS = [
+  {
+    id: 'signed',
+    initials: 'RV',
+    actor: 'R. Villaflor',
+    body: 'signed and issued the licence.',
+    time: 'Today · 14:02',
+    detail: 'LTO-16-015-2527.pdf',
+    attachment: 'PDF',
+  },
+  {
+    id: 'inspected',
+    initials: 'MD',
+    actor: 'M. Dela Cruz',
+    body: 'recorded inspection result: passed.',
+    time: '12 Jun 2026 · 10:41',
+  },
+  {
+    id: 'returned',
+    tone: 'error',
+    glyph: '!',
+    body: 'Application returned to facility — floor plan illegible.',
+    time: '02 Jun 2026 · 16:18',
+    detail:
+      'Scan is below 150 dpi and the service area labels are unreadable. Resubmit as a vector export.',
+  },
+  {
+    id: 'filed',
+    tone: 'portal',
+    glyph: '↑',
+    body: 'Application filed through the online portal.',
+    time: '19 Aug 2025 · 09:14',
+  },
+]
+
 const RULES = [
   {
     title: 'Addressed to you, or it does not belong',
@@ -35,16 +106,40 @@ const RULES = [
     title="Notification centre &amp; activity feed"
     description="Two different jobs. The centre is unread work addressed to you, dismissible and countable. The feed is an immutable record of what happened to one object — nothing to dismiss, nothing to mark read."
   >
-    <DemoBlocks>
+    <DemoBlocks min="340px" gap="22px 24px" pb="24px" align-start>
       <DemoBlock label="NOTIFICATION CENTRE — HEADER PANEL">
-        <DemoGap component="NotificationCentre" group="Notifications &amp; activity" />
+        <NotificationCentre :items="NOTIFICATIONS" see-all-label="See all notifications" />
       </DemoBlock>
 
-      <DemoBlock label="ACTIVITY FEED — ONE RECORD'S HISTORY">
-        <DemoGap component="NotificationCentre" group="Notifications &amp; activity" />
+      <DemoBlock label="ACTIVITY FEED — ONE RECORD&#39;S HISTORY">
+        <ActivityFeed :events="EVENTS" label="Licence history">
+          <template #detail="{ event }">
+            <span v-if="event.attachment" class="notifications-section__file flex items-center">
+              <span aria-hidden="true" class="notifications-section__ext rounded-bar">{{
+                event.attachment
+              }}</span>
+              <span class="font-mono">{{ event.detail }}</span>
+            </span>
+            <template v-else>{{ event.detail }}</template>
+          </template>
+        </ActivityFeed>
       </DemoBlock>
     </DemoBlocks>
 
     <DemoRules :rules="RULES" />
   </DemoCard>
 </template>
+
+<style scoped>
+.notifications-section__file {
+  gap: 8px;
+}
+
+.notifications-section__ext {
+  padding: 2px 6px;
+  background: var(--surface-muted);
+  color: var(--text-header);
+  font-size: 10px;
+  font-weight: 700;
+}
+</style>
