@@ -135,11 +135,6 @@ describe('ContainersSection', () => {
 describe('skeleton sections show their headings and mark their gaps', () => {
 
 
-  it.each([
-    ['FoundationsSection', FoundationsSection],
-  ])('%s marks its gaps', (_name, component) => {
-    expect(mount(component).findAll('[data-gap]').length).toBeGreaterThan(0)
-  })
 
   it('DarkModeSection renders all six sub-blocks and four rule cards', () => {
     const wrapper = mount(DarkModeSection)
@@ -801,5 +796,44 @@ describe('ContainersSection is complete', () => {
       'Facts split by 1px #EEF1F6 rules — never by inner cards.',
       'Four tints, each with one job. No new greys.',
     ])
+  })
+})
+
+describe('FoundationsSection is complete', () => {
+  it('stacks three palettes and rules three scale columns', () => {
+    // Appendix D.1 — palettes stack full-width in the body; the scales sit
+    // in a ruled footer. The skeleton had all six in one DemoBlocks grid.
+    const wrapper = mount(FoundationsSection)
+    expect(wrapper.findAll('[data-gap]')).toHaveLength(0)
+    expect(wrapper.findAll('.swatch-group').map((g) => g.get('[data-label]').text())).toEqual([
+      'BRAND GREEN',
+      'NEUTRALS',
+      'STATUS TONES',
+    ])
+    expect(wrapper.findAll('[data-scale]').map((s) => s.get('[data-label]').text())).toEqual([
+      'RADIUS',
+      'SIZE & SPACING',
+      'ELEVATION & BORDERS',
+    ])
+  })
+
+  it('prints each swatch as a chip, a name, a hex and a use', () => {
+    const swatches = mount(FoundationsSection).findAll('[data-swatch]')
+    expect(swatches).toHaveLength(31)
+    const first = swatches[0]
+    expect(first.get('[data-name]').text()).toBe('Green 900')
+    expect(first.get('[data-hex]').text()).toBe('#14532D')
+    expect(first.get('[data-use]').text()).toBe('Sidebar logo mark')
+    // The chip is painted from the hex it documents, not from a token —
+    // this table's whole job is showing the literal values. jsdom
+    // normalises an inline hex to rgb(), so assert the resolved colour.
+    expect(first.get('[data-chip]').attributes('style')).toContain('rgb(20, 83, 45)')
+  })
+
+  it('draws a sample tile only for the radius scale', () => {
+    const scales = mount(FoundationsSection).findAll('[data-scale]')
+    expect(scales[0].findAll('[data-sample]')).toHaveLength(7)
+    expect(scales[1].findAll('[data-sample]')).toHaveLength(0)
+    expect(scales[0].findAll('[data-sample]')[0].attributes('style')).toContain('999px')
   })
 })

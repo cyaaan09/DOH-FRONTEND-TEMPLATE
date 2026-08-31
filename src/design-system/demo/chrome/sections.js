@@ -8,7 +8,7 @@
  * sections it fills.
  */
 export const SECTIONS = [
-  { id: 'foundations', title: 'Foundations', complete: false },
+  { id: 'foundations', title: 'Foundations', complete: true },
   { id: 'containers', title: 'Containers & surfaces', complete: true },
   { id: 'chips', title: 'Chips', complete: true },
   { id: 'tabs', title: 'Tabs', complete: true },
