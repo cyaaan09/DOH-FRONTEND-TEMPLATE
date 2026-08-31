@@ -2414,6 +2414,22 @@ panel labels inside the expanded row, not section sub-blocks.
   the return trip) — deliberately not done here, because it is a change to what the field accepts
   rather than to how it is punctuated.
 
+- **2026-09-01 — the calendar drills up to month and year views, which Appendix C does not specify.**
+  The *Month header* row reads `13px / 700 #1E2532 centred · 28px ‹ › buttons #667085, hover
+  #F4F6FA` and stops there — a centred label and two arrows. That makes December 2029 thirty-nine
+  clicks away, which contradicts the *Input parsing* row's own reasoning that "typing beats
+  clicking for a date three years out": it leaves typing as the only usable path to a far date,
+  and the same section's copy calls the calendar "the assist, never the only way in".
+  Added at the user's request: clicking the header opens a four-column month grid, clicking it
+  again opens the decade. **The redlined appearance is unchanged** — the label keeps its 13px/700
+  centred treatment and only becomes a button — so this deviates from what the redline omits, not
+  from what it states. The new cells reuse the day cell's height, radius, type and every state
+  colour, including the *unavailable, not hidden* strike, so a disabled month reads exactly like a
+  disabled day.
+  Worth knowing for anyone reading the markup: `DatePickerViewTrigger` was ALREADY present before
+  these views existed. Clicking the month label switched Zag's view to one that rendered nothing,
+  so the calendar sat there looking broken with no error anywhere — a missing view is silent.
+
 #### chipRules
 
 - **One tone per meaning** — Green = good or issued, amber = waiting or legacy, red = blocked or overdue, grey = neutral, purple = modification.

@@ -71,3 +71,75 @@ test('masks the range field too, not just the single one', async ({ page }) => {
   await field.type('01152026', { delay: 10 })
   expect(await field.inputValue()).toBe('01/15/2026')
 })
+
+/**
+ * Appendix C's "Month header" row specifies a centred label and ‹ › buttons and
+ * nothing else — so reaching a date three years out was 39 clicks on ›, which
+ * is the opposite of the row that says "typing beats clicking for a date three
+ * years out". Recorded as a deliberate addition in spec §17.3.
+ *
+ * The trap this guards: DatePickerViewTrigger was already in the markup before
+ * these views existed. Clicking the month label switched the machine's view to
+ * one that rendered nothing, so the calendar sat there looking broken with no
+ * error anywhere.
+ */
+const openPanel = async (page) => {
+  await page.locator('[data-section="date-picker"] [data-dp-trigger]').first().click()
+  const panel = page.locator('[data-section="date-picker"] [data-dp-panel]').first()
+  await panel.waitFor()
+  return panel
+}
+
+// All three views are mounted at once and only the active one is displayed, so
+// an unqualified .first() resolves to a hidden node from another view and the
+// click hangs until the test times out. Everything below asks for the visible
+// one by name.
+const visible = (panel, selector) => panel.locator(`${selector}:visible`)
+
+test('drills up from days to months to years', async ({ page }) => {
+  const panel = await openPanel(page)
+  await expect(visible(panel, '[data-dp-header]')).toContainText('September 2026')
+
+  await visible(panel, '[data-dp-view]').click()
+  await expect(panel.locator('[data-dp-month-grid]')).toBeVisible()
+  await expect(visible(panel, '[data-dp-header]')).toContainText('2026')
+  await expect(visible(panel, '[data-dp-cell]')).toHaveCount(12)
+
+  await visible(panel, '[data-dp-view]').click()
+  await expect(panel.locator('[data-dp-year-grid]')).toBeVisible()
+  await expect(visible(panel, '[data-dp-header]')).toContainText('2020 - 2029')
+  await expect(visible(panel, '[data-dp-cell]')).toHaveCount(10)
+})
+
+test('picking a year then a month lands back on that month of days', async ({ page }) => {
+  // The round trip is the point. Drilling up is useless if coming back down
+  // does not actually move the calendar.
+  const panel = await openPanel(page)
+  await visible(panel, '[data-dp-view]').click()
+  await visible(panel, '[data-dp-view]').click()
+
+  await visible(panel, '[data-dp-cell]').filter({ hasText: /^2028$/ }).click()
+  await expect(panel.locator('[data-dp-month-grid]')).toBeVisible()
+  await expect(visible(panel, '[data-dp-header]')).toContainText('2028')
+
+  await visible(panel, '[data-dp-cell]').filter({ hasText: /^Mar$/ }).click()
+  await expect(panel.locator('[data-dp-month-grid]')).toBeHidden()
+  await expect(visible(panel, '[data-dp-header]')).toContainText('March 2028')
+  // and it is a real calendar again, not an empty view
+  expect(await visible(panel, '[data-dp-day]').count()).toBeGreaterThan(27)
+})
+
+test('keeps unavailable months visible and struck, never hidden', async ({ page }) => {
+  // Redline "Day states · unavailable --border-soft struck" and the rule card
+  // "Unavailable, not hidden". The single-date demo is min 2026-09-03, so
+  // everything before September is out of range.
+  const panel = await openPanel(page)
+  await visible(panel, '[data-dp-view]').click()
+
+  const january = visible(panel, '[data-dp-cell]').filter({ hasText: /^Jan$/ })
+  await expect(january).toBeVisible()
+  await expect(january).toHaveAttribute('data-disabled', '')
+  expect(await january.evaluate((el) => getComputedStyle(el).textDecorationLine)).toContain(
+    'line-through',
+  )
+})

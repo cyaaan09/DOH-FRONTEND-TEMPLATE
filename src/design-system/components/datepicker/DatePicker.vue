@@ -25,6 +25,11 @@ import {
 import { computed } from 'vue'
 import { applyMask } from './mask.js'
 
+// Four columns for both the month and the year grid: twelve months divide
+// evenly into it, and a decade's ten years fill three rows the same width, so
+// the panel does not change size when you drill from one view to the next.
+const MONTH_COLUMNS = 4
+
 /**
  * Redline "Input parsing · accepts 04/09/2026, 4 Sep 26, 2026-09-04 ·
  * normalised on blur · calendar is never the only path" — which is the whole
@@ -129,7 +134,7 @@ const maxValue = computed(() => (props.max ? parseDate(props.max) : undefined))
                     aria-label="Previous month"
                     >‹</DatePickerPrevTrigger
                   >
-                  <DatePickerViewTrigger class="dp__month min-w-0 flex-1 text-ink-900">
+                  <DatePickerViewTrigger data-dp-view class="dp__month min-w-0 flex-1 text-ink-900">
                     <DatePickerRangeText />
                   </DatePickerViewTrigger>
                   <DatePickerNextTrigger
@@ -213,6 +218,115 @@ const maxValue = computed(() => (props.max ? parseDate(props.max) : undefined))
                   }}</span>
                   <slot name="actions" />
                 </div>
+              </DatePickerContext>
+            </DatePickerView>
+
+            <!-- Appendix C's "Month header" row specifies a centred label and
+                 ‹ › buttons and nothing else, so reaching December 2029 was 39
+                 clicks. These two views are a deliberate ADDITION, recorded in
+                 spec §17.3: the header keeps its redlined 13px/700 centred
+                 appearance and only becomes a button, so nothing the redline
+                 does specify changes. DatePickerViewTrigger was already in the
+                 markup — it switched the machine to a view that rendered
+                 nothing, which is why clicking the month did nothing at all. -->
+            <DatePickerView view="month">
+              <DatePickerContext v-slot="api">
+                <DatePickerViewControl data-dp-header class="dp__header flex items-center">
+                  <DatePickerPrevTrigger
+                    data-dp-prev
+                    class="dp__nav rounded-bar"
+                    aria-label="Previous year"
+                    >‹</DatePickerPrevTrigger
+                  >
+                  <DatePickerViewTrigger data-dp-view class="dp__month min-w-0 flex-1 text-ink-900">
+                    <DatePickerRangeText />
+                  </DatePickerViewTrigger>
+                  <DatePickerNextTrigger
+                    data-dp-next
+                    class="dp__nav rounded-bar"
+                    aria-label="Next year"
+                    >›</DatePickerNextTrigger
+                  >
+                </DatePickerViewControl>
+
+                <DatePickerTable
+                  view="month"
+                  :columns="MONTH_COLUMNS"
+                  data-dp-month-grid
+                  class="dp__table dp__table--wide"
+                >
+                  <DatePickerTableBody>
+                    <DatePickerTableRow
+                      v-for="(row, r) in api.getMonthsGrid({
+                        columns: MONTH_COLUMNS,
+                        format: 'short',
+                      })"
+                      :key="r"
+                    >
+                      <DatePickerTableCell
+                        v-for="cell in row"
+                        :key="cell.value"
+                        :value="cell.value"
+                        :columns="MONTH_COLUMNS"
+                      >
+                        <DatePickerTableCellTrigger
+                          data-dp-cell
+                          class="dp__day dp__day--wide rounded-control"
+                          >{{ cell.label }}</DatePickerTableCellTrigger
+                        >
+                      </DatePickerTableCell>
+                    </DatePickerTableRow>
+                  </DatePickerTableBody>
+                </DatePickerTable>
+              </DatePickerContext>
+            </DatePickerView>
+
+            <DatePickerView view="year">
+              <DatePickerContext v-slot="api">
+                <DatePickerViewControl data-dp-header class="dp__header flex items-center">
+                  <DatePickerPrevTrigger
+                    data-dp-prev
+                    class="dp__nav rounded-bar"
+                    aria-label="Previous decade"
+                    >‹</DatePickerPrevTrigger
+                  >
+                  <DatePickerViewTrigger data-dp-view class="dp__month min-w-0 flex-1 text-ink-900">
+                    <DatePickerRangeText />
+                  </DatePickerViewTrigger>
+                  <DatePickerNextTrigger
+                    data-dp-next
+                    class="dp__nav rounded-bar"
+                    aria-label="Next decade"
+                    >›</DatePickerNextTrigger
+                  >
+                </DatePickerViewControl>
+
+                <DatePickerTable
+                  view="year"
+                  :columns="MONTH_COLUMNS"
+                  data-dp-year-grid
+                  class="dp__table dp__table--wide"
+                >
+                  <DatePickerTableBody>
+                    <DatePickerTableRow
+                      v-for="(row, r) in api.getYearsGrid({ columns: MONTH_COLUMNS })"
+                      :key="r"
+                    >
+                      <DatePickerTableCell
+                        v-for="cell in row"
+                        :key="cell.value"
+                        :value="cell.value"
+                        :columns="MONTH_COLUMNS"
+                      >
+                        <DatePickerTableCellTrigger
+                          data-dp-cell
+                          class="dp__day dp__day--wide rounded-control"
+                          >{{ cell.label }}</DatePickerTableCellTrigger
+                        >
+                      </DatePickerTableCell>
+                    </DatePickerTableRow>
+                  </DatePickerTableBody>
+                </DatePickerTable>
               </DatePickerContext>
             </DatePickerView>
           </div>
@@ -327,6 +441,19 @@ const maxValue = computed(() => (props.max ? parseDate(props.max) : undefined))
 }
 
 /* Redline "Day cell · 32px · radius --r-control · 12.5px · 44px on touch". */
+/* The month and year grids are four columns, not seven, so their cells take
+   the panel's width rather than the redlined 32px square. Everything else —
+   height, radius, type, and every state colour — is the day cell's, because a
+   selected month should not look like a different kind of selection. */
+.dp__day--wide {
+  width: auto;
+  min-width: 56px;
+}
+
+.dp__table--wide {
+  width: 100%;
+}
+
 .dp__day {
   width: 32px;
   height: 32px;
