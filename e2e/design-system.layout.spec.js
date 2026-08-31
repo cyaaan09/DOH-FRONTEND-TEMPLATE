@@ -170,6 +170,10 @@ test.describe('toasts actually stack inside their demo surface', () => {
     await page.getByRole('button', { name: 'Error', exact: true }).click()
     const toast = page.locator('[data-toast]').filter({ hasText: 'Upload failed' })
     await expect(toast).toBeVisible()
+    // Settle first: the stack transitions when a toast joins it, so a box
+    // read straight after toBeVisible() catches the toast mid-flight and
+    // below the panel — which is correct behaviour, not a containment bug.
+    await page.waitForTimeout(300)
 
     const [zone, box] = await Promise.all([surface.boundingBox(), toast.boundingBox()])
     // Contained: the toast sits within its dashed panel on every edge. If
@@ -245,5 +249,44 @@ test.describe('dark-mode preview is really dark', () => {
     // A real component inside it picks up the dark ink, not the light one.
     const title = panel.locator('.text-section-title').first()
     expect(await title.evaluate((el) => getComputedStyle(el).color)).toBe('rgb(232, 236, 243)')
+  })
+})
+
+test.describe('the toast stack really stacks', () => {
+  // Ark writes the stacking offsets as CUSTOM PROPERTIES (--offset, --y) and
+  // leaves applying them to the consumer's stylesheet. Nothing read --y, so
+  // every toast rendered at bottom: 0 piled on the others — and the pile
+  // LOOKS fine whenever the toasts differ in height, since a taller one
+  // still pokes out above a shorter. Both existing toast tests passed over
+  // it; only a narrower viewport, where the body wrapped to an extra line,
+  // showed it. This measures the gaps instead of trusting the picture.
+  test('three toasts sit 10px apart and none is clipped by the panel', async ({ page }) => {
+    const surface = page.locator('.notices__surface')
+    await surface.waitFor()
+    for (const tone of ['Warning', 'Info', 'Error']) {
+      await page.getByRole('button', { name: tone, exact: true }).click()
+      await page.waitForTimeout(120)
+    }
+    await expect(page.locator('[data-toast]')).toHaveCount(3)
+    await page.waitForTimeout(350)
+
+    const boxes = await page.locator('[data-toast]').evaluateAll((els) =>
+      els
+        .map((el) => el.getBoundingClientRect())
+        .map((r) => ({ top: r.top, bottom: r.bottom }))
+        .sort((a, b) => a.top - b.top),
+    )
+
+    // Redline "Toast region" — 10px between toasts, and never a negative gap.
+    for (let i = 1; i < boxes.length; i += 1) {
+      const gap = boxes[i].top - boxes[i - 1].bottom
+      expect(Math.round(gap)).toBe(10)
+    }
+
+    // The panel advertises "Three at most", so it has to be able to show
+    // three: D.1's own 316px could not, and clipped the top one.
+    const panel = await surface.boundingBox()
+    expect(boxes[0].top).toBeGreaterThanOrEqual(panel.y)
+    expect(boxes.at(-1).bottom).toBeLessThanOrEqual(panel.y + panel.height)
   })
 })

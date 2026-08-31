@@ -1153,6 +1153,20 @@ _DM Sans 400/500/700 · JetBrains Mono for copyable values_
   passing if it broke. `scripts/build-demo-data.mjs` emits it, and a test asserts it matches the
   file byte for byte.
 
+- **2026-08-31 — Ark's toast stack needs CSS the consumer has to write.** `getToastProps` sets
+  `position: absolute; bottom: 0` on every toast plus `--offset` (the cumulative height-and-gap of
+  the toasts below it) and `--y: calc(var(--lift) * var(--offset))` — and nothing applies `--y`.
+  Without `transform: translateY(var(--y))` every toast renders at `bottom: 0`, piled on the
+  others. It looked FINE whenever the toasts differed in height, because a taller one still pokes
+  out above a shorter, so both existing toast tests passed and only a narrower viewport — where the
+  body text wrapped to an extra line — exposed it. `Toast.vue` now applies it; an e2e test measures
+  the gap between consecutive toasts rather than trusting the picture.
+- **2026-08-31 — the toast demo panel is 340px, not D.1's 316px.** The section advertises "Three at
+  most" and sets `max: 3`, and three toasts run 307px of stack (71 + 117 + 99 plus two 10px gaps)
+  sitting 16px off the bottom edge — 323px, against a panel of 316px with `overflow: hidden`, so
+  the top toast was clipped. The artifact's own value cannot hold the maximum its own rule card
+  states. 340px covers it with headroom for the taller wrapping a narrower viewport produces.
+
 ## Appendix D — demo page content
 
 Extracted verbatim from the source artifact. This is the content authority for the

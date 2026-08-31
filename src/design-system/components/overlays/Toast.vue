@@ -115,16 +115,39 @@ const hasAction = computed(() => Boolean(props.toast.action?.label))
 </template>
 
 <style scoped>
-/* Redline "Toast" — radius 12 (--r-panel), pad 13px 12px 15px 13px, gap 11px,
-   white surface on a 1px tone border under --sh-toast. `relative` and
-   `overflow: hidden` are what let the timer bar sit flush in the corner. */
+/* Ark positions the stack by writing CUSTOM PROPERTIES and leaves applying
+   them to the consumer's stylesheet: it sets `position: absolute; bottom: 0`
+   on every toast plus `--offset` (the cumulative height-and-gap of the ones
+   below) and `--y: calc(var(--lift) * var(--offset))`. Nothing reads --y by
+   itself, so without this rule every toast renders at bottom: 0, piled on
+   top of the others — and the pile LOOKS fine whenever the toasts happen to
+   differ in height, because a taller one still pokes out above a shorter.
+   That is why it survived both existing toast tests and only showed up on a
+   narrower viewport where the body text wrapped to an extra line. */
 .toast {
-  position: relative;
+  transform: translateY(var(--y, 0px));
+  transition:
+    transform var(--t-control) cubic-bezier(0.21, 1.02, 0.73, 1),
+    opacity var(--t-control) ease;
   gap: 11px;
   padding: 13px 12px 15px 13px;
   border-radius: var(--r-panel);
   overflow: hidden;
   box-shadow: var(--sh-toast);
+}
+
+/* Leaving: fade out and drop by one gap, so a dismissed toast reads as
+   leaving rather than blinking out. --lift-amount is Ark's own value for
+   exactly this. */
+.toast[data-state='closed'] {
+  opacity: 0;
+  transform: translateY(calc(var(--y, 0px) - var(--lift-amount, 0px)));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    transition: none;
+  }
 }
 
 .toast__icon {

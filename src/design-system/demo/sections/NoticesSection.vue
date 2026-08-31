@@ -232,10 +232,14 @@ function fire(kind) {
   background: var(--surface-muted);
 }
 
-/* Appendix D.1 — the app surface: 316px tall minimum so the stack has room,
-   dashed hairline on the input well. */
+/* Appendix D.1 gives this surface `min-height: 316px`, which cannot hold the
+   three-toast maximum the section itself advertises: the stack runs 307px
+   (71 + 117 + 99 plus two 10px gaps) and sits 16px off the bottom edge, so
+   it needs 323px and the top toast was clipped by the panel's own
+   overflow: hidden. 340px covers it with headroom for the taller wrapping a
+   narrower viewport produces. Deviation recorded in §17.3. */
 .notices__surface {
-  min-height: 316px;
+  min-height: 340px;
   padding: 16px;
   border: 1px dashed var(--border-dashed);
   background: var(--surface-input);
