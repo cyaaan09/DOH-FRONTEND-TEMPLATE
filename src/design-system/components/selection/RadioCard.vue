@@ -1,0 +1,191 @@
+<script setup>
+import {
+  RadioGroupRoot,
+  RadioGroupItem,
+  RadioGroupItemControl,
+  RadioGroupItemText,
+  RadioGroupItemHiddenInput,
+} from '@ark-ui/vue/radio-group'
+
+const props = defineProps({
+  /** Array<{ value, label, hint?, disabled? }>, in display order. Same option
+   *  shape as Radio. */
+  options: { type: Array, required: true },
+  /** The chosen option's value, or '' when nothing is chosen. */
+  modelValue: { type: String, default: '' },
+  /**
+   * Names the group for assistive technology, via aria-label on the
+   * [role="radiogroup"] root. NOT rendered (§8.1) — same treatment as
+   * Radio.vue, including the dangling aria-labelledby neutralised below.
+   */
+  label: { type: String, required: true },
+})
+
+const emit = defineEmits(['update:modelValue'])
+
+function isChosen(option) {
+  return option.value === props.modelValue
+}
+
+// Redline "Radio" — 17x17 rounded-pill, 1.8px border, 8px dot. Values reused
+// verbatim from Radio.vue's controlClass/dotClass rather than re-derived;
+// the branch ORDER is reused too — "chosen" checked before "disabled" here,
+// the reverse of cardClass below, which keeps dot invisibility tied only to
+// chosen-ness regardless of which other branch runs (Radio.vue's own
+// comment on this same ordering).
+function controlClass(option) {
+  if (option.disabled) return 'bg-surface-disabled border-soft'
+  if (isChosen(option)) return 'bg-surface border-green-fill'
+  return 'bg-surface border-ink-100'
+}
+
+function dotClass(option) {
+  if (!isChosen(option)) return 'bg-transparent'
+  return option.disabled ? 'bg-ink-200' : 'bg-green-fill'
+}
+
+// Redline "Card" / "Card selected" — a two-branch conditional; each branch
+// sets border AND background, never left to emit order (this project's
+// recurring defect). Only two branches: Appendix C gives this group no
+// third "card disabled" row, so a disabled option's card surface reads the
+// same as any other unchosen card — the disabled dress lives entirely on
+// the control above.
+function cardClass(option) {
+  return isChosen(option)
+    ? 'border-green-500 bg-green-tint-2 card--selected'
+    : 'border-hairline bg-surface'
+}
+</script>
+
+<template>
+  <RadioGroupRoot
+    :model-value="modelValue"
+    :aria-label="label"
+    :aria-labelledby="undefined"
+    class="radiocard flex flex-col"
+    @update:model-value="(value) => emit('update:modelValue', value)"
+  >
+    <!-- aria-labelledby neutralises Ark's own getRootProps() value, which
+         points at the id of a RadioGroupLabel this component never renders
+         and would otherwise dangle — same mechanism and same fix as
+         Radio.vue; see the comment there for how the override reaches the
+         DOM through attrs fallthrough. -->
+    <RadioGroupItem
+      v-for="option in options"
+      :key="option.value"
+      data-card
+      :value="option.value"
+      :disabled="option.disabled"
+      class="card flex flex-col border"
+      :class="cardClass(option)"
+    >
+      <span class="radiocard__row flex items-start">
+        <!-- Redline "Radio" — same control token as Radio.vue: 17x17,
+             rounded fully, 1.8px border set in the style block below. -->
+        <RadioGroupItemControl
+          data-control
+          class="radiocard__control grid h-check w-check flex-none place-items-center rounded-pill border"
+          :class="controlClass(option)"
+        >
+          <span
+            data-dot
+            aria-hidden="true"
+            class="radiocard__dot rounded-pill"
+            :class="dotClass(option)"
+          />
+        </RadioGroupItemControl>
+
+        <span class="radiocard__text min-w-0">
+          <!-- Redline "Label" — 13.5/400 ink-700, 10px from the control,
+               reused from Radio.vue unchanged. -->
+          <RadioGroupItemText
+            data-label
+            class="radiocard__label block text-body text-ink-700"
+            >{{ option.label }}</RadioGroupItemText
+          >
+          <span
+            v-if="option.hint"
+            data-hint
+            class="radiocard__hint block text-hint text-text-meta"
+            >{{ option.hint }}</span
+          >
+        </span>
+      </span>
+
+      <!-- Appendix D.1 — the chosen radio card carries a "Selected" marker.
+           Not aria-hidden: Ark's getItemHiddenInputProps() points the
+           input's aria-labelledby at RadioGroupItemText's id specifically
+           (confirmed in @zag-js/radio-group's connect module), not at this
+           whole label, so this text never bleeds into the input's
+           accessible name — it is exposed as ordinary readable content, the
+           same way option.hint already is above. -->
+      <span
+        v-if="isChosen(option)"
+        data-selected-marker
+        class="radiocard__marker block text-hint font-bold text-green-text"
+        >Selected</span
+      >
+
+      <RadioGroupItemHiddenInput />
+    </RadioGroupItem>
+  </RadioGroupRoot>
+</template>
+
+<style scoped>
+/* Redline "Row gap" — 11px between items, reused from Radio.vue unchanged;
+   applies between cards, not within one. */
+.radiocard {
+  gap: 11px;
+}
+
+/* Redline "Card" — pad 13px 14px, radius 11px (no token: --r-panel is 12px,
+   --r-card is 14px), internal gap 11px between this card's own content row
+   and its Selected marker. */
+.card {
+  padding: 13px 14px;
+  border-radius: 11px;
+  gap: 11px;
+  cursor: pointer;
+}
+
+.card[data-disabled] {
+  cursor: not-allowed;
+}
+
+/* Redline "Card selected" — see CheckboxCard.vue's identical rule for why
+   this uses --ring-select rather than a new token. */
+.card--selected {
+  box-shadow: var(--ring-select);
+}
+
+/* Redline "Radio" — 1.8px border. No border-width utility carries it. */
+.radiocard__control {
+  border-width: 1.8px;
+}
+
+/* Redline "Radio" — inner dot 8px. */
+.radiocard__dot {
+  width: 8px;
+  height: 8px;
+}
+
+/* Redline "Label" — gap 10px between control and text, reused from
+   Radio.vue unchanged. */
+.radiocard__text {
+  margin-left: 10px;
+}
+
+/* Scoped to the item, not the group root: with several cards per component
+   instance, a group-level :focus-within (Checkbox's pattern, correct there
+   because it only ever has one control) would ring every card's control at
+   once whenever any one of their inputs had focus — same reasoning as
+   Radio.vue's identical rule. */
+.card:focus-within .radiocard__control {
+  outline: none;
+  box-shadow: var(--ring-focus);
+}
+
+.radiocard__hint {
+  margin-top: 2px;
+}
+</style>
