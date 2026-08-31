@@ -82,7 +82,6 @@ describe('design tokens', () => {
       'surface-disabled': '#E9EDF3',
       'red-800': '#96190F',
       'green-link-hover': '#166534',
-      'logo-ink': '#D9F2C4',
       separator: '#CBD3E0',
       'r-bar': '6px',
     }
@@ -146,9 +145,6 @@ describe('spec Appendix A parity', () => {
    * colour on a dark surface.
    */
   const KEEPS_LIGHT_VALUE = {
-    'green-900':
-      'the logo tile fill — a dark green that reads on both canvases, and the ' +
-      'redline gives it no dark value',
     'green-600': 'legacy value the redline keeps for reference; no consumer',
     'amber-400': 'status DOT fill — a saturated dot reads on both surfaces',
     'red-500': 'status DOT fill — same',
@@ -156,7 +152,6 @@ describe('spec Appendix A parity', () => {
     'toast-bg-amber': 'no consumer — Toast dresses with a tone border on --surface',
     'toast-bg-blue': 'no consumer — same',
     'green-link-hover': 'no consumer',
-    'logo-ink': 'app shell — same',
   }
 
   const GEOMETRY = /^(r-|h-|size-|rail-|pad-|gap-|t-|z-|w-|chip-pad|font-)/

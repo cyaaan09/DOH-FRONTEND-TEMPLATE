@@ -765,6 +765,446 @@ export const SPEC_GROUPS = [
     ]
   },
   {
+    "name": "Date picker",
+    "summary": "32px cells · 280px popover · single + two-month range",
+    "rows": [
+      {
+        "k": "Field",
+        "v": "38px · mono value · 13px ▦ glyph #667085 right · focus 1px #177236 + 3px ring"
+      },
+      {
+        "k": "Popover",
+        "v": "280px · pad 12px · radius 12px · 1px #E4E8EF · shadow 0 12px 28px rgba(16,24,40,.12) · 6px below the field"
+      },
+      {
+        "k": "Month header",
+        "v": "13px / 700 #1E2532 centred · 28px ‹ › buttons #667085, hover #F4F6FA"
+      },
+      {
+        "k": "Weekday row",
+        "v": "24px · 10.5px / 700 / 0.06em #98A2B3"
+      },
+      {
+        "k": "Day cell",
+        "v": "32px · radius 8px · 12.5px · grid 7 cols gap 2px (44px cells on touch)"
+      },
+      {
+        "k": "Day states",
+        "v": "default #344054 · other month #C3CAD6 · today inset 0 0 0 1px #A6E7C3 with #177236 700 · selected #177236 / #FFF · unavailable #DDE2EA struck"
+      },
+      {
+        "k": "Range",
+        "v": "endpoints #177236 / #FFF · between #E8F6EC / #15803D · two months side by side, gap 16px"
+      },
+      {
+        "k": "Presets",
+        "v": "120px column · 12.5px rows radius 8px · active #E8F6EC / #15803D 700 · 1px right #EEF1F6"
+      },
+      {
+        "k": "Range inputs",
+        "v": "two 32px mono fields with a #98A2B3 → between them · the focused one takes the green ring"
+      },
+      {
+        "k": "Footer",
+        "v": "1px top #EEF1F6 · Today link 12px / 500 #177236 left · constraint note 11.5px #98A2B3 right"
+      },
+      {
+        "k": "Apply button",
+        "v": "34px --grad-primary · carries the computed length (Apply · 23 days)"
+      },
+      {
+        "k": "Input parsing",
+        "v": "accepts 04/09/2026, 4 Sep 26, 2026-09-04 · normalised on blur · calendar is never the only path"
+      },
+      {
+        "k": "Mobile",
+        "v": "popover goes full-width under 420px with 44px cells"
+      }
+    ]
+  },
+  {
+    "name": "Tooltip & popover",
+    "summary": "tooltip #1E2532 label only · popover = content plus actions",
+    "rows": [
+      {
+        "k": "Rule",
+        "v": "if it contains a button, it is a popover — a tooltip holds one line of text and nothing else"
+      },
+      {
+        "k": "Tooltip",
+        "v": "pad 6px 9px · radius 7px · #1E2532 · 12px / 500 #FFF · 8px rotated arrow · nowrap"
+      },
+      {
+        "k": "Tooltip copy",
+        "v": "one line, under 48 characters, sentence case, no full stop"
+      },
+      {
+        "k": "Tooltip timing",
+        "v": "120ms delay in, none out · 6px offset from the trigger"
+      },
+      {
+        "k": "Tooltip a11y",
+        "v": "aria-describedby · shows on keyboard focus too · becomes a tap-toggle popover on touch · never focusable itself"
+      },
+      {
+        "k": "Hinted trigger",
+        "v": "inline text that owns a tooltip takes a 1px dashed underline in its own tone + cursor help"
+      },
+      {
+        "k": "Popover",
+        "v": "max-w 300px · pad 14px · radius 12px · #FFF · 1px #E4E8EF · shadow 0 12px 28px rgba(16,24,40,.12)"
+      },
+      {
+        "k": "Popover arrow",
+        "v": "10px rotated square, #FFF with the two leading borders — 6px off the trigger"
+      },
+      {
+        "k": "Popover head",
+        "v": "13.5px / 700 #1E2532 + × #667085 right · body 12.5px / 1.5 #344054"
+      },
+      {
+        "k": "Popover actions",
+        "v": "32px buttons, primary --grad-primary · dismiss reads Got it, not Close"
+      },
+      {
+        "k": "Popover a11y",
+        "v": "focus trapped, Esc closes, focus returns to the trigger · it is a dialog without a scrim"
+      },
+      {
+        "k": "Collision",
+        "v": "flips side near a viewport edge rather than shifting — the arrow always points at the trigger"
+      }
+    ]
+  },
+  {
+    "name": "Accordion",
+    "summary": "header 14px 18px · body indents to 52px · one open by default",
+    "rows": [
+      {
+        "k": "When",
+        "v": "one long record read top to bottom — tabs swap views, accordion reveals sections of the same thing"
+      },
+      {
+        "k": "Container",
+        "v": "1px #E4E8EF · radius 12px · #FFF · rows divided by 1px #EEF1F6"
+      },
+      {
+        "k": "Toolbar",
+        "v": "12px 18px · #FAFBFD · record title 13px / 700 + Expand all 12px / 500 #177236"
+      },
+      {
+        "k": "Header",
+        "v": "pad 14px 18px · gap 12px · the whole row is the button (aria-expanded)"
+      },
+      {
+        "k": "Chevron tile",
+        "v": "22px · radius 7px · closed #F4F6FA / #667085 ▸ · open #E8F6EC / #15803D ▾ · decorative"
+      },
+      {
+        "k": "Header text",
+        "v": "title 13.5px / 700 #1E2532 · summary 12px #667085 that answers without opening"
+      },
+      {
+        "k": "Header badge",
+        "v": "count pill 11px / 700 — #EEF1F6 neutral, #E8F6EC done, #FEE2E2 needs action"
+      },
+      {
+        "k": "Open header",
+        "v": "background #FAFBFD · body pad 0 18px 18px 52px, aligned under the title"
+      },
+      {
+        "k": "Body grid",
+        "v": "auto-fit minmax(180px,1fr) · gap 14px 22px · labels 10.5px / 700 / 0.08em #5A6577"
+      },
+      {
+        "k": "Default state",
+        "v": "first section open, rest collapsed · state persists per record, not per user"
+      },
+      {
+        "k": "Transition",
+        "v": "160ms ease on height and background · never animate the text itself"
+      }
+    ]
+  },
+  {
+    "name": "Search with results",
+    "summary": "42px field merging into a grouped panel · keyboard first",
+    "rows": [
+      {
+        "k": "Scope",
+        "v": "global find — distinct from the 34px toolbar filter, which narrows the list already shown"
+      },
+      {
+        "k": "Field",
+        "v": "42px · pad 0 14px · radius 11px 11px 0 0 when open · 1px #177236 + 3px ring · 14px value"
+      },
+      {
+        "k": "Esc hint",
+        "v": "11px mono #667085 in a #F4F6FA pill, 1px #EEF1F6 — inside the field, right"
+      },
+      {
+        "k": "Panel",
+        "v": "continues the field: no top border, radius 0 0 11px 11px, shadow 0 12px 28px rgba(16,24,40,.12)"
+      },
+      {
+        "k": "Group header",
+        "v": "10.5px / 700 / 0.08em #5A6577 with its count · max 3 groups"
+      },
+      {
+        "k": "Result row",
+        "v": "pad 9px 11px · radius 8px · 28px type tile · title 13px / 700 · meta 11.5px mono #667085"
+      },
+      {
+        "k": "Active row",
+        "v": "#E8F6EC with a #FFF type tile · preselected but never auto-navigated"
+      },
+      {
+        "k": "Row cap",
+        "v": "4 rows per group · everything else behind See all N matches"
+      },
+      {
+        "k": "Missing meta",
+        "v": "states the absence in words (no LTO on file) — never an empty second line"
+      },
+      {
+        "k": "Footer",
+        "v": "1px top #EEF1F6 · #FAFBFD · keycap hints left, See all 12px / 500 #177236 right"
+      },
+      {
+        "k": "Keys",
+        "v": "/ or ⌘K opens · ↑↓ moves · ↵ opens · Esc closes and restores the previous query"
+      },
+      {
+        "k": "ARIA",
+        "v": "role=combobox aria-expanded + role=listbox/option · aria-activedescendant follows the arrows"
+      }
+    ]
+  },
+  {
+    "name": "Notifications & activity",
+    "summary": "centre = your unread work · feed = one record's immutable history",
+    "rows": [
+      {
+        "k": "Split",
+        "v": "centre is addressed to you and dismissible; the feed is append-only and never marked read"
+      },
+      {
+        "k": "Panel",
+        "v": "max-w 380px · radius 12px · 1px #E4E8EF · shadow 0 12px 28px rgba(16,24,40,.12)"
+      },
+      {
+        "k": "Panel head",
+        "v": "13px 16px · #FAFBFD · title 13.5px / 700 + #FEE2E2 / #B42318 count · Mark all read 12px / 500 #177236"
+      },
+      {
+        "k": "Item",
+        "v": "pad 12px 16px · 1px top #F5F7FA · 28px radius-9 tone tile · body 13px / 1.4 #344054"
+      },
+      {
+        "k": "Unread",
+        "v": "#F7FCF9 row + 7px #177236 dot right — never bold text"
+      },
+      {
+        "k": "Item meta",
+        "v": "time 11.5px #98A2B3 · inline action 11.5px / 500 #177236, one per item at most"
+      },
+      {
+        "k": "Tone tiles",
+        "v": "error #FEE2E2 / #B42318 · portal #EAF2FE / #175CD3 · done #E8F6EC / #15803D · system #F4F6FA / #5A6577"
+      },
+      {
+        "k": "Feed spine",
+        "v": "grid 26px / 1fr gap 12px · 26px avatar or tone circle · 2px #EEF1F6 line · 16px below each event"
+      },
+      {
+        "k": "Feed event",
+        "v": "body 13px / 1.45 with the actor in 700 #1E2532 · timestamp 11.5px #98A2B3 · newest first"
+      },
+      {
+        "k": "Feed detail",
+        "v": "attachments and quoted reasons render inside their own event, #FFF on 1px #EEF1F6, radius 9px"
+      },
+      {
+        "k": "Feed rules",
+        "v": "append-only — corrections are new entries, the wrong one stays visible"
+      },
+      {
+        "k": "Live region",
+        "v": "arriving notifications announce via aria-live=polite; the panel itself is role=dialog"
+      }
+    ]
+  },
+  {
+    "name": "Destructive confirmation",
+    "summary": "3 levels — undo toast · plain dialog · type to confirm",
+    "rows": [
+      {
+        "k": "Level 1",
+        "v": "reversible: no dialog at all — toast with Undo and a 3px meter, 10s window"
+      },
+      {
+        "k": "Level 2",
+        "v": "serious but recoverable: plain dialog, destructive OUTLINE button 1px #F9C4BE / #B42318"
+      },
+      {
+        "k": "Level 3",
+        "v": "irreversible: type-to-confirm dialog, primary stays disabled until the string matches"
+      },
+      {
+        "k": "Dialog",
+        "v": "max-w 428px · radius 14px · #FFF · shadow 0 24px 60px rgba(16,24,40,.28) · scrim rgba(16,24,40,.45)"
+      },
+      {
+        "k": "Header",
+        "v": "32px radius-9 #FEE2E2 / #B42318 ! tile + 15.5px / 700 title ending in a question mark"
+      },
+      {
+        "k": "Body",
+        "v": "13px / 1.5 #344054 — what happens, to whom, and whether it can be undone. Never Are you sure"
+      },
+      {
+        "k": "Impact strip",
+        "v": "#FFF6F5 · 1px #F7D6D1 · radius 10px · 12px #B42318 — the count of affected things"
+      },
+      {
+        "k": "Confirm label",
+        "v": "12.5px / 500 with the identifier inline in mono 700 #1E2532 — the LTO number, never the word DELETE"
+      },
+      {
+        "k": "Confirm input",
+        "v": "38px mono · error ring while partial · 11.5px / 500 #B42318 reason below (Does not match yet)"
+      },
+      {
+        "k": "Blocked button",
+        "v": "1px #F9C4BE on #FFF6F5 with #E9A19B text, cursor not-allowed — visible, not hidden"
+      },
+      {
+        "k": "Matching",
+        "v": "trim whitespace, compare case-insensitively · no shake, no toast, no auto-submit"
+      },
+      {
+        "k": "Footer",
+        "v": "13px 20px · 1px top #EEF1F6 · #FAFBFD · Cancel then the destructive action, right-aligned"
+      },
+      {
+        "k": "Focus",
+        "v": "opens on Cancel (never the destructive button) · Esc cancels · focus returns to the trigger"
+      }
+    ]
+  },
+  {
+    "name": "Keyboard shortcuts",
+    "summary": "? opens the sheet · sequences not chords · suspended in fields",
+    "rows": [
+      {
+        "k": "Contract",
+        "v": "listed here means bound everywhere; not listed means not bound"
+      },
+      {
+        "k": "Sheet",
+        "v": "max-w 620px · radius 14px · shadow 0 24px 60px rgba(16,24,40,.28) · groups auto-fit minmax(250px,1fr) gap 22px"
+      },
+      {
+        "k": "Keycap",
+        "v": "11px mono #344054 · pad 3px 7px · radius 6px · #FFF · 1px #E4E8EF · shadow 0 1px 0 #E4E8EF"
+      },
+      {
+        "k": "Row",
+        "v": "label 13px #344054 left, caps right · pad 8px 0 · 1px bottom #F5F7FA"
+      },
+      {
+        "k": "Separator",
+        "v": "encodes the relationship: + (10px #98A2B3) for a true chord, italic then for a sequence, italic or for alternates — never one separator for all three"
+      },
+      {
+        "k": "Group label",
+        "v": "10.5px / 700 / 0.08em #5A6577 — GLOBAL, NAVIGATE, TABLE, RECORD"
+      },
+      {
+        "k": "Global",
+        "v": "/ search · ⌘K palette · ? this sheet · Esc close or cancel"
+      },
+      {
+        "k": "Navigate",
+        "v": "g then l issued · g then a applications · g then f facilities · [ toggles the rail"
+      },
+      {
+        "k": "Table",
+        "v": "↑↓ rows · ↵ open · space expand · x select · ⌘A select all shown"
+      },
+      {
+        "k": "Record",
+        "v": "⌘+↵ save and continue · ⌥+→ / ⌥+← steps · u upload · ⌘+S sign"
+      },
+      {
+        "k": "Sequences",
+        "v": "navigation is two keys in sequence, never a chord — chords only for save and select-all"
+      },
+      {
+        "k": "Suspension",
+        "v": "single-letter bindings are off while an input, textarea, or contenteditable has focus"
+      },
+      {
+        "k": "Platform",
+        "v": "⌘ is Ctrl and ⌥ is Alt on Windows, stated in the footer"
+      },
+      {
+        "k": "Discovery",
+        "v": "? opens it and the account menu links it · Print this sheet renders greyscale-safe"
+      }
+    ]
+  },
+  {
+    "name": "Print & PDF preview",
+    "summary": "true-aspect A4 · preview is the print path · invalid output blocked",
+    "rows": [
+      {
+        "k": "Page",
+        "v": "A4 portrait at true 210:297 aspect, any scale · 20mm margins shown as a 1px dashed #EEF1F6 guide"
+      },
+      {
+        "k": "Desk",
+        "v": "#EEF1F6 around the sheet · sheet #FFF with shadow 0 8px 24px rgba(16,24,40,.16), square corners"
+      },
+      {
+        "k": "Toolbar",
+        "v": "10px 14px · #FAFBFD · size select + orientation segmented left · page count and zoom right"
+      },
+      {
+        "k": "Controls",
+        "v": "30px selects, 1px #D5DBE6, radius 8px · segmented 3px shell #F4F6FA with a #FFF active tile"
+      },
+      {
+        "k": "Footer",
+        "v": "12px 14px · 1px top #EEF1F6 · content toggles left · Download PDF outline + Print --grad-primary right"
+      },
+      {
+        "k": "Certificate",
+        "v": "logo tile top-left · LICENSE TO OPERATE 0.1em #177236 centred · mono LTO number · signature block and QR pinned bottom"
+      },
+      {
+        "k": "Unsigned",
+        "v": "#FFFCF4 · 1px #F4E4C4 notice · preview watermarked · Print disabled 1px #EEF1F6 / #B9C1D1 · Sign now beside it"
+      },
+      {
+        "k": "Batch",
+        "v": "page thumbnails at 210/297 aspect, active 1px #177236 + 2px ring, overflow tile +N dashed #CBD3E0"
+      },
+      {
+        "k": "Batch output",
+        "v": "one single-page PDF per licence, named by LTO number, delivered zipped — never one merged file"
+      },
+      {
+        "k": "Fidelity",
+        "v": "preview and print share markup and stylesheet with one page box — if they can disagree, the preview is decoration"
+      },
+      {
+        "k": "Blocking",
+        "v": "unsigned or expired certificates cannot reach the tray; the fix is one button away in the notice"
+      }
+    ]
+  },
+  {
     "name": "Forms & validation",
     "summary": "12-col grid · 16px/24px gutter · error replaces help text in place",
     "rows": [
@@ -1454,7 +1894,7 @@ export const SPEC_GROUPS = [
   },
   {
     "name": "Dark mode",
-    "summary": "data-theme=\\\"dark\\\" · same geometry · dark text on the green fill",
+    "summary": "data-theme=\"dark\" · same geometry · dark text on the green fill",
     "rows": [
       {
         "k": "Canvas",
@@ -1569,6 +2009,54 @@ export const SPEC_GROUPS = [
       {
         "k": "Pagination",
         "v": "active #2FB25F/#0B1017 · idle 1px #384556/#C3CCDA · disabled #6F7B8C"
+      },
+      {
+        "k": "Rail",
+        "v": "#161C26 · 1px right #2A3441 · brand rule + footer rule #222B38 · footer #1C242F"
+      },
+      {
+        "k": "Logo tile",
+        "v": "--logo-tile #2FB25F / --logo-tile-on #0B1017 — the #14532D/#D9F2C4 pair goes muddy on dark"
+      },
+      {
+        "k": "Nav item",
+        "v": "#C3CCDA · hover #222B38 with #E8ECF3 text"
+      },
+      {
+        "k": "Nav active",
+        "v": "linear-gradient(180deg,#2FB25F,#249A4F) with #0B1017 / 700 = 6.95:1"
+      },
+      {
+        "k": "Item mark",
+        "v": "13px · 1.8px #55606F (decorative, paired with a text label)"
+      },
+      {
+        "k": "Nav badge",
+        "v": "rgba(229,72,77,.18) / #FF9B95 · on active rgba(11,16,23,.28) / #0B1017"
+      },
+      {
+        "k": "Collapsed dot",
+        "v": "7px #E5484D · 2px #161C26 ring (light uses a 2px #FFF ring)"
+      },
+      {
+        "k": "Group header",
+        "v": "10.5px / 700 / 0.1em #9AA5B5"
+      },
+      {
+        "k": "Header",
+        "v": "rgba(22,28,38,.75) · blur 6px · 1px #2A3441 · pad 12px 32px"
+      },
+      {
+        "k": "Breadcrumb",
+        "v": "#9AA5B5 · separator #55606F · current #E8ECF3"
+      },
+      {
+        "k": "Icon button",
+        "v": "34px · #1C242F · 1px #2A3441 · #C3CCDA glyph"
+      },
+      {
+        "k": "Avatar",
+        "v": "34px #2A3441 with #C3CCDA initials · 2px #161C26 + 1px #2A3441 ring"
       },
       {
         "k": "Unchanged",

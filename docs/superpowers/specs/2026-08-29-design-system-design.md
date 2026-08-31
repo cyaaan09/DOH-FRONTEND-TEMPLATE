@@ -902,6 +902,160 @@ _28px nodes · 2px connector · horizontal ≤4, vertical 5+_
 | Interaction | done and current are buttons; upcoming is plain text — no forward jumps past validation |
 | ARIA | ol/li with aria-current=step on the current node; state also in the sub-label text, not colour alone |
 
+### Date picker
+
+_32px cells · 280px popover · single + two-month range_
+
+| Property | Value |
+|---|---|
+| Field | 38px · mono value · 13px ▦ glyph #667085 right · focus 1px #177236 + 3px ring |
+| Popover | 280px · pad 12px · radius 12px · 1px #E4E8EF · shadow 0 12px 28px rgba(16,24,40,.12) · 6px below the field |
+| Month header | 13px / 700 #1E2532 centred · 28px ‹ › buttons #667085, hover #F4F6FA |
+| Weekday row | 24px · 10.5px / 700 / 0.06em #98A2B3 |
+| Day cell | 32px · radius 8px · 12.5px · grid 7 cols gap 2px (44px cells on touch) |
+| Day states | default #344054 · other month #C3CAD6 · today inset 0 0 0 1px #A6E7C3 with #177236 700 · selected #177236 / #FFF · unavailable #DDE2EA struck |
+| Range | endpoints #177236 / #FFF · between #E8F6EC / #15803D · two months side by side, gap 16px |
+| Presets | 120px column · 12.5px rows radius 8px · active #E8F6EC / #15803D 700 · 1px right #EEF1F6 |
+| Range inputs | two 32px mono fields with a #98A2B3 → between them · the focused one takes the green ring |
+| Footer | 1px top #EEF1F6 · Today link 12px / 500 #177236 left · constraint note 11.5px #98A2B3 right |
+| Apply button | 34px --grad-primary · carries the computed length (Apply · 23 days) |
+| Input parsing | accepts 04/09/2026, 4 Sep 26, 2026-09-04 · normalised on blur · calendar is never the only path |
+| Mobile | popover goes full-width under 420px with 44px cells |
+
+### Tooltip & popover
+
+_tooltip #1E2532 label only · popover = content plus actions_
+
+| Property | Value |
+|---|---|
+| Rule | if it contains a button, it is a popover — a tooltip holds one line of text and nothing else |
+| Tooltip | pad 6px 9px · radius 7px · #1E2532 · 12px / 500 #FFF · 8px rotated arrow · nowrap |
+| Tooltip copy | one line, under 48 characters, sentence case, no full stop |
+| Tooltip timing | 120ms delay in, none out · 6px offset from the trigger |
+| Tooltip a11y | aria-describedby · shows on keyboard focus too · becomes a tap-toggle popover on touch · never focusable itself |
+| Hinted trigger | inline text that owns a tooltip takes a 1px dashed underline in its own tone + cursor help |
+| Popover | max-w 300px · pad 14px · radius 12px · #FFF · 1px #E4E8EF · shadow 0 12px 28px rgba(16,24,40,.12) |
+| Popover arrow | 10px rotated square, #FFF with the two leading borders — 6px off the trigger |
+| Popover head | 13.5px / 700 #1E2532 + × #667085 right · body 12.5px / 1.5 #344054 |
+| Popover actions | 32px buttons, primary --grad-primary · dismiss reads Got it, not Close |
+| Popover a11y | focus trapped, Esc closes, focus returns to the trigger · it is a dialog without a scrim |
+| Collision | flips side near a viewport edge rather than shifting — the arrow always points at the trigger |
+
+### Accordion
+
+_header 14px 18px · body indents to 52px · one open by default_
+
+| Property | Value |
+|---|---|
+| When | one long record read top to bottom — tabs swap views, accordion reveals sections of the same thing |
+| Container | 1px #E4E8EF · radius 12px · #FFF · rows divided by 1px #EEF1F6 |
+| Toolbar | 12px 18px · #FAFBFD · record title 13px / 700 + Expand all 12px / 500 #177236 |
+| Header | pad 14px 18px · gap 12px · the whole row is the button (aria-expanded) |
+| Chevron tile | 22px · radius 7px · closed #F4F6FA / #667085 ▸ · open #E8F6EC / #15803D ▾ · decorative |
+| Header text | title 13.5px / 700 #1E2532 · summary 12px #667085 that answers without opening |
+| Header badge | count pill 11px / 700 — #EEF1F6 neutral, #E8F6EC done, #FEE2E2 needs action |
+| Open header | background #FAFBFD · body pad 0 18px 18px 52px, aligned under the title |
+| Body grid | auto-fit minmax(180px,1fr) · gap 14px 22px · labels 10.5px / 700 / 0.08em #5A6577 |
+| Default state | first section open, rest collapsed · state persists per record, not per user |
+| Transition | 160ms ease on height and background · never animate the text itself |
+
+### Search with results
+
+_42px field merging into a grouped panel · keyboard first_
+
+| Property | Value |
+|---|---|
+| Scope | global find — distinct from the 34px toolbar filter, which narrows the list already shown |
+| Field | 42px · pad 0 14px · radius 11px 11px 0 0 when open · 1px #177236 + 3px ring · 14px value |
+| Esc hint | 11px mono #667085 in a #F4F6FA pill, 1px #EEF1F6 — inside the field, right |
+| Panel | continues the field: no top border, radius 0 0 11px 11px, shadow 0 12px 28px rgba(16,24,40,.12) |
+| Group header | 10.5px / 700 / 0.08em #5A6577 with its count · max 3 groups |
+| Result row | pad 9px 11px · radius 8px · 28px type tile · title 13px / 700 · meta 11.5px mono #667085 |
+| Active row | #E8F6EC with a #FFF type tile · preselected but never auto-navigated |
+| Row cap | 4 rows per group · everything else behind See all N matches |
+| Missing meta | states the absence in words (no LTO on file) — never an empty second line |
+| Footer | 1px top #EEF1F6 · #FAFBFD · keycap hints left, See all 12px / 500 #177236 right |
+| Keys | / or ⌘K opens · ↑↓ moves · ↵ opens · Esc closes and restores the previous query |
+| ARIA | role=combobox aria-expanded + role=listbox/option · aria-activedescendant follows the arrows |
+
+### Notifications & activity
+
+_centre = your unread work · feed = one record's immutable history_
+
+| Property | Value |
+|---|---|
+| Split | centre is addressed to you and dismissible; the feed is append-only and never marked read |
+| Panel | max-w 380px · radius 12px · 1px #E4E8EF · shadow 0 12px 28px rgba(16,24,40,.12) |
+| Panel head | 13px 16px · #FAFBFD · title 13.5px / 700 + #FEE2E2 / #B42318 count · Mark all read 12px / 500 #177236 |
+| Item | pad 12px 16px · 1px top #F5F7FA · 28px radius-9 tone tile · body 13px / 1.4 #344054 |
+| Unread | #F7FCF9 row + 7px #177236 dot right — never bold text |
+| Item meta | time 11.5px #98A2B3 · inline action 11.5px / 500 #177236, one per item at most |
+| Tone tiles | error #FEE2E2 / #B42318 · portal #EAF2FE / #175CD3 · done #E8F6EC / #15803D · system #F4F6FA / #5A6577 |
+| Feed spine | grid 26px / 1fr gap 12px · 26px avatar or tone circle · 2px #EEF1F6 line · 16px below each event |
+| Feed event | body 13px / 1.45 with the actor in 700 #1E2532 · timestamp 11.5px #98A2B3 · newest first |
+| Feed detail | attachments and quoted reasons render inside their own event, #FFF on 1px #EEF1F6, radius 9px |
+| Feed rules | append-only — corrections are new entries, the wrong one stays visible |
+| Live region | arriving notifications announce via aria-live=polite; the panel itself is role=dialog |
+
+### Destructive confirmation
+
+_3 levels — undo toast · plain dialog · type to confirm_
+
+| Property | Value |
+|---|---|
+| Level 1 | reversible: no dialog at all — toast with Undo and a 3px meter, 10s window |
+| Level 2 | serious but recoverable: plain dialog, destructive OUTLINE button 1px #F9C4BE / #B42318 |
+| Level 3 | irreversible: type-to-confirm dialog, primary stays disabled until the string matches |
+| Dialog | max-w 428px · radius 14px · #FFF · shadow 0 24px 60px rgba(16,24,40,.28) · scrim rgba(16,24,40,.45) |
+| Header | 32px radius-9 #FEE2E2 / #B42318 ! tile + 15.5px / 700 title ending in a question mark |
+| Body | 13px / 1.5 #344054 — what happens, to whom, and whether it can be undone. Never Are you sure |
+| Impact strip | #FFF6F5 · 1px #F7D6D1 · radius 10px · 12px #B42318 — the count of affected things |
+| Confirm label | 12.5px / 500 with the identifier inline in mono 700 #1E2532 — the LTO number, never the word DELETE |
+| Confirm input | 38px mono · error ring while partial · 11.5px / 500 #B42318 reason below (Does not match yet) |
+| Blocked button | 1px #F9C4BE on #FFF6F5 with #E9A19B text, cursor not-allowed — visible, not hidden |
+| Matching | trim whitespace, compare case-insensitively · no shake, no toast, no auto-submit |
+| Footer | 13px 20px · 1px top #EEF1F6 · #FAFBFD · Cancel then the destructive action, right-aligned |
+| Focus | opens on Cancel (never the destructive button) · Esc cancels · focus returns to the trigger |
+
+### Keyboard shortcuts
+
+_? opens the sheet · sequences not chords · suspended in fields_
+
+| Property | Value |
+|---|---|
+| Contract | listed here means bound everywhere; not listed means not bound |
+| Sheet | max-w 620px · radius 14px · shadow 0 24px 60px rgba(16,24,40,.28) · groups auto-fit minmax(250px,1fr) gap 22px |
+| Keycap | 11px mono #344054 · pad 3px 7px · radius 6px · #FFF · 1px #E4E8EF · shadow 0 1px 0 #E4E8EF |
+| Row | label 13px #344054 left, caps right · pad 8px 0 · 1px bottom #F5F7FA |
+| Separator | encodes the relationship: + (10px #98A2B3) for a true chord, italic then for a sequence, italic or for alternates — never one separator for all three |
+| Group label | 10.5px / 700 / 0.08em #5A6577 — GLOBAL, NAVIGATE, TABLE, RECORD |
+| Global | / search · ⌘K palette · ? this sheet · Esc close or cancel |
+| Navigate | g then l issued · g then a applications · g then f facilities · [ toggles the rail |
+| Table | ↑↓ rows · ↵ open · space expand · x select · ⌘A select all shown |
+| Record | ⌘+↵ save and continue · ⌥+→ / ⌥+← steps · u upload · ⌘+S sign |
+| Sequences | navigation is two keys in sequence, never a chord — chords only for save and select-all |
+| Suspension | single-letter bindings are off while an input, textarea, or contenteditable has focus |
+| Platform | ⌘ is Ctrl and ⌥ is Alt on Windows, stated in the footer |
+| Discovery | ? opens it and the account menu links it · Print this sheet renders greyscale-safe |
+
+### Print & PDF preview
+
+_true-aspect A4 · preview is the print path · invalid output blocked_
+
+| Property | Value |
+|---|---|
+| Page | A4 portrait at true 210:297 aspect, any scale · 20mm margins shown as a 1px dashed #EEF1F6 guide |
+| Desk | #EEF1F6 around the sheet · sheet #FFF with shadow 0 8px 24px rgba(16,24,40,.16), square corners |
+| Toolbar | 10px 14px · #FAFBFD · size select + orientation segmented left · page count and zoom right |
+| Controls | 30px selects, 1px #D5DBE6, radius 8px · segmented 3px shell #F4F6FA with a #FFF active tile |
+| Footer | 12px 14px · 1px top #EEF1F6 · content toggles left · Download PDF outline + Print --grad-primary right |
+| Certificate | logo tile top-left · LICENSE TO OPERATE 0.1em #177236 centred · mono LTO number · signature block and QR pinned bottom |
+| Unsigned | #FFFCF4 · 1px #F4E4C4 notice · preview watermarked · Print disabled 1px #EEF1F6 / #B9C1D1 · Sign now beside it |
+| Batch | page thumbnails at 210/297 aspect, active 1px #177236 + 2px ring, overflow tile +N dashed #CBD3E0 |
+| Batch output | one single-page PDF per licence, named by LTO number, delivered zipped — never one merged file |
+| Fidelity | preview and print share markup and stylesheet with one page box — if they can disagree, the preview is decoration |
+| Blocking | unsigned or expired certificates cannot reach the tray; the fix is one button away in the notice |
+
 ### Forms & validation
 
 _12-col grid · 16px/24px gutter · error replaces help text in place_
@@ -1120,7 +1274,7 @@ _single rail breakpoint · tables scroll · 44px on touch_
 
 ### Dark mode
 
-_data-theme=\"dark\" · same geometry · dark text on the green fill_
+_data-theme="dark" · same geometry · dark text on the green fill_
 
 | Property | Value |
 |---|---|
@@ -1152,6 +1306,18 @@ _data-theme=\"dark\" · same geometry · dark text on the green fill_
 | Empty state | 1px dashed #384556 · title #E8ECF3 · sub #9AA5B5 (1.6px dashed is the dropzone only) |
 | Skeleton | 11px bars #222B38 on #161C26 · 3 rows max |
 | Pagination | active #2FB25F/#0B1017 · idle 1px #384556/#C3CCDA · disabled #6F7B8C |
+| Rail | #161C26 · 1px right #2A3441 · brand rule + footer rule #222B38 · footer #1C242F |
+| Logo tile | --logo-tile #2FB25F / --logo-tile-on #0B1017 — the #14532D/#D9F2C4 pair goes muddy on dark |
+| Nav item | #C3CCDA · hover #222B38 with #E8ECF3 text |
+| Nav active | linear-gradient(180deg,#2FB25F,#249A4F) with #0B1017 / 700 = 6.95:1 |
+| Item mark | 13px · 1.8px #55606F (decorative, paired with a text label) |
+| Nav badge | rgba(229,72,77,.18) / #FF9B95 · on active rgba(11,16,23,.28) / #0B1017 |
+| Collapsed dot | 7px #E5484D · 2px #161C26 ring (light uses a 2px #FFF ring) |
+| Group header | 10.5px / 700 / 0.1em #9AA5B5 |
+| Header | rgba(22,28,38,.75) · blur 6px · 1px #2A3441 · pad 12px 32px |
+| Breadcrumb | #9AA5B5 · separator #55606F · current #E8ECF3 |
+| Icon button | 34px · #1C242F · 1px #2A3441 · #C3CCDA glyph |
+| Avatar | 34px #2A3441 with #C3CCDA initials · 2px #161C26 + 1px #2A3441 ring |
 | Unchanged | every height, radius, padding, gap, weight and font — palette only |
 
 ### Type & layout
@@ -1295,6 +1461,24 @@ _DM Sans 400/500/700 · JetBrains Mono for copyable values_
   past its card and the `overflow-x: auto` container inside it never constrained anything. Nothing
   errored — the card simply overflowed, and only the layout gate saw it. Any block name that
   collides with a utility (`grid`, `flex`, `block`, `contents`) carries the same risk.
+
+- **2026-08-31 — three inferred dark values were wrong, and the artifact graded them.** When
+  `AppSidebar`/`AppHeader` were built, Appendix C's Dark mode group carried no app-shell rows, so
+  five tokens were inferred from the file's own patterns and commented as inferred. The second
+  artifact update added twelve such rows. `--nav-ink` (`#C3CCDA`) and `--row-hover-strong`
+  (`#222B38`) were right; `--item-mark` (guessed `#6F7B8C`, redline `#55606F`), `--avatar-bg`
+  (guessed `#222B38`, redline `#2A3441`) and `--separator` (guessed `#384556`, redline `#55606F`)
+  were not. Worse, `--green-900`/`--logo-ink` had been ALLOWLISTED as "a dark green that reads on
+  both canvases"; the redline says the opposite outright — "the `#14532D`/`#D9F2C4` pair goes muddy
+  on dark" — and flips the tile to `#2FB25F`/`#0B1017`. All corrected; the allowlist shrank by two.
+  **An inferred value is a placeholder, not a decision: label it and re-check it when the source
+  moves.**
+- **2026-08-31 — parsing the artifact's `specData` by bracket depth is wrong.** A row value can
+  contain a literal `[` (the `[` shortcut key does), and `Dark mode`'s summary contains a
+  doubly-escaped quote that any ordinary string regex mis-reads — either one silently merges a
+  group into its neighbour. Split on `{ name: "…", summary:` boundaries and do not try to parse the
+  summary. The first pass at this reported `Keyboard shortcuts` as 241 rows and `Responsive & touch`
+  as 68; both were absorbing their successors.
 
 ## Appendix D — demo page content
 

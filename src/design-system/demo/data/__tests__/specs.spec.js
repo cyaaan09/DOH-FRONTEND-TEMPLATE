@@ -17,10 +17,10 @@ describe('generated spec data', () => {
   })
 
   it('carries every Appendix C group the artifact shows', () => {
-    // 22 since the 2026-08-31 artifact update added Layout primitives,
-    // Stepper and Forms & validation, and grew Tables 14 -> 30 and
-    // App shell 16 -> 18.
-    expect(SPEC_GROUPS).toHaveLength(22)
+    // 30 after the second 2026-08-31 artifact update, which added eight more
+    // groups (Date picker … Print & PDF preview) and grew Dark mode 29 -> 41
+    // with the app-shell rows.
+    expect(SPEC_GROUPS).toHaveLength(30)
     expect(SPEC_GROUPS[0].name).toBe('Containers & surfaces')
     expect(SPEC_GROUPS[0].summary).toBe('canvas #EEF1F6 · card #FFF radius 14 · sunken #FAFBFD')
     expect(SPEC_GROUPS.at(-1).name).toBe('Type & layout')
@@ -28,6 +28,7 @@ describe('generated spec data', () => {
       expect(SPEC_GROUPS.map((g) => g.name)).toContain(name)
     }
     expect(SPEC_GROUPS.find((g) => g.name === 'Tables').rows).toHaveLength(30)
+    expect(SPEC_GROUPS.find((g) => g.name === 'Dark mode').rows).toHaveLength(41)
   })
 
   it('marks a swatch only where the value IS a colour', () => {

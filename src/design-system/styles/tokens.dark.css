@@ -108,13 +108,20 @@
   --toast-border-amber:  rgba(240,192,112,.45);
   --toast-border-blue:   rgba(143,184,255,.45);
 
-  /* App shell — these were allowlisted as "no consumer" until AppSidebar and
-     AppHeader were built on 2026-08-31. The rail is a --surface card on the
-     dark canvas, so its text and marks take the dark neutrals. --logo-ink
-     stays: it sits on the dark-green logo tile, which does not flip. */
-  --nav-ink: #C3CCDA;          /* rail item label, matching --ink-700 */
-  --item-mark: #6F7B8C;        /* decorative mark, the dark decorative step */
-  --avatar-bg: #222B38;        /* the control shell, not a pale tint */
-  --separator: #384556;        /* breadcrumb slash, the dark border colour */
-  --row-hover-strong: #222B38;
+  /* App shell. These were inferred when AppSidebar and AppHeader were built,
+     because Appendix C's Dark mode group carried no app-shell rows yet. The
+     2026-08-31 artifact update added twelve, and graded the guesses: --nav-ink
+     and --row-hover-strong were right, the other three were not. The redlined
+     values win. */
+  --nav-ink: #C3CCDA;          /* redline "Nav item · #C3CCDA" — inferred right */
+  --row-hover-strong: #222B38; /* redline "Nav item · hover #222B38" — right */
+  --item-mark: #55606F;        /* redline "Item mark · 1.8px #55606F"; inferred #6F7B8C */
+  --avatar-bg: #2A3441;        /* redline "Avatar · 34px #2A3441"; inferred #222B38 */
+  --separator: #55606F;        /* redline "Breadcrumb · separator #55606F"; inferred #384556 */
+
+  /* The logo tile FLIPS. It was allowlisted as "a dark green that reads on
+     both canvases" — the redline says the opposite in as many words: "the
+     #14532D/#D9F2C4 pair goes muddy on dark". */
+  --green-900: #2FB25F;
+  --logo-ink: #0B1017;
 }
