@@ -121,4 +121,37 @@ describe('Switch', () => {
     await off.get('input[type="checkbox"]').trigger('click')
     expect(off.emitted('update:modelValue')).toBeUndefined()
   })
+
+  it('puts the label before the track in DOM order', () => {
+    // Appendix D.1 — the artifact's own footnote under this sub-block states
+    // the rule: "Switch sits right of its label". It was built control-first
+    // (mirroring Checkbox and Radio), which inverts the row, and every
+    // existing assertion above still passed because none of them looks at
+    // order. compareDocumentPosition is the direct expression of the rule;
+    // asserting on classes would not have caught it.
+    const wrapper = mountSwitch({ hint: 'Digest at 6 PM, weekdays only' })
+    const label = wrapper.get('[data-label]').element
+    const track = wrapper.get('[data-track]').element
+     
+    const labelPrecedesTrack = Boolean(
+      label.compareDocumentPosition(track) & Node.DOCUMENT_POSITION_FOLLOWING,
+    )
+    expect(labelPrecedesTrack).toBe(true)
+  })
+
+  it('sets the label at the switch weight, and dims it when disabled', () => {
+    // Appendix D.1's per-control type table — a switch label is 13.5/500
+    // --ink-900, NOT the 13.5/400 --ink-700 the plain checkbox and radio
+    // rows use, and drops to --ink-200 disabled. Spread to classList rather
+    // than substring-matching className: 'text-ink-900'.includes('text-ink-9')
+    // style false positives are a live hazard in this repo.
+    const on = [...mountSwitch().get('[data-label]').element.classList]
+    expect(on).toContain('font-medium')
+    expect(on).toContain('text-ink-900')
+    expect(on).not.toContain('text-ink-700')
+
+    const off = [...mountSwitch({ disabled: true }).get('[data-label]').element.classList]
+    expect(off).toContain('text-ink-200')
+    expect(off).not.toContain('text-ink-900')
+  })
 })

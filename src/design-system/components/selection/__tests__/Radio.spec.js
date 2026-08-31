@@ -135,4 +135,12 @@ describe('Radio', () => {
       wrapper.unmount()
     }
   })
+
+  it('dims a disabled option label', () => {
+    // Appendix D.1 — a disabled label drops to --ink-200; previously every
+    // label rendered at --ink-700 and only the control dimmed.
+    const labels = mountRadio().findAll('[data-label]')
+    expect([...labels[0].element.classList]).toContain('text-ink-700')
+    expect([...labels[labels.length - 1].element.classList]).toContain('text-ink-200')
+  })
 })

@@ -36,6 +36,12 @@ function hintId(index) {
   return `${groupId}-hint-${index}`
 }
 
+// Appendix D.1 — a disabled label drops to --ink-200. Previously every
+// label rendered at --ink-700 regardless, so only the control dimmed.
+function labelClass(option) {
+  return option.disabled ? 'text-ink-200' : 'text-ink-700'
+}
+
 // One branch per state, each setting every property it owns — never a base
 // class plus an override, which is this project's recurring defect.
 function controlClass(option) {
@@ -107,9 +113,12 @@ function dotClass(option) {
 
       <span class="radio__text min-w-0">
         <!-- Redline "Label" — 13.5/400 ink-700, 10px from the control. -->
-        <RadioGroupItemText data-label class="radio__label block text-body text-ink-700">{{
-          option.label
-        }}</RadioGroupItemText>
+        <RadioGroupItemText
+          data-label
+          class="radio__label block text-body"
+          :class="labelClass(option)"
+          >{{ option.label }}</RadioGroupItemText
+        >
         <span
           v-if="option.hint"
           :id="hintId(index)"

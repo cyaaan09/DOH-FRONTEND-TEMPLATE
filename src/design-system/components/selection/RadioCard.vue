@@ -42,6 +42,13 @@ function isChosen(option) {
 // the reverse of cardClass below, which keeps dot invisibility tied only to
 // chosen-ness regardless of which other branch runs (Radio.vue's own
 // comment on this same ordering).
+// Appendix D.1's per-control type table — a card label is 13.5/500
+// --ink-900, unlike the plain radio list's 13.5/400 --ink-700, and drops to
+// --ink-200 disabled.
+function labelClass(option) {
+  return option.disabled ? 'text-ink-200' : 'text-ink-900'
+}
+
 function controlClass(option) {
   if (option.disabled) return 'bg-surface-disabled border-soft'
   if (isChosen(option)) return 'bg-surface border-green-fill'
@@ -85,44 +92,47 @@ function cardClass(option) {
       data-card
       :value="option.value"
       :disabled="option.disabled"
-      class="card flex flex-col border"
+      class="card flex items-start border"
       :class="cardClass(option)"
     >
-      <span class="radiocard__row flex items-start">
-        <!-- Redline "Radio" — same control token as Radio.vue: 17x17,
-             rounded fully, 1.8px border set in the style block below. -->
-        <RadioGroupItemControl
-          data-control
-          class="radiocard__control grid h-check w-check flex-none place-items-center rounded-pill border"
-          :class="controlClass(option)"
-        >
-          <span
-            data-dot
-            aria-hidden="true"
-            class="radiocard__dot rounded-pill"
-            :class="dotClass(option)"
-          />
-        </RadioGroupItemControl>
+      <!-- Appendix D.1 — the card is ONE flex row of three children
+           (control, text, marker) with an 11px gap, not a column wrapping a
+           row. Built as a column, the "Selected" marker stacked under the
+           hint instead of sitting at the card's right edge. -->
+      <!-- Redline "Radio" — same control token as Radio.vue: 17x17,
+           rounded fully, 1.8px border set in the style block below. -->
+      <RadioGroupItemControl
+        data-control
+        class="radiocard__control grid h-check w-check flex-none place-items-center rounded-pill border"
+        :class="controlClass(option)"
+      >
+        <span
+          data-dot
+          aria-hidden="true"
+          class="radiocard__dot rounded-pill"
+          :class="dotClass(option)"
+        />
+      </RadioGroupItemControl>
 
-        <span class="radiocard__text min-w-0">
-          <!-- Redline "Label" — 13.5/400 ink-700, 10px from the control,
-               reused from Radio.vue unchanged. -->
-          <RadioGroupItemText
-            data-label
-            class="radiocard__label block text-body text-ink-700"
-            >{{ option.label }}</RadioGroupItemText
-          >
-          <span
-            v-if="option.hint"
-            :id="hintId(index)"
-            data-hint
-            class="radiocard__hint block text-hint text-text-meta"
-            >{{ option.hint }}</span
-          >
-        </span>
+      <span class="radiocard__text min-w-0 flex-1">
+        <RadioGroupItemText
+          data-label
+          class="radiocard__label block text-body font-medium"
+          :class="labelClass(option)"
+          >{{ option.label }}</RadioGroupItemText
+        >
+        <span
+          v-if="option.hint"
+          :id="hintId(index)"
+          data-hint
+          class="radiocard__hint block text-hint text-text-meta"
+          >{{ option.hint }}</span
+        >
       </span>
 
-      <!-- Appendix D.1 — the chosen radio card carries a "Selected" marker.
+      <!-- Appendix D.1 — the chosen card's "Selected" marker is an inline
+           pill at the row's right edge (--green-100 on --green-text at the
+           11/700 chip step), the row's third flex child at flex:none.
            Not aria-hidden: Ark's getItemHiddenInputProps() points the
            input's aria-labelledby at RadioGroupItemText's id specifically
            (confirmed in @zag-js/radio-group's connect module), not at this
@@ -132,7 +142,7 @@ function cardClass(option) {
       <span
         v-if="isChosen(option)"
         data-selected-marker
-        class="radiocard__marker block text-hint font-bold text-green-text"
+        class="radiocard__marker flex-none rounded-pill bg-green-100 text-chip text-green-text"
         >Selected</span
       >
 
@@ -142,20 +152,25 @@ function cardClass(option) {
 </template>
 
 <style scoped>
-/* Redline "Row gap" — 11px between items, reused from Radio.vue unchanged;
-   applies between cards, not within one. */
+/* Appendix D.1's row-gap table — cards sit 8px apart, not the 11px the
+   plain checkbox and radio lists use. Applies between cards, not within
+   one; the 11px inside a card is `.card`'s own flex gap below. */
 .radiocard {
-  gap: 11px;
+  gap: 8px;
 }
 
 /* Redline "Card" — pad 13px 14px, radius 11px (no token: --r-panel is 12px,
-   --r-card is 14px), internal gap 11px between this card's own content row
-   and its Selected marker. */
+   --r-card is 14px). The 11px gap now separates the row's three children —
+   control, text, marker — since the card is a single flex row. */
 .card {
   padding: 13px 14px;
   border-radius: 11px;
   gap: 11px;
   cursor: pointer;
+  /* Appendix D.1 — selectCardStyle sets user-select:none and transitions
+     only border-color, at the 120ms control duration. */
+  user-select: none;
+  transition: border-color var(--t-control) ease;
 }
 
 .card[data-disabled] {
@@ -179,11 +194,9 @@ function cardClass(option) {
   height: 8px;
 }
 
-/* Redline "Label" — gap 10px between control and text, reused from
-   Radio.vue unchanged. */
-.radiocard__text {
-  margin-left: 10px;
-}
+/* Appendix D.1 — the control-to-text gap is the card's own 11px flex gap
+   (above), not a margin on the text: with the marker as a third child, a
+   margin here would apply to the wrong edge. */
 
 /* Redline "Focus ring" — :focus-visible -> border var(--green-500) + ring.
    Targets the control directly via [data-focus-visible], scoped per item by
@@ -205,3 +218,6 @@ function cardClass(option) {
   margin-top: 2px;
 }
 </style>
+
+/* Appendix D.1 — the marker pill: pad 3px 9px on --green-100. Its radius and type come from the
+shared rounded-pill / text-chip utilities. */ .radiocard__marker { padding: 3px 9px; }

@@ -209,4 +209,29 @@ describe('RadioCard', () => {
       wrapper.unmount()
     }
   })
+
+  it('hangs the Selected marker off the card row, not inside the text column', () => {
+    // Appendix D.1 — the marker is the card row's THIRD flex child at
+    // flex:none, so it sits at the card's right edge. It was built as a
+    // block below the text column, which is where the screenshot showed it.
+    // Structure, not classes: the old build carried the same green type and
+    // still rendered in the wrong place.
+    const card = mountCards().findAll('[data-card]')[1]
+    const marker = card.get('[data-selected-marker]')
+    const text = card.get('[data-label]').element.parentElement
+    expect(text.contains(marker.element)).toBe(false)
+    expect(marker.element.parentElement).toBe(card.element)
+    const cls = [...marker.element.classList]
+    expect(cls).toContain('flex-none')
+    expect(cls).toContain('bg-green-100')
+  })
+
+  it('sets a card label at the card weight, unlike a plain radio row', () => {
+    // Appendix D.1's per-control type table — 13.5/500 --ink-900 in a card
+    // against 13.5/400 --ink-700 in the plain list.
+    const cls = [...mountCards().get('[data-label]').element.classList]
+    expect(cls).toContain('font-medium')
+    expect(cls).toContain('text-ink-900')
+    expect(cls).not.toContain('text-ink-700')
+  })
 })

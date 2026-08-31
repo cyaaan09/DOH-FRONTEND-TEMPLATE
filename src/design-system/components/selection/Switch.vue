@@ -32,6 +32,12 @@ const hintId = `${useId()}-hint`
 // "Track on / off": --green-fill on, --border-field off (the bridge exposes
 // the border-field token as `bg-field`; `bg-border-field` emits nothing),
 // --ink-100 disabled.
+// Appendix D.1's per-control type table — the switch label is 13.5/**500**
+// --ink-900, not the 13.5/400 --ink-700 the plain checkbox and radio rows
+// use, and drops to --ink-200 disabled. Appendix C's single "Label" row
+// describes the plain lists only; reusing it here was the original error.
+const labelClass = computed(() => (props.disabled ? 'text-ink-200' : 'text-ink-900'))
+
 const trackClass = computed(() => {
   if (props.disabled) return 'bg-ink-100'
   if (props.modelValue) return 'bg-green-fill'
@@ -46,6 +52,30 @@ const trackClass = computed(() => {
     class="switch flex items-start"
     @checked-change="(details) => emit('update:modelValue', details.checked)"
   >
+    <!-- Appendix D.1 — the text span comes FIRST and the track second: the
+         artifact's own footnote under this sub-block states the rule ("Switch
+         sits right of its label — nothing to submit, so nothing to scan back
+         to."). It was built control-first, mirroring Checkbox and Radio,
+         which inverts the row. flex:1 + min-width:0 lets a long hint wrap
+         instead of pushing the track off the row. -->
+    <span class="switch__text min-w-0 flex-1">
+      <!-- Redline "Label" — 13.5/500 --ink-900 (see labelClass), 14px from
+           the track via the root's own gap. -->
+      <SwitchLabel
+        data-label
+        class="switch__label block text-body font-medium"
+        :class="labelClass"
+        >{{ label }}</SwitchLabel
+      >
+      <span
+        v-if="hint"
+        :id="hintId"
+        data-hint
+        class="switch__hint block text-hint text-text-meta"
+        >{{ hint }}</span
+      >
+    </span>
+
     <!-- Redline "Switch track" — 38x22px, radius 999px (the rounded-pill
          utility), pad 2px; geometry set in the style block below since no
          token carries it. The knob's position (data-state driven) lives
@@ -56,20 +86,6 @@ const trackClass = computed(() => {
            mode. Size and shadow have no token and are set below. -->
       <SwitchThumb data-knob class="switch__knob bg-surface rounded-pill" />
     </SwitchControl>
-
-    <span class="switch__text min-w-0">
-      <!-- Redline "Label" — 13.5/400 ink-700, 10px from the track. -->
-      <SwitchLabel data-label class="switch__label block text-body text-ink-700">{{
-        label
-      }}</SwitchLabel>
-      <span
-        v-if="hint"
-        :id="hintId"
-        data-hint
-        class="switch__hint block text-hint text-text-meta"
-        >{{ hint }}</span
-      >
-    </span>
 
     <!-- Redline "Switch" (ARIA & semantics) — role=switch aria-checked, not
          a checkbox. Ark's hidden input is a plain <input type="checkbox">;
@@ -102,6 +118,10 @@ const trackClass = computed(() => {
   width: 38px;
   height: 22px;
   padding: 2px;
+  /* Appendix D.1 — the artifact offsets the track 1px down so its centre
+     lines up with the cap height of the 13.5px label beside it, rather than
+     with the label box's top edge. */
+  margin-top: 1px;
   transition:
     background-color var(--t-control) ease,
     justify-content var(--t-control) ease;
@@ -124,10 +144,10 @@ const trackClass = computed(() => {
   box-shadow: 0 1px 2px rgba(16, 24, 40, 0.2);
 }
 
-/* Redline "Label" — gap 10px between track and text. */
-.switch__text {
-  margin-left: 10px;
-}
+/* Appendix D.1 — 14px between the text and the track, expressed as the
+   row's own flex gap rather than a margin on either child, so it holds in
+   the label-left/track-right order regardless of which child moves. The
+   plain checkbox and radio rows keep their 10px; this row is wider. */
 
 /* Appendix D's Selection controls description — "whole row clickable".
    Lives on the root, not .switch__track: a cursor declared directly on the
@@ -137,7 +157,11 @@ const trackClass = computed(() => {
    it. Matches Checkbox's identical fix and Radio's/RadioCard's existing
    row/card-level cursor. */
 .switch {
+  gap: 14px;
   cursor: pointer;
+  /* Appendix D.1 — the artifact's switch row sets user-select:none. Dragging
+     across a whole-row-clickable control otherwise selects its label text. */
+  user-select: none;
 }
 
 .switch[data-disabled] {

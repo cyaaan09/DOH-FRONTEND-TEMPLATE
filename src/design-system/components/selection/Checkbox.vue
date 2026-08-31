@@ -22,6 +22,16 @@ const props = defineProps({
    * attribute — see Checkbox.spec.js "exposes the mixed state...".
    */
   indeterminate: { type: Boolean, default: false },
+  /**
+   * Renders the label at the card weight. Appendix D.1's per-control type
+   * table: a plain list row is 13.5/400 --ink-700, but the same control
+   * inside a CheckboxCard is 13.5/500 --ink-900. CheckboxCard composes this
+   * component rather than re-rendering Ark's parts, so the weight has to
+   * arrive as a prop — a :deep() override in the card would set font-weight
+   * and color a second time, which is exactly the two-declarations-per-
+   * property pattern this codebase keeps regressing on.
+   */
+  emphasis: { type: Boolean, default: false },
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -33,6 +43,17 @@ const emit = defineEmits(['update:modelValue'])
 // aria-describedby, a hint is in neither the name nor the description, and
 // is silent on focus.
 const hintId = `${useId()}-hint`
+
+// One branch per state, each naming both properties it owns. Appendix D.1:
+// disabled labels drop to --ink-200 in every selection control, which this
+// component previously never did — the label stayed at full --ink-700 while
+// only the box dimmed.
+const labelClass = computed(() => {
+  const weight = props.emphasis ? 'text-body font-medium' : 'text-body'
+  return props.disabled
+    ? `${weight} text-ink-200`
+    : `${weight} ${props.emphasis ? 'text-ink-900' : 'text-ink-700'}`
+})
 
 // Ark models the tri-state as a value of true | false | 'indeterminate'.
 const checked = computed(() => (props.indeterminate ? 'indeterminate' : props.modelValue))
@@ -80,8 +101,13 @@ const boxClass = computed(() => {
     </CheckboxControl>
 
     <span class="checkbox__text min-w-0">
-      <!-- Redline "Label" — 13.5/400 ink-700, 10px from the box. -->
-      <CheckboxLabel data-label class="checkbox__label block text-body text-ink-700">{{
+      <!-- Appendix D.1's per-control type table — 13.5/400 --ink-700 in a
+           plain list, 13.5/500 --ink-900 under `emphasis` (the card), and
+           --ink-200 disabled in both. `text-body font-medium` is Tailwind's
+           documented font-size/font-weight override pairing, not a competing
+           declaration: v4 orders font-weight utilities after font-size ones.
+           10px from the box. -->
+      <CheckboxLabel data-label class="checkbox__label block" :class="labelClass">{{
         label
       }}</CheckboxLabel>
       <span

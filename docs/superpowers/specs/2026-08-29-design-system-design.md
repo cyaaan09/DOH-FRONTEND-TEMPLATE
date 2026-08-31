@@ -1106,6 +1106,26 @@ _DM Sans 400/500/700 · JetBrains Mono for copyable values_
 | Table row | pad 13px 20px · 1px #F5F7FA · hover #FAFBFD |
 ---
 
+- **2026-08-31 — the `BULK SELECTION` strip keeps §17.1's padding, not the artifact's.** The
+  artifact pads this one strip `16px 20px` with a 4px inset on its label; §17.1's `DemoStrip` — the
+  page-wide strip treatment, already carrying five other strips — pads `18px 24px 22px` with no
+  inset. Following the artifact here would make this the only strip on the page at a different
+  gutter, a worse inconsistency than the 2–4px it fixes. Deliberate; the label's own
+  `margin-bottom: 10px` already matches `DemoStrip`.
+- **2026-08-31 — `CheckboxCard`'s control-to-text gap is 10px, not the card's 11px.** The artifact's
+  card is one flex row at `gap: 11px`, which sets the distance from the box to the label.
+  `CheckboxCard` composes `Checkbox` rather than re-rendering Ark's parts, so that distance comes
+  from `Checkbox`'s own 10px `margin-left`. `RadioCard`, which does render its own parts, gets the
+  11px right. Closing the 1px would mean either duplicating Ark's checkbox wiring in the card or
+  making the gap a `Checkbox` prop; neither is worth 1px.
+- **2026-08-31 — `DemoBlock`'s label gap is 4px page-wide, and the source page never uses 4px.**
+  §17.1 redlines `margin-bottom 4px`. Scanning every uppercase sub-block label in the artifact gives
+  `2px` (Tabs), `10px` (Containers, and the bulk strip), `11px` (three reference sections) and
+  `12px` (Selection controls) — never 4px, so the §17.1 value looks like a bad extraction rather
+  than a real redline. Left alone here: it is page-wide chrome, and changing it inside a
+  Selection-controls fix would silently move every other section. Wants its own pass, with §17.1
+  corrected to a per-section value.
+
 ## Appendix D — demo page content
 
 Extracted verbatim from the source artifact. This is the content authority for the
@@ -1217,6 +1237,72 @@ checkbox, a facility name and a mono licence number:
 | `Trento Primary Care Facility` | `16-015-2527-PCF-1` |
 | `Hipol Family Hospital` | `16-19-26-I-2` |
 | `Socorro Birthing Clinic` | `16-72-26-BH-1` |
+
+
+##### Selection controls → arrangement, footnotes and per-control type
+
+Extracted from the artifact on 2026-08-31 after a visual diff showed the built section
+disagreeing with the source in fifteen places. The sub-block *data* above was right; none of
+what follows had been extracted, so the phase was planned without it.
+
+**The section is three stacked wrappers, not one grid.** `DemoBlocks`' single
+`minmax(268px,1fr)` grid put all six sub-blocks in one auto-fit flow, which floated
+`BULK SELECTION` up as a third column beside the two card blocks:
+
+| # | Wrapper | Contents |
+|---|---|---|
+| 1 | `padding: 18px 24px 6px; display:grid; grid-template-columns: repeat(auto-fit, minmax(268px,1fr)); gap:24px` | `CHECKBOX · STATES`, `RADIO · LIST`, `SWITCH · TAKES EFFECT AT ONCE` |
+| 2 | `padding: 6px 24px 22px; display:grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap:24px` | `CHECKBOX CARDS · MULTI`, `RADIO CARDS · SINGLE` |
+| 3 | `border-top: 1px solid #EEF1F6; padding: 16px 20px; background: #FAFBFD` | `BULK SELECTION — TABLE HEADER + ACTION BAR`, full width |
+
+Wrapper 3 is a **tinted strip**, not a grid cell: `--divider` top rule on `--surface-sunken`.
+Its uppercase label is the only one on the page at `margin-bottom: 10px` **and**
+`padding-left: 4px`; the other five sit at `margin-bottom: 12px` with no inset.
+
+**Three trailing footnotes, one per first-row sub-block.** Each is `12px`, `#667085`,
+`line-height: 1.5`, `margin-top: 12px`, and sits **after** its list of rows — not before it.
+`DemoBlock`'s existing `note` prop renders *above* the slot (correct for `Foundations` and
+`Chips`, which do lead with their notes), so these need a separate trailing slot:
+
+| Sub-block | Footnote |
+|---|---|
+| `CHECKBOX · STATES` | `Parent rows show a dash when only some children are picked.` |
+| `RADIO · LIST` | `Three or fewer short options; more than that becomes a dropdown.` |
+| `SWITCH · TAKES EFFECT AT ONCE` | `Switch sits right of its label — nothing to submit, so nothing to scan back to.` |
+
+**The switch's label sits left of its track.** The row is
+`display:flex; align-items:flex-start; gap:14px; user-select:none` with the **text span first**
+and the track second; the track carries `margin-top: 1px`. The footnote above states this rule
+in so many words, which is how the inversion was caught. Appendix C's `Label` row —
+"13.5/400 ink-700, 10px from the control" — describes the **plain checkbox and radio lists
+only**; it does not govern the switch or either card, and reusing it there was the error.
+
+**Label type differs by control**, which no single redline row captures:
+
+| Control | Size / weight | Colour | Disabled colour | Gap to control |
+|---|---|---|---|---|
+| `Checkbox`, `Radio` (plain lists) | 13.5 / **400** | `--ink-700` | `--ink-200` | 10px |
+| `Switch` | 13.5 / **500** | `--ink-900` | `--ink-200` | **14px**, and on the *right* |
+| `CheckboxCard`, `RadioCard` | 13.5 / **500** | `--ink-900` | `--ink-200` | 11px, the card's own flex `gap` |
+
+There is no 13.5/500 step in the `@theme` scale — `--text-body` is 13.5/400. The 500 rows use
+`text-body font-medium`; Tailwind orders `font-weight` utilities after `font-size` utilities, so
+the pairing is the documented override, not this project's two-competing-classes defect.
+
+**Row gaps between siblings** — 11px for the plain lists, 14px between switches, **8px between
+cards**. The built section reused 11px for the card lists.
+
+**The card is one flex row, not a column.** `selectCardStyle` is
+`display:flex; align-items:flex-start; gap:11px; padding:13px 14px; border-radius:11px;
+cursor:pointer; user-select:none; transition:border-color 120ms`, with three children: the
+control, a `flex:1; min-width:0` text span, and — on the chosen radio card only — the `Selected`
+marker. So the control-to-text gap is the card's own `gap`, never a `margin-left` on the text.
+
+**`Selected` is an inline pill at the card's right edge**, a third flex child at `flex: none`:
+`padding: 3px 9px; border-radius: 999px; background: #E8F6EC; color: #15803D; font-size: 11px;
+font-weight: 700` — i.e. `--green-100` on `--green-text` at the chip step. It was built as a
+block *below* the hint, which is what put it under the text in the screenshot.
+
 
 #### Dropdowns → the four inline demos
 

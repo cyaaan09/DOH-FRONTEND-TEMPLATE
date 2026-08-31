@@ -430,3 +430,49 @@ describe('SelectionSection renders real components, not gaps', () => {
     expect(text).toContain('Select all')
   })
 })
+
+describe('SelectionSection follows the artifact arrangement', () => {
+  it('closes its first three sub-blocks with their footnotes', () => {
+    // Appendix D.1 — three trailing notes, one per first-row sub-block. The
+    // section shipped without them; DemoBlock's `note` prop leads, so these
+    // needed their own trailing slot. Asserting position, not just presence:
+    // a leading note would satisfy a text-only check.
+    const wrapper = mount(SelectionSection)
+    const notes = wrapper.findAll('[data-footnote]').map((n) => n.text())
+    expect(notes).toEqual([
+      'Parent rows show a dash when only some children are picked.',
+      'Three or fewer short options; more than that becomes a dropdown.',
+      'Switch sits right of its label — nothing to submit, so nothing to scan back to.',
+    ])
+    const first = wrapper.findAll('[data-footnote]')[0].element
+    const label = wrapper.findAll('[data-label]')[0].element
+     
+    expect(Boolean(label.compareDocumentPosition(first) & Node.DOCUMENT_POSITION_FOLLOWING)).toBe(
+      true,
+    )
+  })
+
+  it('puts bulk selection in a full-width strip, not the sub-block grid', () => {
+    // Appendix D.1 — the section is three stacked wrappers. Built as one
+    // DemoBlocks, auto-fit floated BULK SELECTION up as a third column
+    // beside the two card blocks, which is what the screenshot showed.
+    const wrapper = mount(SelectionSection)
+    const grids = wrapper.findAll('.demo-blocks')
+    expect(grids).toHaveLength(2)
+    grids.forEach((g) => expect(g.text()).not.toContain('BULK SELECTION'))
+
+    const bulk = wrapper
+      .findAll('[data-label]')
+      .find((el) => el.text().startsWith('BULK SELECTION'))
+    expect(bulk).toBeDefined()
+    expect(bulk.element.closest('.demo-blocks')).toBe(null)
+  })
+
+  it('widens the card row so it holds two columns, not three', () => {
+    // Appendix D.1 — the card grid runs a 300px track against the 268px the
+    // first row uses, which is what keeps the two card blocks side by side.
+    const grids = mount(SelectionSection).findAll('.demo-blocks')
+    expect(grids[0].attributes('style')).toContain('268px')
+    expect(grids[1].attributes('style')).toContain('300px')
+  })
+})

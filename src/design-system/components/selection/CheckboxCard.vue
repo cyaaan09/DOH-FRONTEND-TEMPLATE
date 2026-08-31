@@ -55,6 +55,7 @@ function onCardClick(event) {
     @click="onCardClick"
   >
     <Checkbox
+      emphasis
       :model-value="modelValue"
       :label="label"
       :hint="hint"
@@ -73,6 +74,10 @@ function onCardClick(event) {
   border-radius: 11px;
   gap: 11px;
   cursor: pointer;
+  /* Appendix D.1 — selectCardStyle sets user-select:none and transitions
+     only border-color, at the 120ms control duration. */
+  user-select: none;
+  transition: border-color var(--t-control) ease;
 }
 
 .card[data-disabled] {

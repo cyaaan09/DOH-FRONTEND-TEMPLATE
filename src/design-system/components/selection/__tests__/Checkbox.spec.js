@@ -165,4 +165,22 @@ describe('Checkbox', () => {
       wrapper.unmount()
     }
   })
+
+  it('dims the label when disabled and lifts it inside a card', () => {
+    // Appendix D.1's per-control type table. Both were previously fixed at
+    // text-body/text-ink-700 regardless of state, so a disabled row kept a
+    // full-strength label beside its dimmed box, and a card label sat a
+    // weight and a step lighter than the artifact's.
+    const plain = [...mountBox().get('[data-label]').element.classList]
+    expect(plain).toContain('text-ink-700')
+    expect(plain).not.toContain('font-medium')
+
+    expect([...mountBox({ disabled: true }).get('[data-label]').element.classList]).toContain(
+      'text-ink-200',
+    )
+
+    const card = [...mountBox({ emphasis: true }).get('[data-label]').element.classList]
+    expect(card).toContain('font-medium')
+    expect(card).toContain('text-ink-900')
+  })
 })
