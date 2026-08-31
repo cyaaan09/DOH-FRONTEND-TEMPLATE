@@ -1,0 +1,99 @@
+import { mount } from '@vue/test-utils'
+import { describe, expect, it } from 'vitest'
+import Checkbox from '../Checkbox.vue'
+
+const mountBox = (props = {}) =>
+  mount(Checkbox, { props: { modelValue: false, label: 'Include legacy records', ...props } })
+
+describe('Checkbox', () => {
+  it('renders its label and optional hint', () => {
+    const wrapper = mountBox({ hint: 'Migrated paper licences with no service list' })
+    expect(wrapper.text()).toContain('Include legacy records')
+    expect(wrapper.text()).toContain('Migrated paper licences with no service list')
+  })
+
+  it('omits the hint element when none is given', () => {
+    expect(mountBox().find('[data-hint]').exists()).toBe(false)
+  })
+
+  it('sizes the box from the shared control token', () => {
+    // Redline "Checkbox" — 17x17, radius 5px. --size-check is 17px and bridges
+    // to h-check/w-check; this section is its first consumer.
+    const box = mountBox().get('[data-box]')
+    expect(box.classes()).toContain('h-check')
+    expect(box.classes()).toContain('w-check')
+    expect(box.classes()).toContain('rounded-check')
+  })
+
+  it('fills green when on and stays white when off', () => {
+    // Redlines "Checkbox on" and "Checkbox off". Both branches set background
+    // AND border, so neither is left to Tailwind's emit order.
+    const on = mountBox({ modelValue: true }).get('[data-box]')
+    expect(on.classes()).toContain('bg-green-fill')
+    expect(on.classes()).toContain('border-green-fill')
+    expect(on.classes()).not.toContain('bg-surface')
+
+    const off = mountBox().get('[data-box]')
+    expect(off.classes()).toContain('bg-surface')
+    expect(off.classes()).toContain('border-ink-100')
+    expect(off.classes()).not.toContain('bg-green-fill')
+  })
+
+  it('shows a check when on and a dash when indeterminate', () => {
+    // Redline "Indeterminate" — same fill as on, glyph is a dash.
+    expect(mountBox({ modelValue: true }).get('[data-glyph]').text()).toBe('✓')
+    const mixed = mountBox({ indeterminate: true })
+    expect(mixed.get('[data-glyph]').text()).toBe('–')
+    expect(mixed.get('[data-box]').classes()).toContain('bg-green-fill')
+  })
+
+  it('exposes the mixed state to assistive technology', () => {
+    // WCAG 2.1 AA: an indeterminate box must not announce as merely unchecked.
+    //
+    // Deviates from the task brief here, which targeted `[role="checkbox"]`
+    // and `aria-checked="mixed"`. Confirmed by reading the installed
+    // @zag-js/checkbox and @ark-ui/vue source (see task-1-report.md, "API
+    // risk 1"): no element this component renders ever carries a literal
+    // `role` attribute — CheckboxRoot is a plain `<label>`, CheckboxControl
+    // is `aria-hidden="true"`, and the only element with real checkbox
+    // semantics is the native `<input type="checkbox">` from
+    // CheckboxHiddenInput. Ark exposes the mixed state through that input's
+    // `indeterminate` IDL property (set imperatively by the zag machine's
+    // `syncInputElement` action), which is how native checkboxes report
+    // "mixed" to assistive technology — there is no `aria-checked` attribute
+    // to read, on this element or any other.
+    const input = mountBox({ indeterminate: true }).get('input[type="checkbox"]')
+    expect(input.element.indeterminate).toBe(true)
+  })
+
+  it('dresses the disabled state distinctly from both on and off', () => {
+    // Redline "Disabled" — its own fill, border and glyph colour.
+    const box = mountBox({ disabled: true, modelValue: true }).get('[data-box]')
+    expect(box.classes()).toContain('bg-surface-disabled')
+    expect(box.classes()).toContain('border-soft')
+    expect(box.classes()).toContain('text-ink-200')
+    expect(box.classes()).not.toContain('bg-green-fill')
+  })
+
+  it('emits update:modelValue when toggled', async () => {
+    // Targets the native hidden input rather than `[role="checkbox"]` — see
+    // "exposes the mixed state to assistive technology" above. This is the
+    // element that actually carries the click handler wiring `CHECKED.SET`.
+    const wrapper = mountBox()
+    await wrapper.get('input[type="checkbox"]').trigger('click')
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([true])
+  })
+
+  it('does not emit when disabled', async () => {
+    const wrapper = mountBox({ disabled: true })
+    await wrapper.get('input[type="checkbox"]').trigger('click')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+  })
+
+  it('labels at the body step in the ink-700 grey', () => {
+    // Redline "Label" — 13.5/400, #344054.
+    const label = mountBox().get('[data-label]')
+    expect(label.classes()).toContain('text-body')
+    expect(label.classes()).toContain('text-ink-700')
+  })
+})
