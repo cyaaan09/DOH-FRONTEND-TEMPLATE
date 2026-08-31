@@ -120,12 +120,36 @@ describe('DemoStrip', () => {
     expect(classes).toContain('border-divider')
   })
 
-  it('pads at spec §17.1: 18px top, 24px sides, 22px bottom', () => {
-    // Redlined pad "18px 24px 22px" (px-card-x=24, pt-4.5=18, pb-5.5=22).
-    const classes = mount(DemoStrip, { props: { label: 'INTERACTIVE — FILTER CHIPS' } }).classes()
-    expect(classes).toContain('px-card-x')
-    expect(classes).toContain('pt-4.5')
-    expect(classes).toContain('pb-5.5')
+  it('pads at spec §17.1 by default, and takes the plain Tabs variant', () => {
+    // Redlined pad "18px 24px 22px" on --surface-sunken. Appendix D.1 — Tabs
+    // runs the same block untinted, undivided and with its own padding, so
+    // those are props; the tinted default stays what Chips and Toasts use.
+    const base = mount(DemoStrip, { props: { label: 'INTERACTIVE — FILTER CHIPS' } })
+    expect(base.classes()).toContain('px-card-x')
+    expect(base.classes()).toContain('bg-surface-sunken')
+    expect(base.classes()).toContain('border-t')
+    expect(base.attributes('style')).toContain('--ds-pt: 18px')
+    expect(base.attributes('style')).toContain('--ds-pb: 22px')
+
+    const plain = mount(DemoStrip, {
+      props: { label: 'UNDERLINE', tinted: false, divided: false, pt: '20px', pb: '4px' },
+    })
+    expect(plain.classes()).not.toContain('bg-surface-sunken')
+    expect(plain.classes()).not.toContain('border-t')
+    expect(plain.attributes('style')).toContain('--ds-pt: 20px')
+  })
+
+  it('tightens the label gap when a leading note is present', () => {
+    // Appendix D.1's Tabs blocks — label mb 2px, note 12.5px mb 8px. Without
+    // a note the label keeps §17.1's 10px.
+    const bare = mount(DemoStrip, { props: { label: 'X' } })
+    expect(bare.get('[data-label]').classes()).toContain('mb-2.5')
+    expect(bare.find('[data-note]').exists()).toBe(false)
+
+    const noted = mount(DemoStrip, { props: { label: 'X', note: 'Use at the top of a table card.' } })
+    expect(noted.get('[data-label]').classes()).toContain('mb-0.5')
+    expect(noted.get('[data-note]').classes()).toContain('text-caption')
+    expect(noted.get('[data-note]').classes()).toContain('mb-2')
   })
 
   it('renders its label and slot', () => {

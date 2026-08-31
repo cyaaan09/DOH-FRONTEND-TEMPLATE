@@ -529,3 +529,99 @@ describe('FieldsSection carries the artifact\'s seven demos', () => {
     expect(wrapper.find('.fields-section__wide').exists()).toBe(true)
   })
 })
+
+describe('carry-forward audit: arrangement the earlier sections were built without', () => {
+  it('DropdownsSection draws the inline filter\'s field name', () => {
+    // Appendix D.1 — the InlineFilter trigger reads "Status: All". The name
+    // comes from the component, not the section, which is why a text scan of
+    // the section file alone reports it missing.
+    expect(mount(DropdownsSection).text()).toContain('Status:')
+  })
+
+  it('DropdownsSection runs the 260px track it was already specced for', () => {
+    // D.1 recorded 260px / gap 20px 24px / align-items:start when Dropdowns
+    // was built, and the build used §17.1's 268px default anyway.
+    const grid = mount(DropdownsSection).get('.demo-blocks')
+    expect(grid.attributes('style')).toContain('--db-min: 260px')
+    expect(grid.attributes('style')).toContain('--db-gap: 20px 24px')
+    expect(grid.classes()).toContain('items-start')
+  })
+
+  it('TabsSection runs three plain blocks, each leading with its note', () => {
+    // Appendix D.1 — Tabs' blocks are NOT the sunken strips Chips and Toasts
+    // use; they sit on the card surface, and the first carries no top rule
+    // because it opens the body. All three shipped tinted and note-less.
+    const wrapper = mount(TabsSection)
+    const strips = wrapper.findAll('.demo-strip')
+    expect(strips).toHaveLength(3)
+    strips.forEach((s) => expect(s.classes()).not.toContain('bg-surface-sunken'))
+    expect(strips[0].classes()).not.toContain('border-t')
+    expect(strips[1].classes()).toContain('border-t')
+    expect(wrapper.findAll('[data-note]').map((n) => n.text())).toEqual([
+      'Use at the top of a table card. Counts ride inside the label.',
+      'Sits in a filter bar next to the search field. Never more than four.',
+      'The pipeline pattern from LTO Applications: numbered, countable, one urgent tone allowed.',
+    ])
+  })
+
+  it('ButtonsSection runs two rows, each with exactly one filled button', () => {
+    // Appendix D.1 — a 38px row and a 34px compact row. It shipped as three
+    // rows with Apply built secondary and Reset filters ghost, which left
+    // the compact row with no primary at all.
+    const wrapper = mount(ButtonsSection)
+    const rows = wrapper.findAll('.gap-btn-row')
+    expect(rows).toHaveLength(2)
+    expect(rows[0].findAll('button').map((b) => b.text())).toEqual([
+      'Verify & save',
+      'Export CSV',
+      'Revoke licence',
+      'View logs',
+      'Sign document',
+    ])
+    expect(rows[0].findAll('button')[4].attributes('disabled')).toBeDefined()
+    expect(rows[1].findAll('button').map((b) => b.text())).toEqual([
+      'Apply',
+      'Reset filters',
+      '⋯',
+      'Sign document',
+    ])
+
+    // Variant, not just label: Apply shipped secondary and Reset filters
+    // ghost, so the compact row had no filled button. `btn--primary` is the
+    // marker class Button sets for the primary variant only.
+    const compact = rows[1].findAll('button')
+    expect(compact[0].classes()).toContain('btn--primary')
+    expect(compact[1].classes()).not.toContain('btn--primary')
+    expect(compact[1].classes()).toContain('border-field')
+    expect(rows[0].findAll('button')[0].classes()).toContain('btn--primary')
+    expect(wrapper.text()).toContain('Compact 34px row · click the last one for the pending state')
+  })
+
+  it('TypeScaleSection is a three-column table with a header row', () => {
+    // Appendix D.1 — TOKEN / SAMPLE / SPEC. It shipped as a two-column list
+    // with no header, no spec column, the order shuffled and two samples cut
+    // to fragments.
+    const wrapper = mount(TypeScaleSection)
+    expect(wrapper.get('[data-type-head]').findAll('div').map((d) => d.text())).toEqual([
+      'TOKEN',
+      'SAMPLE',
+      'SPEC',
+    ])
+    const rows = wrapper.findAll('[data-type-row]')
+    expect(rows).toHaveLength(9)
+    expect(rows.map((r) => r.findAll('div')[0].text())).toEqual([
+      'Page title',
+      'Section title',
+      'Card figure',
+      'Row title',
+      'Body',
+      'Field label',
+      'Meta / hint',
+      'Column header',
+      'Mono',
+    ])
+    expect(rows[0].findAll('div')[2].text()).toBe('26px / 700 / -0.015em')
+    expect(wrapper.text()).toContain('Buenavista Primary Health Care Center')
+    expect(wrapper.text()).toContain('Your PNPKI certificate and its password are stored encrypted.')
+  })
+})

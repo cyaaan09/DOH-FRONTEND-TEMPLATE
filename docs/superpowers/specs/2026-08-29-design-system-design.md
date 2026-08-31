@@ -1354,6 +1354,63 @@ as though it were a control. The password button toggles `showPw`, which drives 
 `margin-top: 1px`) and then the text at `12px / 1.45` in the same red. Built as one `<p>` serving
 both messages, the glyph was absent.
 
+#### The other four audited sections → arrangement
+
+Extracted 2026-08-31 in the same carry-forward audit that produced the Text-fields entry above.
+Each of these was built from Appendix C's redlines with no arrangement extraction.
+
+**Tabs — three plain blocks, not sunken strips.** The page uses this block in two dresses. Chips,
+Toasts and Selection controls tint theirs on `--surface-sunken` (§17.1's `DemoStrip` default,
+correct). Tabs runs three on the card surface with no tint, their own padding, and a `margin-top`
+above the rule; the first opens the card body and carries **no top rule at all**:
+
+| Block | Wrapper | Leading note |
+|---|---|---|
+| `UNDERLINE — PRIMARY, SITS ON A CARD EDGE` | `padding: 20px 24px 4px` — no rule, no margin | `Use at the top of a table card. Counts ride inside the label.` |
+| `SEGMENTED — INLINE FILTER, 2–4 SHORT OPTIONS` | `padding: 22px 24px 4px; border-top; margin-top: 14px` | `Sits in a filter bar next to the search field. Never more than four.` |
+| `STAGE TABS — A WORKFLOW WITH VOLUME PER STEP` | `padding: 22px 24px 24px; border-top; margin-top: 18px` | `The pipeline pattern from LTO Applications: numbered, countable, one urgent tone allowed.` |
+
+The note is **leading**, unlike Selection controls' trailing footnotes: label at `margin-bottom:
+2px`, then a 12.5px `#667085` note at `margin-bottom: 8px`, then the content. Where a block has no
+note the label keeps §17.1's 10px.
+
+**Buttons — a flex column of two rows, no grid.** Body is `padding: 18px 24px 22px; display: flex;
+flex-direction: column; gap: 16px`; each row is `display: flex; flex-wrap: wrap; gap: 10px;
+align-items: center`.
+
+| Row | Contents |
+|---|---|
+| 38px | `Verify & save` primary · `Export CSV` secondary · `Revoke licence` destructive · `View logs` ghost · `Sign document` secondary **disabled** |
+| 34px compact | `Apply` **primary** · `Reset filters` **secondary** · `⋯` 34×34 icon · the busy button (primary, `Sign document` → `Signing…`) · then a 12px `#667085` note, `Compact 34px row · click the last one for the pending state` |
+
+`Sign document` appears twice on purpose — disabled at 38px in row one, and as the busy control in
+row two. The build had three rows, `Apply` secondary and `Reset filters` ghost, which left the
+compact row with no filled button at all.
+
+**Type scale — a full-bleed three-column table.** Header and rows share
+`grid-template-columns: 132px 1fr 210px; gap: 20px`. Header: `padding: 12px 24px`, `--surface-sunken`,
+rules above and below in `--divider`, cells `TOKEN` / `SAMPLE` / `SPEC` at the column-header step.
+Rows: `padding: 15px 24px`, `align-items: baseline`, `border-bottom: 1px solid #F5F7FA`
+(`--divider-row`); column one is 12.5/700 `--ink-600`, column three 12px mono in `--text-meta`.
+
+| Token | Sample | Spec |
+|---|---|---|
+| `Page title` | `Issued LTO` | `26px / 700 / -0.015em` |
+| `Section title` | `Application history` | `17px / 700` |
+| `Card figure` | `211` | `23px / 700 / -0.01em` |
+| `Row title` | `Buenavista Primary Health Care Center` | `14px / 700` |
+| `Body` | `Your PNPKI certificate and its password are stored encrypted.` | `13.5px / 400 / 1.55` |
+| `Field label` | `Certificate password` | `12.5px / 500` |
+| `Meta / hint` | `Updated 8 minutes ago` | `12px / 400` |
+| `Column header` | `FACILITY TYPE` | `10.5px / 700 / 0.08em` |
+| `Mono` | `16-015-2527-PCF-1` | `12.5px / 500 mono` |
+
+**Dropdowns — the recorded values were never built.** D.1 already carried
+`repeat(auto-fit, minmax(260px,1fr))`, `gap: 20px 24px`, `align-items: start`, padding
+`18px 24px 24px` when the section was planned, and the build used §17.1's 268px/24px default
+regardless. This is the one case in the audit where extraction was not the failure — carrying the
+extracted value into the plan was.
+
 #### Dropdowns → the four inline demos
 
 Extracted from the artifact on 2026-08-30, per the Known limitation above: this section has no

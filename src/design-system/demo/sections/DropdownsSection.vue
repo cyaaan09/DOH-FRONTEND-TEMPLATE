@@ -56,7 +56,10 @@ const status = ref('Active')
     title="Dropdowns"
     description="Same 38px shell as a text field. The caret is the only affordance; the panel is a 12px-radius card on a soft shadow."
   >
-    <DemoBlocks>
+    <!-- Appendix D.1 — 260px track, gap 20px 24px, align-items: start, and
+         the grid closes the card at 24px. Built on §17.1's 268px/24px
+         default even though D.1 already recorded these values. -->
+    <DemoBlocks min="260px" gap="20px 24px" pb="24px" align-start>
       <div>
         <div class="text-field-label text-ink-700 mb-1.5">
           Facility type <span class="text-ink-500">· single select</span>
