@@ -140,21 +140,6 @@ describe('ContainersSection', () => {
 })
 
 describe('skeleton sections show their headings and mark their gaps', () => {
-  it('SelectionSection renders all six sub-blocks', () => {
-    const text = mount(SelectionSection).text()
-    for (const label of [
-      'CHECKBOX · STATES',
-      'RADIO · LIST',
-      'SWITCH · TAKES EFFECT AT ONCE',
-      'CHECKBOX CARDS · MULTI',
-      'RADIO CARDS · SINGLE',
-      'BULK SELECTION — TABLE HEADER + ACTION BAR',
-    ]) {
-      expect(text, `missing: ${label}`).toContain(label)
-    }
-    expect(mount(SelectionSection).findAll('[data-gap]')).toHaveLength(6)
-  })
-
   it('FilesSection renders its file-list heading and marks both gaps', () => {
     expect(mount(FilesSection).text()).toContain('FILE LIST — UPLOADING, DONE, FAILED')
     expect(mount(FilesSection).findAll('[data-gap]').length).toBeGreaterThan(0)
@@ -378,5 +363,70 @@ describe('DropdownsSection renders real components, not gaps', () => {
       .findAll('[data-trigger]')
       .map((trigger) => trigger.attributes('aria-label'))
     expect(ariaLabels).toContain('Row actions')
+  })
+})
+
+describe('SelectionSection renders real components, not gaps', () => {
+  it('has no gap markers left', () => {
+    expect(mount(SelectionSection).findAll('[data-gap]')).toHaveLength(0)
+  })
+
+  it('still renders all six uppercase sub-blocks', () => {
+    const text = mount(SelectionSection).text()
+    for (const label of [
+      'CHECKBOX · STATES',
+      'RADIO · LIST',
+      'SWITCH · TAKES EFFECT AT ONCE',
+      'CHECKBOX CARDS · MULTI',
+      'RADIO CARDS · SINGLE',
+      'BULK SELECTION — TABLE HEADER + ACTION BAR',
+    ]) {
+      expect(text, `missing sub-block: ${label}`).toContain(label)
+    }
+  })
+
+  it('carries the checkbox states verbatim from Appendix D.1', () => {
+    const text = mount(SelectionSection).text()
+    expect(text).toContain('Include legacy records')
+    expect(text).toContain('Migrated paper licences with no service list')
+    expect(text).toContain('All Caraga provinces')
+    expect(text).toContain('3 of 5 provinces selected')
+  })
+
+  it('shows an indeterminate checkbox, which is the point of that sub-block', () => {
+    // Deviates from the task brief here, which targeted
+    // `[role="checkbox"][aria-checked="mixed"]`. Confirmed empirically (mount
+    // Checkbox with indeterminate: true and inspect wrapper.html()) and
+    // against Checkbox.spec.js "exposes the mixed state to assistive
+    // technology", BulkActionBar.spec.js "shows the header box mixed...", and
+    // Task 1's report: no element Checkbox.vue renders ever carries a
+    // literal `role` attribute or an `aria-checked` attribute. The mixed
+    // state lives only on the native hidden input's `indeterminate` IDL
+    // property. `[role="checkbox"][aria-checked="mixed"]` would match zero
+    // elements against a correctly wired, correctly built component.
+    const wrapper = mount(SelectionSection)
+    const mixed = wrapper
+      .findAll('input[type="checkbox"]')
+      .filter((input) => input.element.indeterminate)
+    expect(mixed.length).toBeGreaterThan(0)
+  })
+
+  it('carries the switch rows, including the disabled one', () => {
+    const text = mount(SelectionSection).text()
+    expect(text).toContain('Maintenance mode')
+    expect(text).toContain('Enforced by policy — cannot be turned off')
+  })
+
+  it('carries the card options with their em dashes intact', () => {
+    const text = mount(SelectionSection).text()
+    expect(text).toContain('Clinical Laboratory — Limited')
+    expect(text).toContain('Add / Modify')
+  })
+
+  it('shows the bulk rows and their licence numbers', () => {
+    const text = mount(SelectionSection).text()
+    expect(text).toContain('Trento Primary Care Facility')
+    expect(text).toContain('16-015-2527-PCF-1')
+    expect(text).toContain('Select all')
   })
 })
