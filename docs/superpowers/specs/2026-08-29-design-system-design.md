@@ -493,7 +493,7 @@ Found while extracting the page structure; each is scheduled into the phase that
   --grad-meter: linear-gradient(90deg,#25A94E,#7BC96F);
 
   /* motion */
-  --t-fast: 120ms; --t-control: 140ms; --t-rail: 160ms ease;
+  --t-fast: 120ms; --t-control: 140ms; --t-rail: 160ms ease; --t-spin: 700ms;
 
   /* z-index */
   --z-header: 6; --z-popover: 12; --z-dialog: 40;
@@ -2384,6 +2384,21 @@ panel labels inside the expanded row, not section sub-blocks.
   ≥24px wide, WCAG 2.5.8), and the rail's icon button, where the redline's own precedent — "17px
   box inside a 44px tappable row" — makes the ROW the target. Forcing 44px there pushed 100px of
   content into the redlined 62px collapsed rail.
+
+- **2026-08-31 — `--green-text` on `--green-100` is 4.4961:1, not the 4.50:1 the redline quotes.**
+  Appendix C's *Tone text on tint* row lists `#15803D/#E8F6EC 4.50` among four pairs it says
+  "pass with zero headroom, so never lighten either side". Computed exactly, this pair is
+  **4.4961** — it rounds to 4.50 at two decimals and sits 0.004 BELOW the 4.5:1 AA threshold. The
+  other three pairs clear 4.5 outright. Recorded rather than silently rounded: the value is the
+  artifact's, the pair is used for the green tone chip's text, and any tool that reports two
+  decimals will call it a pass. `contrast.spec.js` asserts a 4.49 floor for this one pair, with
+  the reason inline, so a real regression in the other three cannot hide behind it. Fixing it
+  would mean darkening `--green-text` or deepening `--green-100`, both of which change the
+  artifact's palette — a decision for the source document, not this port.
+- **2026-08-31 — the spinner ran at 600ms against a redlined 700ms.** Appendix C's *Motion* row
+  says `Spinner | @keyframes spin 700ms linear infinite`; `Button`'s pending state hardcoded
+  600ms. Now `--t-spin: 700ms`, the only duration in the system that had bypassed the motion
+  tokens.
 
 #### chipRules
 

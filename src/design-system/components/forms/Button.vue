@@ -148,6 +148,7 @@ const busyClass = computed(() => (props.busy ? 'btn--busy' : ''))
      so a hardcoded white track no longer belongs to its own button. */
   border: 2px solid color-mix(in srgb, var(--green-on-fill) 40%, transparent);
   border-top-color: currentColor;
-  animation: spin 600ms linear infinite;
+  /* Redline "Spinner · @keyframes spin 700ms linear infinite" — was 600ms. */
+  animation: spin var(--t-spin) linear infinite;
 }
 </style>

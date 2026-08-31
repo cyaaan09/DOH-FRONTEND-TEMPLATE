@@ -68,7 +68,7 @@
   --grad-meter: linear-gradient(90deg,#25A94E,#7BC96F);
 
   /* motion */
-  --t-fast: 120ms; --t-control: 140ms; --t-rail: 160ms ease;
+  --t-fast: 120ms; --t-control: 140ms; --t-rail: 160ms ease; --t-spin: 700ms;
 
   /* z-index */
   --z-header: 6; --z-popover: 12; --z-dialog: 40;

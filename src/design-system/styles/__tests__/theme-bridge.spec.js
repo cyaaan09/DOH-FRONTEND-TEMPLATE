@@ -50,7 +50,7 @@ describe('tailwind theme bridge', () => {
    */
   const DELIBERATELY_UNBRIDGED = new Set([
     'z-header', 'z-popover', 'z-dialog',
-    't-fast', 't-control', 't-rail',
+    't-fast', 't-control', 't-rail', 't-spin',
     'grad-primary', 'grad-meter',
     'ring-focus', 'ring-select', 'scrim', 'chip-pad',
     // Tailwind's built-in font-normal / font-medium / font-bold cover these.
