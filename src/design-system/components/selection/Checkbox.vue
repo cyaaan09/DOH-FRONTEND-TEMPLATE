@@ -32,6 +32,15 @@ const props = defineProps({
    * property pattern this codebase keeps regressing on.
    */
   emphasis: { type: Boolean, default: false },
+  /**
+   * Keep the label as the accessible name but take it out of the layout —
+   * a table's select column is 44px wide and the row beside it already says
+   * which row this is. §8.1: `label` is the text that names the thing; how
+   * it is presented is the component's business. NOT aria-label instead:
+   * Ark points the hidden input's aria-labelledby at this element, so
+   * removing it would leave the control unnamed.
+   */
+  hideLabel: { type: Boolean, default: false },
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -107,9 +116,11 @@ const boxClass = computed(() => {
            documented font-size/font-weight override pairing, not a competing
            declaration: v4 orders font-weight utilities after font-size ones.
            10px from the box. -->
-      <CheckboxLabel data-label class="checkbox__label block" :class="labelClass">{{
-        label
-      }}</CheckboxLabel>
+      <CheckboxLabel
+        data-label
+        :class="hideLabel ? 'checkbox__label--hidden' : ['checkbox__label block', labelClass]"
+        >{{ label }}</CheckboxLabel
+      >
       <span
         v-if="hint"
         :id="hintId"
@@ -186,6 +197,15 @@ const boxClass = computed(() => {
 
 .checkbox__hint {
   margin-top: 2px;
+}
+
+.checkbox__label--hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 </style>
 

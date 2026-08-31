@@ -1284,6 +1284,18 @@ _DM Sans 400/500/700 · JetBrains Mono for copyable values_
   two or three digits of the existing pair. Adding two tokens for one container is worse than the
   difference.
 
+- **2026-08-31 — `DataTable` and `Pagination` are hand-built, not TanStack/Ark.** §7 plans
+  `DataTable` on TanStack and `Pagination` on Ark's machine. Every one of the Tables group's 30
+  rows is presentation — grid template, state stripe, meter cell, expand panel, sort caret — and
+  the demo's sorting and paging are a handful of lines, so a headless table library would be
+  pre-emptive. Both components' props are shaped so a row model can drive them later without the
+  markup changing: `rows`/`columns` in, `update:selected`/`update:expanded`/`sort` out.
+- **2026-08-31 — `DataTable`'s root class is `dtable`, because `table` is a Tailwind utility.** A
+  bare BEM block of that name compiles to `display: table`, which shrink-to-fits: the root grew
+  past its card and the `overflow-x: auto` container inside it never constrained anything. Nothing
+  errored — the card simply overflowed, and only the layout gate saw it. Any block name that
+  collides with a utility (`grid`, `flex`, `block`, `contents`) carries the same risk.
+
 ## Appendix D — demo page content
 
 Extracted verbatim from the source artifact. This is the content authority for the
@@ -1907,10 +1919,8 @@ demo folder is exempt from the raw-hex guard precisely so blocks like this can q
 
 **Description:** One rail, two widths. Group headers carry the section, the active item is the only gradient on screen, and a count badge only appears where a number changes what you do next.
 
-**Sub-blocks:**
-
-- `LICENSING`
-- `CONFIGURATION`
+**Sub-blocks:** none — the section is one rail shown at both widths.
+`LICENSING` and `CONFIGURATION` are nav group headers inside it, not section sub-blocks.
 
 **Rule cards:**
 
@@ -1924,11 +1934,15 @@ demo folder is exempt from the raw-hex guard precisely so blocks like this can q
 
 **Description:** Rebuilt around three ideas: a 3px state stripe replaces reading the status column, the count column carries its own meter so urgency is visible without comparing digits, and the toolbar holds saved views instead of a second row of filters.
 
-**Sub-blocks:**
+**Sub-blocks:** none — the section is one table. `SERVICES`, `LAST INSPECTION` and `ACTIONS` are
+panel labels inside the expanded row, not section sub-blocks.
 
-- `TOOLBAR — SAVED VIEWS`
-- `TABLE`
-- `FOOTER — ROWS PER PAGE`
+**Rule cards:**
+
+- **State stripe, 3px** — Each row carries a 3px left stripe in its status tone — green active, amber expiring, red overdue, #EEF1F6 closed. You scan the stripe, then read only the rows that need you. Never the only cue: the status chip stays.
+- **Counts carry a meter** — The expiry column is a right-aligned mono figure plus a 3px track. 36 days next to a nearly empty red bar reads faster than 36 next to 1 082.
+- **Saved views, not filter rows** — Pill views replace a stacked filter bar — the current view is the one filled pill, and + saves whatever is on screen. Search and column settings sit right.
+- **Seven columns, hard cap** — 44px select · minmax(240px, 2.4fr) identity · 148 mono · 132 status · 116 date · 136 numeric · 44px actions. An eighth column means the detail page needs the field, not the table.
 
 #### Type scale
 

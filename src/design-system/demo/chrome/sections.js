@@ -24,7 +24,7 @@ export const SECTIONS = [
   { id: 'stepper', title: 'Stepper', complete: true },
   { id: 'form-layout', title: 'Form layout', complete: true },
   { id: 'app-shell', title: 'App shell — side navigation', complete: true },
-  { id: 'data-table', title: 'Data table', complete: false },
+  { id: 'data-table', title: 'Data table', complete: true },
   { id: 'type-scale', title: 'Type scale', complete: true },
   { id: 'specs', title: 'Component specs', complete: true },
   { id: 'dark-mode', title: 'Dark mode', complete: true },

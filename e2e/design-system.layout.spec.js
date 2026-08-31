@@ -117,6 +117,23 @@ test.describe('page-level layout guards', () => {
           // Portalled panels are positioned against the viewport, not the card,
           // and are legitimately allowed outside it.
           if (rect.width === 0 || child.closest('[role="listbox"],[role="menu"]')) continue
+          // Content inside a horizontal scroll container is SUPPOSED to be wider
+          // than the card — that is what the Tables redline means by "never
+          // reflow: overflow-x:auto with min-width 1040px". Walk up to the card
+          // looking for a scroller; if one is found this child scrolls rather
+          // than spilling. The scroller ITSELF is still checked, which is what
+          // caught a root that had silently become display:table.
+          let scroller = child.parentElement
+          let scrolls = false
+          while (scroller && scroller !== card) {
+            const ox = getComputedStyle(scroller).overflowX
+            if (ox === 'auto' || ox === 'scroll') {
+              scrolls = true
+              break
+            }
+            scroller = scroller.parentElement
+          }
+          if (scrolls) continue
           if (rect.right - limit > 2) {
             // getAttribute('class'), not .className: on an SVG child,
             // .className is an SVGAnimatedString, not a string, and stringifies
