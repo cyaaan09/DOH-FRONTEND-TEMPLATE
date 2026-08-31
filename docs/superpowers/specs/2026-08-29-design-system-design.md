@@ -422,12 +422,14 @@ Found while extracting the page structure; each is scheduled into the phase that
   unselected row neither class rather than a guessed one — nothing is ever left to compete with the
   selected branch for the same property.
 
-- **2026-08-31 — two Selection controls values are inferred, not redlined.** `Radio`'s chosen and
-  unchosen control border colours reuse the `Checkbox off` row's exact hex (`Checkbox off | #FFF
-  fill · 1.8px #C3CAD6`) — Appendix C's own `Radio` row specifies only the inner dot's colour, not
-  the control's border. `RadioCard`'s "Selected" marker typography (13.5px/400, the same step as
-  `Label`) is likewise an inference: Appendix D.1 records that the chosen card carries a "Selected"
-  marker at all, not what type styles it, and no Type scale row covers it either.
+- **2026-08-31 — two Selection controls values are inferred, not redlined.** `Radio`'s **unchosen**
+  control border reuses the `Checkbox off` row's exact hex (`Checkbox off | #FFF fill · 1.8px
+  #C3CAD6`), and its **chosen** border reuses the fill green `#177236` from `Checkbox on` —
+  Appendix C's own `Radio` row specifies only the inner dot's colour, not the control's border in
+  either state. `RadioCard`'s "Selected" marker typography (12px at weight 700, in the green text
+  colour — the `--text-hint` step, not `Label`'s 13.5px/400) is likewise an inference: Appendix D.1
+  records that the chosen card carries a "Selected" marker at all, not what type styles it, and no
+  Type scale row covers it either.
 
 - **2026-08-31 — the 44px touch target for `Checkbox`/`Radio` is unimplemented.** Appendix C's
   Responsive & touch group states `Checkbox / radio | 17px box inside a 44px tappable row on touch`;
