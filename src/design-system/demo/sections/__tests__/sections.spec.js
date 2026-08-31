@@ -79,10 +79,6 @@ describe('NoticesSection', () => {
     }
   })
 
-  it('marks the toast stack as not built', () => {
-    // Toast is Phase 3e. Its slot must be visible, not absent.
-    expect(mount(NoticesSection).findAll('[data-gap]').length).toBeGreaterThan(0)
-  })
 })
 
 describe('sections with complete components render no gaps', () => {
@@ -663,5 +659,40 @@ describe('FilesSection carries the artifact\'s three demos', () => {
     await wrapper.findAll('[data-remove]')[1].trigger('click')
     expect(wrapper.findAll('[data-file-row]')).toHaveLength(2)
     expect(wrapper.text()).not.toContain('floorplan-carmen-rhu.pdf')
+  })
+})
+
+describe('NoticesSection carries the toast demo', () => {
+  it('renders one trigger per tone and the contained region', () => {
+    const wrapper = mount(NoticesSection)
+    expect(wrapper.findAll('[data-gap]')).toHaveLength(0)
+    expect(wrapper.findAll('[data-toast-trigger]').map((b) => b.text())).toEqual([
+      'Success',
+      'Error',
+      'Warning',
+      'Info',
+    ])
+    expect(wrapper.text()).toContain(
+      'App surface — toasts stack bottom-right, newest on top, 5s auto-dismiss',
+    )
+    // Appendix D.1 — the demo contains its toasts inside the app surface
+    // rather than letting Ark fix them to the viewport.
+    expect(wrapper.get('[data-toast-region]').classes()).toContain('toastregion--contained')
+  })
+
+  it('keeps its rule cards inside the toast block, not the DemoRules footer', () => {
+    // Appendix D.1 — a plain 230px grid with no top rule, card borders or
+    // sunken surface, unlike §17.1's DemoRules that other sections use.
+    const wrapper = mount(NoticesSection)
+    const rules = wrapper.findAll('[data-rule]')
+    expect(rules).toHaveLength(3)
+    expect(rules[0].text()).toContain('One line, one consequence')
+    expect(wrapper.find('.demo-rules__card').exists()).toBe(false)
+  })
+
+  it('closes the notices strip with its footnote', () => {
+    expect(mount(NoticesSection).get('[data-footnote]').text()).toContain(
+      'One line, one pill: the outlined tone label carries the meaning',
+    )
   })
 })

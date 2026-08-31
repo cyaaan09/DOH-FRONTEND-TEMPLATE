@@ -158,3 +158,38 @@ test.describe('page-level layout guards', () => {
     }
   })
 })
+
+test.describe('toasts actually stack inside their demo surface', () => {
+  // jsdom cannot exercise Ark's Toaster: it renders through a teleport and
+  // positions itself from inline styles the machine writes at runtime. This
+  // is the only place the toast demo is really executed.
+  test('a fired toast lands inside the app surface, not over the page', async ({ page }) => {
+    const surface = page.locator('.notices__surface')
+    await surface.waitFor()
+
+    await page.getByRole('button', { name: 'Error', exact: true }).click()
+    const toast = page.locator('[data-toast]').filter({ hasText: 'Upload failed' })
+    await expect(toast).toBeVisible()
+
+    const [zone, box] = await Promise.all([surface.boundingBox(), toast.boundingBox()])
+    // Contained: the toast sits within its dashed panel on every edge. If
+    // ToastRegion's !important override ever stops beating Ark's inline
+    // `position: fixed`, the toast jumps to the viewport corner and this
+    // fails — which is the whole reason the override exists.
+    expect(box.x).toBeGreaterThanOrEqual(zone.x - 1)
+    expect(box.y).toBeGreaterThanOrEqual(zone.y - 1)
+    expect(box.x + box.width).toBeLessThanOrEqual(zone.x + zone.width + 1)
+    expect(box.y + box.height).toBeLessThanOrEqual(zone.y + zone.height + 1)
+
+    // Redline "Toast region · 372px wide".
+    expect(Math.round(box.width)).toBe(372)
+  })
+
+  test('the dismiss button clears the stack', async ({ page }) => {
+    await page.locator('.notices__surface').waitFor()
+    await page.getByRole('button', { name: 'Warning', exact: true }).click()
+    await expect(page.locator('[data-toast]').first()).toBeVisible()
+    await page.locator('[data-dismiss-all]').click()
+    await expect(page.locator('[data-toast]')).toHaveCount(0)
+  })
+})

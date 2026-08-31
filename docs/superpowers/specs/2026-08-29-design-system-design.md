@@ -1137,6 +1137,23 @@ _DM Sans 400/500/700 · JetBrains Mono for copyable values_
   same way for the same reason. Inside Text fields this means one demo's label comes from a
   sibling div while six come from the component, though both render identically.
 
+- **2026-08-31 — `FileList` is hand-built, not Ark's `FileUploadItem` family.** Those parts render
+  the machine's OWN accepted files, and `@zag-js/file-upload` has no upload-state or progress model
+  at all. The artifact's list carries a percentage, a success note and a failure note — consumer
+  data — so the rows arrive as a prop. `FileInput` and `FileInputCompact` are Ark.
+- **2026-08-31 — `ToastRegion` overrides Ark's inline positioning with `!important`.**
+  `getGroupPlacementStyle` writes `position: fixed` and `MAX_Z_INDEX` as inline styles, which no
+  amount of specificity can beat. The default is left alone (fixed is right for a real app); the
+  demo passes `contained` to position the region inside its app-surface panel, which is what the
+  artifact shows. An e2e test measures the toast against that panel's box, because this is exactly
+  the kind of override that fails silently.
+- **2026-08-31 — the toast store publishes events, not the toast array.** `subscribe`'s TypeScript
+  says `(toasts: Options[]) => void`; the runtime calls `subscriber(data)` with a single toast, and
+  `{ id, dismiss: true }` on removal. `getCount()` cannot be used inside the callback either —
+  `publish()` runs before the store mutates its array, so it reads stale by one in both directions.
+  A live count means tracking ids. Wired the other way first, `Dismiss all` and the empty state
+  were both dead, and only the e2e test caught it.
+
 ## Appendix D — demo page content
 
 Extracted verbatim from the source artifact. This is the content authority for the
@@ -1410,6 +1427,74 @@ Rows: `padding: 15px 24px`, `align-items: baseline`, `border-bottom: 1px solid #
 `18px 24px 24px` when the section was planned, and the build used §17.1's 268px/24px default
 regardless. This is the one case in the audit where extraction was not the failure — carrying the
 extracted value into the plan was.
+
+#### File inputs → the three demos
+
+Extracted 2026-08-31. Section body is a grid — `repeat(auto-fit, minmax(320px,1fr))`,
+`gap: 22px 24px`, `align-items: start`, padding `18px 24px 24px`. The first two demos carry
+12.5/500 field labels; the file list is the one uppercase sub-block and spans the grid with
+`grid-column: 1 / -1`. **There is no tinted strip in this section** — the skeleton had put the list
+in one.
+
+| Demo | Label | Detail | Note |
+|---|---|---|---|
+| Dropzone | `PNPKI certificate` | `1.6px dashed --border-dashed`, radius 10, pad 16, gap 12; hover swaps to `--green-500` on `--dropzone-hover`. 36px `--neutral-100` tile with `↑` at 15/700, then `Drop a file or click to browse` (13.5/700) over `.p12 · up to 5 MB` | `Click it — files land in the list beside this.` |
+| Compact | `Compact · inside a form row` | the 38px field shell padded `0 6px 0 12px`; name at 13px in `--text-meta`, then a 28px `Browse` at radius `--r-tile` | `Use when the field sits in a dense two-column form.` |
+| List | `FILE LIST — UPLOADING, DONE, FAILED` | rows 8px apart | — |
+
+**File row** — `pad 12px 14px`, radius 10, gap 12. A failed row takes `--red-50` on `--red-border`;
+every other row is `--surface` on `--border-card`. The 34px type mark is 10/700 at `0.04em`,
+`--neutral-100`/`--text-header` normally and `--red-100`/`--red-700` when failed. Name 13.5/500
+ellipsised, size 12px meta. **Uploading** shows a 5px `--neutral-100` track filled with
+`--grad-meter` (the same gradient `Meter` uses), 7px under the name. **Done** and **failed** show a
+note 4px under it instead: `Uploaded · virus scan passed` at 400 in `--green-text`, or
+`Over the 10 MB limit — compress or split the file.` at 500 in `--red-700`. The remove button is a
+26px ghost tile at radius `--r-tile` that turns destructive on hover. Empty:
+`No files attached yet.` in a dashed `--border-card` panel, pad `14px 16px`.
+
+The three seeded rows are `matangcas-pnpki.p12` / `3.2 KB` / `P12` / done;
+`floorplan-carmen-rhu.pdf` / `8.4 MB` / `PDF` / uploading at 62%; `annex-b2-equipment.xlsx` /
+`12.8 MB` / `XLS` / failed.
+
+#### Toasts & inline notices → the toast demo
+
+Extracted 2026-08-31. The toast block is a plain padded body (`18px 24px 22px`), not a grid, and
+holds three things in order: a trigger row, a contained "app surface", and its own rule cards.
+
+**Trigger row** — `flex wrap`, gap 8px, `margin-bottom: 14px`: four 34px buttons at radius
+`--r-control`, 12.5/500 on `--surface` with the tone's own toast border and an 8px dot; then a flex
+spacer; then `Dismiss all`, shown only while the stack is non-empty.
+
+**App surface** — `min-height: 316px`, pad 16, `1px dashed --border-dashed` on `--surface-input`,
+radius `--r-panel`, `position: relative; overflow: hidden`, captioned
+`App surface — toasts stack bottom-right, newest on top, 5s auto-dismiss`. The toast region sits
+`right: 16px; bottom: 16px`, 372px wide, `max-width: calc(100% - 32px)`, 10px between toasts, at
+`--z-popover`. Empty: `Fire one above to see the stack.` in a dashed panel at radius 11.
+
+**Toast** — `position: relative; overflow: hidden`, pad `13px 12px 15px 13px`, gap 11, radius
+`--r-panel`, `--surface` on a 1px tone border under `--sh-toast`. A 26px icon tile filled with the
+tone's link colour carries a white 12/700 glyph; title 13.5/700 `--ink-900`; body 12.5/1.45 meta
+2px under it; actions 9px below at gap 14 (the tone-coloured action at 700, then `Dismiss` at 500
+meta); a 22px × in the corner; and a 3px timer bar draining `scaleX(1)→0` over 5s.
+
+| Type | Border | Icon / action | Timer dot | Glyph |
+|---|---|---|---|---|
+| success | `--toast-border-green` | `--green-text` | `--dot-green` | `✓` |
+| error | `--red-border` | `--red-700` | `--red-500` | `!` |
+| warning | `--toast-border-amber` | `--amber-text` | `--amber-400` | `!` |
+| info | `--toast-border-blue` | `--blue-700` | `--blue-700` | `i` |
+
+Copy: `Licence issued` / `16-015-2527-PCF-1 is now active until Dec 31, 2027.` / `View`;
+`Upload failed` / `annex-b2-equipment.xlsx exceeds the 10 MB limit.` / `Retry`;
+`3 licences expire soon` / `They fall within 90 days — send renewal notices.` / `Review`;
+`Draft saved` / `Your remarks were saved but not submitted.` / no action. The page opens with
+`Certificate saved` / `Password verified and stored encrypted.` / `Undo` already on screen.
+
+**Rule cards live inside the toast block**, on their own `repeat(auto-fit, minmax(230px,1fr))` grid
+at gap 18, `margin-top: 16px` — no top rule, no card borders, no sunken surface, unlike §17.1's
+`DemoRules`. The notices strip below is the standard tinted strip, but stacks at **10px**, and
+closes with a trailing note: `One line, one pill: the outlined tone label carries the meaning, so
+the surface stays almost white.`
 
 #### Dropdowns → the four inline demos
 
