@@ -73,3 +73,17 @@ export { default as Switch } from './components/selection/Switch.vue'
 export { default as CheckboxCard } from './components/selection/CheckboxCard.vue'
 export { default as RadioCard } from './components/selection/RadioCard.vue'
 export { default as BulkActionBar } from './components/selection/BulkActionBar.vue'
+
+// Charts — Appendix C's "Charts" group, added by the 2026-09-01 artifact update.
+export { default as ChartPanel } from './components/charts/ChartPanel.vue'
+export { default as DeltaPill } from './components/charts/DeltaPill.vue'
+export { default as LineChart } from './components/charts/LineChart.vue'
+export { default as StackedBars } from './components/charts/StackedBars.vue'
+export { default as HorizontalBars } from './components/charts/HorizontalBars.vue'
+export { default as DonutChart } from './components/charts/DonutChart.vue'
+export { default as Sparkline } from './components/charts/Sparkline.vue'
+export { default as ChartStatCard } from './components/charts/ChartStatCard.vue'
+export { default as ChartReadout } from './components/charts/ChartReadout.vue'
+export { default as ChartEmpty } from './components/charts/ChartEmpty.vue'
+export { default as ChartLoading } from './components/charts/ChartLoading.vue'
+

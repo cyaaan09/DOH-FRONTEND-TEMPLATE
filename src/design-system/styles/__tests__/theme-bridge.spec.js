@@ -92,6 +92,8 @@ describe('tailwind theme bridge', () => {
     'chart-area',
     'readout-bg',
     'readout-rule',
+    'chart-footer',
+    'chart-grid-mid',
   ])
 
   /** The set of token names theme.css bridges (the target side of every var() reference). */

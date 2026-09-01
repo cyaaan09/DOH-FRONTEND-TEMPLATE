@@ -150,4 +150,13 @@
   --chart-area: rgba(23, 114, 54, 0.16);
   --readout-bg: #1E2532;
   --readout-rule: #3A4454;
+
+  /* Redlines "Panel · optional footer 12px 18px on #FCFDFE" and "Gridlines ·
+     outer two #EEF1F6, middle #F3F5F9". Both are literals in the source, which
+     is what this additions block is for. #FCFDFE is a THIRD off-white, one step
+     from --surface-card-muted (#FBFCFE) and two from --surface-sunken
+     (#FAFBFD) — kept distinct rather than folded into either, because the
+     source draws all three on the same page. */
+  --chart-footer: #FCFDFE;
+  --chart-grid-mid: #F3F5F9;
 }

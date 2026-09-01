@@ -4,7 +4,7 @@
 
 # Component API reference
 
-69 components, every one exported from `@/design-system`.
+80 components, every one exported from `@/design-system`.
 Each entry lists only what a consumer passes in: props, events and slots.
 Anything undocumented here is internal and may change.
 
@@ -12,6 +12,7 @@ For how to install, theme and compose these, start with [README.md](./README.md)
 
 ## Contents
 
+- [charts](#charts) — ChartEmpty, ChartLoading, ChartPanel, ChartReadout, ChartStatCard, DeltaPill, DonutChart, HorizontalBars, LineChart, Sparkline, StackedBars
 - [Data](#data) — DataTable, Pagination
 - [Date picker](#date-picker) — DatePicker
 - [Disclosure](#disclosure) — Accordion
@@ -30,6 +31,133 @@ For how to install, theme and compose these, start with [README.md](./README.md)
 - [Stepper](#stepper) — Stepper
 - [Surfaces](#surfaces) — Card, CardBody, CardFooter, CardHeader, DividedCard, Meter, StatCard
 - [Tabs](#tabs) — SegmentedTabs, StageTabs, Tabs
+
+## charts
+
+### ChartEmpty
+
+Redline "Empty · 1px dashed --border-dashed on --surface, radius 12px, pad 28px 18px · says why in 13px / 700 + a 12px reason + a 34px reset button. Never an empty gridded frame, never a zero line." The two nevers are the point. An empty axis with a flat line at zero is a chart claiming the answer is nought; this says there is no data and why.
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `title` | String | (required) |  |
+| `reason` | String | `''` | Why it is empty — a fact, not an apology. |
+| `actionLabel` | String | `''` |  |
+
+**Emits:** `action`
+
+### ChartLoading
+
+Redline "Loading · the plot area becomes one --chart-grid block at the chart's height — never animated bars growing from zero". The never matters: bars that animate up from zero read as real values arriving, so a user starts interpreting a chart that has no data in it yet.
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `height` | Number | `108` |  |
+| `label` | String | `'Loading chart'` |  |
+
+### ChartPanel
+
+The shell every chart sits in. Redline "Figure first · label 12px · figure 26px mono / 700 / -0.03em / line-height 1 · period meta 11.5px right-aligned. The header answers the question; the plot adds shape." That ordering is the section's first rule card, so the header is the component and the plot is a slot — not the other way round.
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `label` | String | (required) | What the figure counts — "Licences issued". |
+| `figure` | [String, Number] | (required) | The answer, in mono. "88", "122", "84%". |
+| `period` | String | `''` | Right-hand meta, first line — "This month". |
+| `note` | String | `''` | Right-hand meta, second line — "744 in 12 months". |
+| `delta` | String | `''` | Passed straight to DeltaPill; omitted together, the pill does not render. |
+| `deltaDirection` | String | `''` |  |
+| `deltaTone` | String | `'good'` |  |
+| `tableHref` | String | `''` | Redline "A11y · each chart names the table view holding the same data". A chart is a picture; this is where a keyboard user is sent instead. |
+| `tableLabel` | String | `'View as table'` |  |
+
+**Slots:** `default`, `footer`
+
+### ChartReadout
+
+Redline "Hover readout · --readout-bg · radius 11px · pad 11px 13px · shadow 0 10px 28px rgba(16,24,40,.26) · period 10.5px / 700 / 0.07em --ink-300 · every series in stack order + a total row above a 1px --readout-rule rule · 12px pointer offset" and "Touch · readout pins under the tapped column instead of following a pointer". Every series, always — including the ones at zero. A readout that hides empty series changes shape between columns, and the row you are looking for moves.
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `period` | String | (required) | The column being read — "DECEMBER 2026". |
+| `rows` | Array | (required) | [{ label, value, tone }] in stack order. |
+| `totalLabel` | String | `'Total'` |  |
+
+### ChartStatCard
+
+Redline "Stat card · pad 15px 16px 12px · radius 14px · 1px --border-card · label 11.5px --text-meta · figure 24px mono / 700 / -0.03em with the delta baseline-aligned right · spark 12px below". Distinct from the StatCard in Surfaces: that one carries a status dot and an urgency treatment, this one carries a trend. Same redline group, different rows, and merging them would give each half the other's props.
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `label` | String | (required) |  |
+| `figure` | [String, Number] | (required) |  |
+| `delta` | String | `''` |  |
+| `deltaDirection` | String | `''` |  |
+| `deltaTone` | String | `'good'` |  |
+| `values` | Array | `() => []` |  |
+| `tone` | String | `'var(--chart-ok)'` |  |
+
+### DeltaPill
+
+The tinted pill beside a chart's figure. Redline "Direction, not sign · the pill's tone follows whether the movement is GOOD, not whether the number rose — overdue renewals falling is green with a ▼". So `tone` and `direction` are separate props and neither is derived from the other: this component cannot know that fewer overdue renewals is an improvement, and a component that guessed would paint half a dashboard the wrong colour with nothing to catch it.
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `label` | String | (required) | The text inside the pill — "15.8%", "4", "36 at risk", "In good standing". |
+| `direction` | String | `''` | Arrow prefix. Omit for a pill that states a condition rather than a change. |
+| `tone` | String | `'good'` | Redline "Delta pill" — good --green-100/--green-text, watch --amber, bad --red. |
+
+### DonutChart
+
+Redline "Donut · 120px · r 46 · stroke 11 · BUTT caps, 2px gap taken out of each dash · a --chart-track full-circle track sits under the arcs so a small total still reads as a ring". The cap rule is the one to leave alone. Round caps add stroke/2 at BOTH ends, so at stroke 11 every slice paints 11px longer than its arc — this chart's own "Overdue 8" of 211 would read as 6.9% instead of 3.8% and lap the slice next to it. geometry.spec.js asserts both numbers.
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `slices` | Array | (required) | [{ label, value, tone }] — at most four, per the sub-block's own title. |
+| `centreValue` | [String, Number] | `''` | Big number in the hole, and the word under it. |
+| `centreLabel` | String | `''` |  |
+| `size` | Number | `120` |  |
+
+### HorizontalBars
+
+Redline "Horizontal bars · 7px track --chart-track radius 999 · label 12.5px clipping left · value 12px mono / 700 + share 10.5px --text-meta in a 30px right column". Bars are scaled against the LARGEST row, not the total: this chart ranks, and scaling to the total would leave every bar short and the ranking hard to read. The share column still carries the proportion in text.
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `rows` | Array | (required) | [{ label, value, tone? }] in the order they should rank. |
+| `total` | Number | `0` | Total for the share column; defaults to the sum of the rows. |
+
+### LineChart
+
+Redline "Line · 2.25px, smooth cubic through midpoints, round joins, vector-effect non-scaling-stroke" plus "Area fill", "Latest point", "Gridlines" and "Axis geometry". The gridlines are DIVs behind the SVG, not SVG lines, and the latest point is a positioned span in front of it. Both are deliberate: `preserveAspectRatio ="none"` stretches the viewBox horizontally, which would smear an SVG hairline and squash a circle into an ellipse. `vector-effect` saves the path itself; everything that must stay round or 1px thick lives in CSS.
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `values` | Array | (required) | One number per period. |
+| `labels` | Array | `() => []` | Labels for the x axis — one per value; only every third is drawn. |
+| `tone` | String | `'var(--chart-ok-strong)'` | Any chart token: --chart-ok-strong for the emphasised single series. |
+| `height` | Number | `108` |  |
+
+### Sparkline
+
+Redline "Sparkline · 30px tall · 1.75px smooth stroke in the figure's own tone + a 0.14→0 gradient fill · no axis, no dots, no labels". Deliberately not LineChart with smaller numbers: everything that makes a chart readable on its own — axis, gridlines, the latest point — is absent here, because a sparkline is punctuation inside a figure, not a chart.
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `values` | Array | (required) |  |
+| `tone` | String | `'var(--chart-ok)'` |  |
+| `height` | Number | `30` |  |
+
+### StackedBars
+
+Redline "Bars · gap 12px · max-width 34px · radius 5px on the outer end only · 2px between stack segments · value 11px mono / 700 above, --ink-900 on the emphasised column and --text-meta elsewhere". "Outer end only" is the detail that makes a stack read as one bar: rounding every segment would draw a column of separate pills.
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `columns` | Array | (required) | [{ label, segments: [{ key, value }] }] — segments run bottom-up. |
+| `series` | Array | (required) | [{ key, label, tone }] in stack order; the tone is any chart token. |
+| `emphasis` | String | `''` | Column label to draw at full weight — the redline allows exactly one. |
+| `height` | Number | `112` |  |
 
 ## Data
 

@@ -113,6 +113,7 @@ describe('the section manifest', () => {
       'destructive',
       'shortcuts',
       'print',
+      'charts',
       'form-layout',
       'app-shell',
       'data-table',

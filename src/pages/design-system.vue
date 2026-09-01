@@ -23,6 +23,7 @@ import ShortcutsSection from '@/design-system/demo/sections/ShortcutsSection.vue
 import PrintSection from '@/design-system/demo/sections/PrintSection.vue'
 import FormLayoutSection from '@/design-system/demo/sections/FormLayoutSection.vue'
 import AppShellSection from '@/design-system/demo/sections/AppShellSection.vue'
+import ChartsSection from '@/design-system/demo/sections/ChartsSection.vue'
 import DataTableSection from '@/design-system/demo/sections/DataTableSection.vue'
 import TypeScaleSection from '@/design-system/demo/sections/TypeScaleSection.vue'
 import SpecsSection from '@/design-system/demo/sections/SpecsSection.vue'
@@ -55,6 +56,7 @@ const COMPONENTS = {
   print: PrintSection,
   'form-layout': FormLayoutSection,
   'app-shell': AppShellSection,
+  charts: ChartsSection,
   'data-table': DataTableSection,
   'type-scale': TypeScaleSection,
   specs: SpecsSection,

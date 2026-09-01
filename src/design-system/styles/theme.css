@@ -226,7 +226,7 @@
 /* Deliberately unbridged, continued — the chart palette.
    --chart-grid --chart-axis --chart-track --series-1..5 --chart-ok
    --chart-ok-strong --chart-warn --chart-bad --chart-idle --chart-area
-   --readout-bg --readout-rule
+   --readout-bg --readout-rule --chart-footer --chart-grid-mid
 
    Every one is consumed as a custom property inside SVG, where a Tailwind
    utility cannot reach: stroke, fill and gradient stops are attributes rather

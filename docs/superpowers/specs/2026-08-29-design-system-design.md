@@ -583,6 +583,8 @@ from the source.
   --chart-area: rgba(23, 114, 54, 0.16);
   --readout-bg: #1E2532;
   --readout-rule: #3A4454;
+  --chart-footer: #FCFDFE;
+  --chart-grid-mid: #F3F5F9;
 }
 ```
 
@@ -669,6 +671,8 @@ reads them yet, so they do not belong in `tokens.dark.css` until then — do not
   --chart-area: rgba(47, 178, 95, 0.2);
   --readout-bg: #E8ECF3;
   --readout-rule: #C3CCDA;
+  --chart-footer: #1C242F;
+  --chart-grid-mid: #1C242F;
 }
 ```
 
@@ -2421,13 +2425,21 @@ panel splits ring from legend at `minmax(280px, 1fr)`, and the readout demo at `
 is the 84% in its header). Reproduce the numbers exactly: several of them exist to demonstrate a
 specific redline.
 
-- **Line + area** — `Licences issued` · figure `88` · delta `▲ 15.8%` · period `This month` ·
-  footer `744 in 12 months`. Y axis `100 / 50 / 0`; x labels `Sep 25`, `Dec`, `Mar 26`, `Jun`, `Aug`
-  (every third period, per the *Axis labels* row).
+- **Line + area** — `Licences issued` · figure `88` · delta `▲ 15.8%` · period block `This month`
+  over `744 in 12 months`. Both lines are the RIGHT-ALIGNED meta block, one `<br>` apart — not a
+  panel footer. Y axis `100 / 50 / 0`; x labels `Sep 25`, `Dec`, `Mar 26`, `Jun`, `Aug` (every
+  third period, per the *Axis labels* row). The twelve values decode from the artifact's published
+  path as `38 44 41 52 61 57 66 72 68 81 76 88`, which sums to the 744 in its own header.
 - **Stacked bars** — `Expiring in the next 6 months` · figure `122` · delta `36 at risk` ·
-  period `Renewal load` · footer `peak in December`. Columns Sep 18, Oct 25, Nov 12, **Dec 32**,
+  period block `Renewal load` over `peak in December`. Columns Sep 18, Oct 25, Nov 12, **Dec 32**,
   Jan 21, Feb 14 — December is the emphasised column. Legend `On track 86`, `No renewal 27`,
-  `Overdue 9` (= 122).
+  `Overdue 9` (= 122), in the panel footer.
+  **The per-column split is derived, not copied.** The artifact's drawn bar heights reconcile with
+  neither its labels nor its legend — November is 42px where its own value asks for 32.8, and only
+  one column carries a `No renewal` segment though the legend totals 27. It is hand-drawn at that
+  level. The demo therefore solves for the three things the artifact DOES state: every column sums
+  to its label, every series sums to its legend entry, and December is `22 / 7 / 3` exactly as the
+  hover-readout demo shows it.
 - **Horizontal bars** — `Facilities by type` · figure `211` · period `Active licences` ·
   footer `5 categories`. Rows `Primary Care Facility 96 · 45%`, `Birthing Home 58 · 27%`,
   `Clinical Laboratory 34 · 16%`, `Infirmary 15 · 7%`, `Level 1 Hospital 8 · 4%` (= 211). The top
@@ -2444,8 +2456,14 @@ specific redline.
 - **Hover readout** — header `DECEMBER 2026`, then `On track 22`, `No renewal 7`, `Overdue 3`, and
   a `Total 32` row above the rule. The 32 is December's column in the stacked-bar demo.
 - **No data** — `No licences issued in this range` (13px/700) over
-  `The first LTO in Caraga was issued in March 2019.` (12px) and a 34px
-  `Reset to last 12 months` button. Never an empty gridded frame, never a zero line.
+  `The first LTO in Caraga was issued in March 2019.` (12px, 4px above) and a 34px
+  `Reset to last 12 months` button (13px above, radius 8, 1px --border-field).
+  **No chart panel and no figure**: the artifact wraps this in a plain tinted card — 18px pad, 1px
+  --divider, radius 14, on --surface-card-muted — precisely because a panel header would have to
+  show a figure, and a `0` above an empty chart IS the zero-line its own footnote forbids. The
+  `HOVER READOUT` block takes the same wrapper for the same reason. Closing footnote, 11.5px:
+  "A chart with no data says why and offers the fix. Never a gridded frame with nothing in it, and
+  never a zero-line that reads as real data." 
 
 **Rule cards:**
 

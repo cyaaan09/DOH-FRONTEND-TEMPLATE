@@ -44,6 +44,12 @@ test.describe('dark theme', () => {
         // on --surface, which is near-black on light and near-white on dark.
         // Excepted by name so the sweep still catches everything else.
         if (el.matches('[data-tooltip]')) continue
+        // The hover readout inverts for the same reason, and the artifact's own
+        // dark block says so: --readout-bg goes #1E2532 -> #E8ECF3 while its
+        // text goes the other way. A readout that stayed dark on a dark chart
+        // would be the one panel you could not read. Excepted by name, so the
+        // sweep still catches every other surface.
+        if (el.matches('[data-chart-readout]')) continue
 
         const bg = getComputedStyle(el).backgroundColor
         const m = bg.match(/rgba?\(([^)]+)\)/)

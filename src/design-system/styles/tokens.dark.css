@@ -149,4 +149,14 @@
   --chart-area: rgba(47, 178, 95, 0.2);
   --readout-bg: #E8ECF3;
   --readout-rule: #C3CCDA;
+
+  /* Charts, continued. Both dark values are INFERRED — the artifact tokenises
+     neither, so there is nothing to copy. The footer takes --surface-sunken's
+     dark value because it fills the same role; the middle gridline collapses
+     onto it too, since a line subtler than --chart-grid (#222B38) has almost
+     nowhere left to go above --surface (#161C26). Flagged in spec §17.3 so the
+     next artifact update can grade them, the way the last one graded
+     --item-mark and --avatar-bg. */
+  --chart-footer: #1C242F;
+  --chart-grid-mid: #1C242F;
 }

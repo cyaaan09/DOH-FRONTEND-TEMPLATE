@@ -30,6 +30,7 @@ export const SECTIONS = [
   { id: 'destructive', title: 'Destructive confirmation', complete: true },
   { id: 'shortcuts', title: 'Keyboard shortcuts', complete: true },
   { id: 'print', title: 'Print & PDF preview', complete: true },
+  { id: 'charts', title: 'Charts', complete: true },
   { id: 'form-layout', title: 'Form layout', complete: true },
   { id: 'app-shell', title: 'App shell — side navigation', complete: true },
   { id: 'data-table', title: 'Data table', complete: true },

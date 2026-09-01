@@ -290,6 +290,16 @@ const STRIPE = {
   display: block;
 }
 
+/* position: relative so the visually-hidden label below has a containing block
+   INSIDE the scroll container. Without it that span is absolutely positioned
+   against the initial containing block, which means it does not participate in
+   .table__scroll's clipping at all: it sat at x=1025 and made the whole
+   document 1026px wide, so every page scrolled sideways at any viewport under
+   1026px. A 1px element hidden with clip-path, widening the page. */
+.table__th {
+  position: relative;
+}
+
 /* Names the actions column for a screen reader without drawing a header over
    a 44px strip of icon buttons. */
 .table__sr-only {
