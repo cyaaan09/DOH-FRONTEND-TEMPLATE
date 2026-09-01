@@ -40,6 +40,32 @@ test('inserts each separator as its group fills', async ({ page }) => {
   ])
 })
 
+test('advances a group as soon as its digit can only mean one thing', async ({ page }) => {
+  // No month begins with 2-9, so typing 4 can only mean April: the field fills
+  // the leading zero and moves to the day rather than waiting for a second
+  // digit that cannot come. Only 0-3 can begin a two-digit day, so the day has
+  // its own threshold — which is why 15 still takes both keystrokes.
+  const field = fieldAt(page, 0)
+  await field.click()
+
+  const seen = []
+  for (const char of '492026') {
+    await field.type(char, { delay: 10 })
+    seen.push(await field.inputValue())
+  }
+  expect(seen).toEqual(['04/', '04/09/', '04/09/2', '04/09/20', '04/09/202', '04/09/2026'])
+
+  // 3 advances the month, then 1 must wait because 15 and 31 both exist
+  await field.fill('')
+  await field.type('3152026', { delay: 10 })
+  expect(await field.inputValue()).toBe('03/15/2026')
+
+  // and the caret sits after the padded group, not inside it
+  await field.fill('')
+  await field.type('4', { delay: 10 })
+  expect(await field.evaluate((el) => el.selectionStart)).toBe(3)
+})
+
 test('cannot be typed past a whole date', async ({ page }) => {
   // The reported bug: the field accepted 12/12/202612121 and the calendar
   // jumped to December 9999. Eight digits is a date; there is no ninth.

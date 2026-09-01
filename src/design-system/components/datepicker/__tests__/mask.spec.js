@@ -12,6 +12,37 @@ describe('date input mask', () => {
     expect(maskDate('12122026')).toBe('12/12/2026')
   })
 
+  it('advances as soon as a digit can only be a one-digit month', () => {
+    // No month begins with 2-9, so typing 4 can only mean April. Waiting for a
+    // second digit that cannot come is what made the field feel wrong.
+    expect(maskDate('2')).toBe('02/')
+    expect(maskDate('4')).toBe('04/')
+    expect(maskDate('9')).toBe('09/')
+  })
+
+  it('waits where a second digit is still possible', () => {
+    // 0 could still become 01-09, and 1 could become 10, 11 or 12.
+    expect(maskDate('0')).toBe('0')
+    expect(maskDate('1')).toBe('1')
+  })
+
+  it('applies the same rule to the day, at its own threshold', () => {
+    // Only 0-3 can begin a two-digit day, so 4 upward advances — but 3 waits,
+    // because 30 and 31 exist. This is why the threshold is per group and not
+    // one shared rule.
+    expect(maskDate('124')).toBe('12/04/')
+    expect(maskDate('129')).toBe('12/09/')
+    expect(maskDate('123')).toBe('12/3')
+    expect(maskDate('120')).toBe('12/0')
+  })
+
+  it('never auto-advances while deleting', () => {
+    // Otherwise backspacing into a single digit would pad it straight back and
+    // the field would grow as the user tried to shorten it.
+    expect(maskDate('4', true)).toBe('4')
+    expect(maskDate('12/4', true)).toBe('12/4')
+  })
+
   it('re-punctuates a value that already has slashes', () => {
     expect(maskDate('12/12/2026')).toBe('12/12/2026')
     expect(maskDate('12/1')).toBe('12/1')
@@ -71,6 +102,15 @@ describe('date input mask', () => {
       expect(applyMask(el, 'insertText')).toBe(true)
       expect(el.value).toBe('12/12/')
       expect(el.caret).toBe(6)
+    })
+
+    it('puts the caret after a padded group, not inside it', () => {
+      // Padding 4 to 04 adds a digit the raw value never had, so counting
+      // digits would land the caret between the zero and the four.
+      const el = field('4')
+      expect(applyMask(el, 'insertText')).toBe(true)
+      expect(el.value).toBe('04/')
+      expect(el.caret).toBe(3)
     })
 
     it('never walks the caret forward while deleting', () => {

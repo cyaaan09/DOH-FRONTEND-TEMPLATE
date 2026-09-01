@@ -17,24 +17,56 @@
 export const isMaskable = (value) => /^[\d/]*$/.test(value)
 
 /**
+ * The three groups, in the order the field accepts them, each with the digit
+ * above which a single keystroke can only be a one-digit value.
+ *
+ * Month: no month starts with 2-9, so typing 4 can only mean April — pad it to
+ * 04 and move on rather than waiting for a second digit that cannot come.
+ * Day: same from 4 up, since only 0-3 can begin a two-digit day.
+ * Year: four digits, nothing to infer.
+ *
+ * These thresholds assume MM/DD/YYYY. They swap if the field ever moves to the
+ * day-first order Appendix C's parse examples imply — the order lives here, so
+ * that is a one-line change rather than a hunt.
+ */
+const GROUPS = [{ size: 2, padAbove: '1' }, { size: 2, padAbove: '3' }, { size: 4 }]
+
+/**
  * @param {string} raw       the field's current value
  * @param {boolean} deleting true when the edit was a backspace or delete
  * @returns {string} the value re-punctuated as MM/DD/YYYY
  */
 export function maskDate(raw, deleting = false) {
-  const digits = raw.replace(/\D/g, '').slice(0, 8)
+  const digits = raw.replace(/\D/g, '')
+  const groups = []
+  let read = 0
 
-  // A trailing separator is added as soon as a group fills, so typing runs
-  // straight through — but NOT while deleting. Re-adding the slash the user
-  // just removed would make the field impossible to back out of, which is the
-  // classic way a mask traps someone mid-correction.
-  const group = (from, to) => digits.slice(from, to)
-  let out = group(0, 2)
-  if (digits.length > 2) out += `/${group(2, 4)}`
-  else if (digits.length === 2 && !deleting) out += '/'
-  if (digits.length > 4) out += `/${group(4, 8)}`
-  else if (digits.length === 4 && !deleting) out += '/'
-  return out
+  for (const group of GROUPS) {
+    if (read >= digits.length) break
+    let chunk = digits.slice(read, read + group.size)
+    read += chunk.length
+    let complete = chunk.length === group.size
+
+    // Auto-advance: a lone digit that cannot begin a two-digit value is that
+    // value, so fill the leading zero and treat the group as done. Never while
+    // deleting — padding a group the user is backing out of would grow the
+    // field as they try to shorten it.
+    if (!complete && !deleting && chunk.length === 1 && group.padAbove && chunk > group.padAbove) {
+      chunk = `0${chunk}`
+      complete = true
+    }
+
+    groups.push({ chunk, complete })
+    if (!complete) break
+  }
+
+  if (groups.length === 0) return ''
+  const value = groups.map((g) => g.chunk).join('/')
+  const finished = groups[groups.length - 1].complete
+
+  // A trailing separator once a group fills, so typing runs straight through —
+  // but not on the last group, and not while deleting.
+  return finished && groups.length < GROUPS.length && !deleting ? `${value}/` : value
 }
 
 /**
@@ -75,9 +107,17 @@ export function applyMask(el, inputType = '') {
   const masked = maskDate(raw, deleting)
   if (masked === raw) return false
 
-  const before = raw.slice(0, el.selectionStart ?? raw.length).replace(/\D/g, '').length
+  const at = el.selectionStart ?? raw.length
   el.value = masked
-  const caret = caretAfterDigits(masked, before, !deleting)
+
+  // Typing at the end is the overwhelmingly common case and the only one where
+  // auto-advance applies, so it gets the simple answer. Counting digits would
+  // be wrong there: padding 4 to 04 adds a digit the raw value never had, and
+  // the caret would land between the zero and the four.
+  const caret =
+    at === raw.length
+      ? masked.length
+      : caretAfterDigits(masked, raw.slice(0, at).replace(/\D/g, '').length, !deleting)
   el.setSelectionRange(caret, caret)
   return true
 }
