@@ -222,3 +222,13 @@
  * Font weights are not bridged either: 400/500/700 are Tailwind's built-in
  * font-normal / font-medium / font-bold.
  */
+
+/* Deliberately unbridged, continued — the chart palette.
+   --chart-grid --chart-axis --chart-track --series-1..5 --chart-ok
+   --chart-ok-strong --chart-warn --chart-bad --chart-idle --chart-area
+   --readout-bg --readout-rule
+
+   Every one is consumed as a custom property inside SVG, where a Tailwind
+   utility cannot reach: stroke, fill and gradient stops are attributes rather
+   than classes. Bridging them would emit roughly 48 utilities that no template
+   could use. Mirrored by DELIBERATELY_UNBRIDGED in theme-bridge.spec.js. */

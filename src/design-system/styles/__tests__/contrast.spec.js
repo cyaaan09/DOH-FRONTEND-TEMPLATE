@@ -109,8 +109,10 @@ describe('the rules those ratios exist to enforce', () => {
     // Redline "Dark on white · all pass" and "Hints & meta · #667085 inside
     // white cards only". This is the claim the numbers are FOR.
     for (const name of ['ink-900', 'ink-700', 'ink-600', 'ink-500', 'text-meta', 'placeholder']) {
-      expect(contrast(hex(light, name), hex(light, 'surface')), `--${name} on white`)
-        .toBeGreaterThanOrEqual(4.5)
+      expect(
+        contrast(hex(light, name), hex(light, 'surface')),
+        `--${name} on white`,
+      ).toBeGreaterThanOrEqual(4.5)
     }
   })
 

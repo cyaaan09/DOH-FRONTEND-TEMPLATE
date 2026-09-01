@@ -33,9 +33,16 @@ describe('tailwind theme bridge', () => {
 
   it('bridges the namespaces components are written against', () => {
     for (const name of [
-      'color-canvas', 'color-surface', 'color-ink-900', 'color-green-fill',
-      'color-hairline', 'color-field',
-      'radius-field', 'radius-card', 'spacing-field', 'shadow-card',
+      'color-canvas',
+      'color-surface',
+      'color-ink-900',
+      'color-green-fill',
+      'color-hairline',
+      'color-field',
+      'radius-field',
+      'radius-card',
+      'spacing-field',
+      'shadow-card',
     ]) {
       expect(bridge.has(name), `bridge is missing --${name}`).toBe(true)
     }
@@ -49,12 +56,42 @@ describe('tailwind theme bridge', () => {
    * listed there too.
    */
   const DELIBERATELY_UNBRIDGED = new Set([
-    'z-header', 'z-popover', 'z-dialog',
-    't-fast', 't-control', 't-rail', 't-spin',
-    'grad-primary', 'grad-meter',
-    'ring-focus', 'ring-select', 'scrim', 'chip-pad',
+    'z-header',
+    'z-popover',
+    'z-dialog',
+    't-fast',
+    't-control',
+    't-rail',
+    't-spin',
+    'grad-primary',
+    'grad-meter',
+    'ring-focus',
+    'ring-select',
+    'scrim',
+    'chip-pad',
     // Tailwind's built-in font-normal / font-medium / font-bold cover these.
-    'w-regular', 'w-medium', 'w-bold',
+    'w-regular',
+    'w-medium',
+    'w-bold',
+    // Chart tokens are read as custom properties inside SVG, where utilities
+    // cannot reach: stroke, fill and gradient stops are attributes, not
+    // classes. Bridging them would generate ~48 utilities no template can use.
+    'chart-grid',
+    'chart-axis',
+    'chart-track',
+    'series-1',
+    'series-2',
+    'series-3',
+    'series-4',
+    'series-5',
+    'chart-ok',
+    'chart-ok-strong',
+    'chart-warn',
+    'chart-bad',
+    'chart-idle',
+    'chart-area',
+    'readout-bg',
+    'readout-rule',
   ])
 
   /** The set of token names theme.css bridges (the target side of every var() reference). */
@@ -124,9 +161,13 @@ describe('tailwind theme bridge', () => {
 
   it('bridges the new colour additions', () => {
     for (const name of [
-      'color-notice-border-green', 'color-notice-border-blue',
-      'color-notice-border-amber', 'color-notice-border-red',
-      'color-border-dashed', 'color-surface-disabled', 'color-dot-green',
+      'color-notice-border-green',
+      'color-notice-border-blue',
+      'color-notice-border-amber',
+      'color-notice-border-red',
+      'color-border-dashed',
+      'color-surface-disabled',
+      'color-dot-green',
       'radius-bar',
     ]) {
       expect(bridge.has(name), `theme.css is missing --${name}`).toBe(true)

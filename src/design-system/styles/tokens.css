@@ -127,4 +127,27 @@
   /* Radius — redlines "Skeleton bar · radius 6px" and "Stage number · radius 6px".
      6px sits between --r-check (5px) and --r-tile (7px) and had no token. */
   --r-bar: 6px;
+
+  /* --- Charts (artifact update 2026-09-01) ---------------------------------
+     Verbatim from the source document's own :root. Unlike the block above,
+     these ARE tokenised at source — they live here rather than in the verbatim
+     region only because that region mirrors spec Appendix A, which predates
+     them. --chart-axis carries a contrast note because the redline calls axis
+     labels readable text: "never --ink-300". */
+  --chart-grid: #EEF1F6;
+  --chart-axis: #667085; /* 4.83:1 — axis + legend figures are readable text */
+  --chart-track: #F4F6FA;
+  --series-1: #177236;
+  --series-2: #2E8E6B;
+  --series-3: #2E6FB0;
+  --series-4: #6E5AD1;
+  --series-5: #8A5206;
+  --chart-ok: #1F8B43;
+  --chart-ok-strong: #177236;
+  --chart-warn: #D9A13B;
+  --chart-bad: #E5484D;
+  --chart-idle: #CBD3E0;
+  --chart-area: rgba(23, 114, 54, 0.16);
+  --readout-bg: #1E2532;
+  --readout-rule: #3A4454;
 }

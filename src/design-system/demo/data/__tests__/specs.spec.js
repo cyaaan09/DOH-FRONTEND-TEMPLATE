@@ -17,10 +17,10 @@ describe('generated spec data', () => {
   })
 
   it('carries every Appendix C group the artifact shows', () => {
-    // 30 after the second 2026-08-31 artifact update, which added eight more
-    // groups (Date picker … Print & PDF preview) and grew Dark mode 29 -> 41
-    // with the app-shell rows.
-    expect(SPEC_GROUPS).toHaveLength(30)
+    // 31 after the 2026-09-01 update, which added Charts (30 rows) and changed
+    // nothing else — verified row by row against the previous bundle, not just
+    // by group count.
+    expect(SPEC_GROUPS).toHaveLength(31)
     expect(SPEC_GROUPS[0].name).toBe('Containers & surfaces')
     expect(SPEC_GROUPS[0].summary).toBe('canvas #EEF1F6 · card #FFF radius 14 · sunken #FAFBFD')
     expect(SPEC_GROUPS.at(-1).name).toBe('Type & layout')
@@ -29,6 +29,16 @@ describe('generated spec data', () => {
     }
     expect(SPEC_GROUPS.find((g) => g.name === 'Tables').rows).toHaveLength(30)
     expect(SPEC_GROUPS.find((g) => g.name === 'Dark mode').rows).toHaveLength(41)
+    expect(SPEC_GROUPS.find((g) => g.name === 'Charts').rows).toHaveLength(30)
+  })
+
+  it('keeps the groups in the artifact\'s own order', () => {
+    // Order is not cosmetic: the Component specs accordion renders this array
+    // as-is, so a group appended in the wrong place silently reorders the
+    // page. Charts arrived at index 20, between Print and Forms — appending it
+    // at the end looked right and was not.
+    const names = SPEC_GROUPS.map((g) => g.name)
+    expect(names.slice(19, 22)).toEqual(['Print & PDF preview', 'Charts', 'Forms & validation'])
   })
 
   it('marks a swatch only where the value IS a colour', () => {

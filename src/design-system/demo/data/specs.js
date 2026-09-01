@@ -1205,6 +1205,132 @@ export const SPEC_GROUPS = [
     ]
   },
   {
+    "name": "Charts",
+    "summary": "figure-first panels · 5 types only · status tones keep their meaning",
+    "rows": [
+      {
+        "k": "Types",
+        "v": "line/area (time) · stacked bars (composition per period) · horizontal bars (ranking) · donut (parts of one whole, ≤4 slices) · sparkline (trend inside a figure). No pies, radar, or dual axis"
+      },
+      {
+        "k": "Panel",
+        "v": "1px #EEF1F6 · radius 14px · #FFF · header 16px 18px 14px, plot 0 18px 16px, optional footer 12px 18px on #FCFDFE with a 1px #F5F7FA rule"
+      },
+      {
+        "k": "Figure first",
+        "v": "label 12px #667085 · figure 26px mono / 700 / -0.03em / line-height 1 · period meta 11.5px #98A2B3 right-aligned. The header answers the question; the plot adds shape"
+      },
+      {
+        "k": "Delta pill",
+        "v": "pad 2px 8px · radius 999px · 11px / 700 · ▲ / ▼ prefix · good #E8F6EC / #15803D · watch #FEF2E0 / #8A5206 · bad #FEE2E2 / #B42318"
+      },
+      {
+        "k": "Direction, not sign",
+        "v": "the pill's tone follows whether the movement is GOOD, not whether the number rose — overdue renewals falling is green with a ▼"
+      },
+      {
+        "k": "Palette rule",
+        "v": "a chart about state uses the STATUS tones exactly as the tables do; the categorical ramp is only for neutral splits (type, region, inspector)"
+      },
+      {
+        "k": "Status series",
+        "v": "on track #1F8B43 (#177236 when emphasised) · no renewal #E3B25E · overdue #E5484D · closed #CBD3E0"
+      },
+      {
+        "k": "Categorical ramp",
+        "v": "#177236 · #2E8E6B · #2E6FB0 · #6E5AD1 · #8A5206 — in that order, max 5 series"
+      },
+      {
+        "k": "One emphasis",
+        "v": "exactly one element at full weight per chart — the peak bar, the top row, the latest point. Everything else steps back one shade and to 400 weight"
+      },
+      {
+        "k": "Gridlines",
+        "v": "three max, horizontal only · outer two #EEF1F6, middle #F3F5F9 · no axis line, no ticks, no plot border"
+      },
+      {
+        "k": "Axis labels",
+        "v": "10.5px --chart-axis #667085 (4.83:1) · y mono, x proportional · label every 3rd period at most — axis numbers are readable data text, never --ink-300"
+      },
+      {
+        "k": "Axis geometry",
+        "v": "the y-label box is the SAME height as the plot box (align-items flex-start, no padding), each label absolutely positioned at 0 / 50% / 100% with translateY(-50%) so it centres on its gridline"
+      },
+      {
+        "k": "Line",
+        "v": "2.25px, smooth cubic through midpoints (never a spline that overshoots), round joins, vector-effect non-scaling-stroke"
+      },
+      {
+        "k": "Area fill",
+        "v": "linear-gradient of the line tone, 0.18 to 0 — one series only; two overlapping areas is a stacked bar"
+      },
+      {
+        "k": "Latest point",
+        "v": "9px #FFF dot, 2.25px ring, 0 0 0 3px tone-at-12% halo, plus a 1px dashed drop line at 0.45 opacity to the baseline"
+      },
+      {
+        "k": "Bars",
+        "v": "gap 12px · max-width 34px · radius 5px on the outer end only · 2px between stack segments · value 11px mono / 700 above, #1E2532 on the emphasised column and #667085 elsewhere"
+      },
+      {
+        "k": "Horizontal bars",
+        "v": "7px track #F4F6FA radius 999 · label 12.5px clipping left · value 12px mono / 700 + share 10.5px #667085 in a 30px right column"
+      },
+      {
+        "k": "Donut",
+        "v": "120px · r 46 · stroke 11 · BUTT caps, 2px gap taken out of each dash · a #F4F6FA full-circle track sits under the arcs so a small total still reads as a ring"
+      },
+      {
+        "k": "Donut caps",
+        "v": "butt, never round: a round cap adds stroke/2 at BOTH ends, so at stroke 11 every slice paints 11px longer than its arc — an 8-of-211 slice reads as 6.9% instead of 3.8% and laps its neighbour. Round caps would require dash = arc − strokeWidth, which floors any slice under ~3.8% at zero"
+      },
+      {
+        "k": "Donut centre",
+        "v": "the hole is 2 × (r − stroke/2) = 81px — the centre block caps at max-width 70px, line-height 1.2, and wraps. An uncapped caption overruns onto the ring, where the SVG sibling is not an ancestor background so no contrast check catches it"
+      },
+      {
+        "k": "Donut legend",
+        "v": "rows divided by 1px #F5F7FA, 7px vertical padding · swatch 8px radius 2px · count mono / 700 · share 10.5px #667085 in a 32px right column"
+      },
+      {
+        "k": "Sparkline",
+        "v": "30px tall · 1.75px smooth stroke in the figure's own tone + a 0.14→0 gradient fill · no axis, no dots, no labels"
+      },
+      {
+        "k": "Stat card",
+        "v": "pad 15px 16px 12px · radius 14px · 1px #E4E8EF · label 11.5px #667085 · figure 24px mono / 700 / -0.03em with the delta baseline-aligned right · spark 12px below"
+      },
+      {
+        "k": "Legend",
+        "v": "8px radius-2 swatch + 11.5px #344054, value appended in mono / 700 #1E2532 · gap 14px · in the panel footer, or omitted for a single series"
+      },
+      {
+        "k": "Hover readout",
+        "v": "#1E2532 · radius 11px · pad 11px 13px · shadow 0 10px 28px rgba(16,24,40,.26) · period 10.5px / 700 / 0.07em #98A2B3 · every series in stack order + a total row above a 1px #3A4454 rule · 12px pointer offset"
+      },
+      {
+        "k": "Touch",
+        "v": "readout pins under the tapped column instead of following a pointer"
+      },
+      {
+        "k": "Empty",
+        "v": "1px dashed #CBD3E0 on #FFF, radius 12px, pad 28px 18px · says why in 13px / 700 + a 12px reason + a 34px reset button. Never an empty gridded frame, never a zero line"
+      },
+      {
+        "k": "Loading",
+        "v": "the plot area becomes one #EEF1F6 block at the chart's height — never animated bars growing from zero"
+      },
+      {
+        "k": "A11y",
+        "v": "SVG is aria-hidden; the header figure, delta, and legend carry the meaning in text, and each chart names the table view holding the same data"
+      },
+      {
+        "k": "Motion",
+        "v": "160ms ease on hover state only · no entry animation — a chart that animates in delays the number"
+      }
+    ]
+  },
+  {
     "name": "Forms & validation",
     "summary": "12-col grid · 16px/24px gutter · error replaces help text in place",
     "rows": [

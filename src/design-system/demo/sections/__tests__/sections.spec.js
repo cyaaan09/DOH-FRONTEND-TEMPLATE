@@ -843,10 +843,10 @@ describe('FoundationsSection is complete', () => {
 })
 
 describe('SpecsSection renders Appendix C as an accordion', () => {
-  it('lists all 30 redline groups and opens Chips by default', () => {
+  it('lists all 31 redline groups and opens Chips by default', () => {
     const wrapper = mount(SpecsSection)
     expect(wrapper.findAll('[data-gap]')).toHaveLength(0)
-    expect(wrapper.findAll('[data-spec-group]')).toHaveLength(30)
+    expect(wrapper.findAll('[data-spec-group]')).toHaveLength(31)
     const open = wrapper.findAll('[data-spec-toggle]').filter(
       (t) => t.attributes('aria-expanded') === 'true',
     )

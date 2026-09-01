@@ -36,7 +36,17 @@ export function readStyle(name) {
 export function readSpec() {
   const testsDir = dirname(fileURLToPath(import.meta.url))
   return readFileSync(
-    join(testsDir, '..', '..', '..', '..', 'docs', 'superpowers', 'specs', '2026-08-29-design-system-design.md'),
+    join(
+      testsDir,
+      '..',
+      '..',
+      '..',
+      '..',
+      'docs',
+      'superpowers',
+      'specs',
+      '2026-08-29-design-system-design.md',
+    ),
     'utf8',
   )
 }

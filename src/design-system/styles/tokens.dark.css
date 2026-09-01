@@ -131,4 +131,22 @@
      rather than as a near-white sheet on the dark desk. */
   --toast-bg-amber: rgba(217,161,59,.12);
   --toast-bg-blue:  rgba(23,92,211,.12);
+
+  /* Charts — lighter series so a 2px stroke holds on #161C26. The artifact
+     does NOT override --chart-ok-strong: see spec §17.3. */
+  --chart-grid: #222B38;
+  --chart-axis: #9AA5B5; /* 6.86:1 on --surface */
+  --chart-track: #222B38;
+  --series-1: #2FB25F;
+  --series-2: #4FC7A0;
+  --series-3: #6FA8FF;
+  --series-4: #A895FF;
+  --series-5: #F0C070;
+  --chart-ok: #2FB25F;
+  --chart-warn: #E0B060;
+  --chart-bad: #FF7B74;
+  --chart-idle: #55606F;
+  --chart-area: rgba(47, 178, 95, 0.2);
+  --readout-bg: #E8ECF3;
+  --readout-rule: #C3CCDA;
 }

@@ -562,6 +562,27 @@ from the source.
   /* Radius — redlines "Skeleton bar · radius 6px" and "Stage number · radius 6px".
      6px sits between --r-check (5px) and --r-tile (7px) and had no token. */
   --r-bar: 6px;
+
+  /* --- Charts (artifact update 2026-09-01) ---------------------------------
+     Verbatim from the source document's own :root. Unlike the block above,
+     these ARE tokenised at source — they live here rather than in the verbatim
+     region only because that region mirrors Appendix A, which predates them. */
+  --chart-grid: #EEF1F6;
+  --chart-axis: #667085; /* 4.83:1 — axis + legend figures are readable text */
+  --chart-track: #F4F6FA;
+  --series-1: #177236;
+  --series-2: #2E8E6B;
+  --series-3: #2E6FB0;
+  --series-4: #6E5AD1;
+  --series-5: #8A5206;
+  --chart-ok: #1F8B43;
+  --chart-ok-strong: #177236;
+  --chart-warn: #D9A13B;
+  --chart-bad: #E5484D;
+  --chart-idle: #CBD3E0;
+  --chart-area: rgba(23, 114, 54, 0.16);
+  --readout-bg: #1E2532;
+  --readout-rule: #3A4454;
 }
 ```
 
@@ -630,6 +651,24 @@ reads them yet, so they do not belong in `tokens.dark.css` until then — do not
   --sh-panel:  0 12px 28px rgba(0,0,0,.45);
   --sh-dialog: 0 24px 60px rgba(0,0,0,.60);
   --scrim: rgba(4,7,12,.62);
+
+  /* Charts — lighter series so a 2px stroke holds on #161C26. The artifact
+     does NOT override --chart-ok-strong: see §17.3. */
+  --chart-grid: #222B38;
+  --chart-axis: #9AA5B5; /* 6.86:1 on --surface */
+  --chart-track: #222B38;
+  --series-1: #2FB25F;
+  --series-2: #4FC7A0;
+  --series-3: #6FA8FF;
+  --series-4: #A895FF;
+  --series-5: #F0C070;
+  --chart-ok: #2FB25F;
+  --chart-warn: #E0B060;
+  --chart-bad: #FF7B74;
+  --chart-idle: #55606F;
+  --chart-area: rgba(47, 178, 95, 0.2);
+  --readout-bg: #E8ECF3;
+  --readout-rule: #C3CCDA;
 }
 ```
 
@@ -1055,6 +1094,43 @@ _true-aspect A4 · preview is the print path · invalid output blocked_
 | Batch output | one single-page PDF per licence, named by LTO number, delivered zipped — never one merged file |
 | Fidelity | preview and print share markup and stylesheet with one page box — if they can disagree, the preview is decoration |
 | Blocking | unsigned or expired certificates cannot reach the tray; the fix is one button away in the notice |
+
+### Charts
+
+_figure-first panels · 5 types only · status tones keep their meaning_
+
+| Property | Value |
+|---|---|
+| Types | line/area (time) · stacked bars (composition per period) · horizontal bars (ranking) · donut (parts of one whole, ≤4 slices) · sparkline (trend inside a figure). No pies, radar, or dual axis |
+| Panel | 1px #EEF1F6 · radius 14px · #FFF · header 16px 18px 14px, plot 0 18px 16px, optional footer 12px 18px on #FCFDFE with a 1px #F5F7FA rule |
+| Figure first | label 12px #667085 · figure 26px mono / 700 / -0.03em / line-height 1 · period meta 11.5px #98A2B3 right-aligned. The header answers the question; the plot adds shape |
+| Delta pill | pad 2px 8px · radius 999px · 11px / 700 · ▲ / ▼ prefix · good #E8F6EC / #15803D · watch #FEF2E0 / #8A5206 · bad #FEE2E2 / #B42318 |
+| Direction, not sign | the pill's tone follows whether the movement is GOOD, not whether the number rose — overdue renewals falling is green with a ▼ |
+| Palette rule | a chart about state uses the STATUS tones exactly as the tables do; the categorical ramp is only for neutral splits (type, region, inspector) |
+| Status series | on track #1F8B43 (#177236 when emphasised) · no renewal #E3B25E · overdue #E5484D · closed #CBD3E0 |
+| Categorical ramp | #177236 · #2E8E6B · #2E6FB0 · #6E5AD1 · #8A5206 — in that order, max 5 series |
+| One emphasis | exactly one element at full weight per chart — the peak bar, the top row, the latest point. Everything else steps back one shade and to 400 weight |
+| Gridlines | three max, horizontal only · outer two #EEF1F6, middle #F3F5F9 · no axis line, no ticks, no plot border |
+| Axis labels | 10.5px --chart-axis #667085 (4.83:1) · y mono, x proportional · label every 3rd period at most — axis numbers are readable data text, never --ink-300 |
+| Axis geometry | the y-label box is the SAME height as the plot box (align-items flex-start, no padding), each label absolutely positioned at 0 / 50% / 100% with translateY(-50%) so it centres on its gridline |
+| Line | 2.25px, smooth cubic through midpoints (never a spline that overshoots), round joins, vector-effect non-scaling-stroke |
+| Area fill | linear-gradient of the line tone, 0.18 to 0 — one series only; two overlapping areas is a stacked bar |
+| Latest point | 9px #FFF dot, 2.25px ring, 0 0 0 3px tone-at-12% halo, plus a 1px dashed drop line at 0.45 opacity to the baseline |
+| Bars | gap 12px · max-width 34px · radius 5px on the outer end only · 2px between stack segments · value 11px mono / 700 above, #1E2532 on the emphasised column and #667085 elsewhere |
+| Horizontal bars | 7px track #F4F6FA radius 999 · label 12.5px clipping left · value 12px mono / 700 + share 10.5px #667085 in a 30px right column |
+| Donut | 120px · r 46 · stroke 11 · BUTT caps, 2px gap taken out of each dash · a #F4F6FA full-circle track sits under the arcs so a small total still reads as a ring |
+| Donut caps | butt, never round: a round cap adds stroke/2 at BOTH ends, so at stroke 11 every slice paints 11px longer than its arc — an 8-of-211 slice reads as 6.9% instead of 3.8% and laps its neighbour. Round caps would require dash = arc − strokeWidth, which floors any slice under ~3.8% at zero |
+| Donut centre | the hole is 2 × (r − stroke/2) = 81px — the centre block caps at max-width 70px, line-height 1.2, and wraps. An uncapped caption overruns onto the ring, where the SVG sibling is not an ancestor background so no contrast check catches it |
+| Donut legend | rows divided by 1px #F5F7FA, 7px vertical padding · swatch 8px radius 2px · count mono / 700 · share 10.5px #667085 in a 32px right column |
+| Sparkline | 30px tall · 1.75px smooth stroke in the figure's own tone + a 0.14→0 gradient fill · no axis, no dots, no labels |
+| Stat card | pad 15px 16px 12px · radius 14px · 1px #E4E8EF · label 11.5px #667085 · figure 24px mono / 700 / -0.03em with the delta baseline-aligned right · spark 12px below |
+| Legend | 8px radius-2 swatch + 11.5px #344054, value appended in mono / 700 #1E2532 · gap 14px · in the panel footer, or omitted for a single series |
+| Hover readout | #1E2532 · radius 11px · pad 11px 13px · shadow 0 10px 28px rgba(16,24,40,.26) · period 10.5px / 700 / 0.07em #98A2B3 · every series in stack order + a total row above a 1px #3A4454 rule · 12px pointer offset |
+| Touch | readout pins under the tapped column instead of following a pointer |
+| Empty | 1px dashed #CBD3E0 on #FFF, radius 12px, pad 28px 18px · says why in 13px / 700 + a 12px reason + a 34px reset button. Never an empty gridded frame, never a zero line |
+| Loading | the plot area becomes one #EEF1F6 block at the chart's height — never animated bars growing from zero |
+| A11y | SVG is aria-hidden; the header figure, delta, and legend carry the meaning in text, and each chart names the table view holding the same data |
+| Motion | 160ms ease on hover state only · no entry animation — a chart that animates in delays the number |
 
 ### Forms & validation
 
@@ -2319,6 +2395,64 @@ panel labels inside the expanded row, not section sub-blocks.
 - **The fill flips its text** — White on a dark-mode green never clears 4.5:1 at a usable brightness, so the filled green lightens to #2FB25F and takes #0B1017 text (6.95:1). Read it from --green-on-fill so one button component serves both themes.
 - **Tints become translucent** — Every status tint is the tone at 14–24% over whatever surface it lands on — 7% for neutral chips and row hover — paired with the light tone as text — so a chip works on a card, a sunken strip, and a hovered row without a third value.
 - **Geometry never changes** — Same 38px fields, 9px radius, 22px chips, 32px notices, 24px gutters. Dark mode is a palette swap — if a size changes between themes, it is a bug.
+
+
+#### Charts
+
+**Description:** Five chart types, no more. Every panel leads with the figure it is about, then draws it — so a glance answers the question and the plot only adds the shape. Status tones keep their meaning inside charts: green is still issued, red is still overdue.
+
+**Sub-blocks:**
+
+- `LINE + AREA — ONE SERIES OVER TIME`
+- `STACKED BARS — COMPOSITION PER PERIOD`
+- `HORIZONTAL BARS — RANKED CATEGORIES`
+- `DONUT — PARTS OF ONE WHOLE, 4 SLICES MAX`
+- `SPARKLINES — INSIDE A STAT CARD`
+- `HOVER READOUT`
+- `NO DATA — NOT AN EMPTY FRAME`
+
+**Arrangement:** the section body is one `repeat(auto-fit, minmax(430px, 1fr))` grid at `gap: 14px`
+with `align-items: stretch`, so two panels sit side by side above ~890px and stack below it. The
+stat-card row inside `SPARKLINES` is its own `minmax(200px, 1fr)` grid at `gap: 12px`; the donut's
+panel splits ring from legend at `minmax(280px, 1fr)`, and the readout demo at `minmax(240px, 1fr)`.
+
+**Demo content** — every figure below is the artifact's own, and the sets are internally consistent
+(the stacked legend sums to its figure, the ranked rows sum to theirs, and the donut's 178 of 211
+is the 84% in its header). Reproduce the numbers exactly: several of them exist to demonstrate a
+specific redline.
+
+- **Line + area** — `Licences issued` · figure `88` · delta `▲ 15.8%` · period `This month` ·
+  footer `744 in 12 months`. Y axis `100 / 50 / 0`; x labels `Sep 25`, `Dec`, `Mar 26`, `Jun`, `Aug`
+  (every third period, per the *Axis labels* row).
+- **Stacked bars** — `Expiring in the next 6 months` · figure `122` · delta `36 at risk` ·
+  period `Renewal load` · footer `peak in December`. Columns Sep 18, Oct 25, Nov 12, **Dec 32**,
+  Jan 21, Feb 14 — December is the emphasised column. Legend `On track 86`, `No renewal 27`,
+  `Overdue 9` (= 122).
+- **Horizontal bars** — `Facilities by type` · figure `211` · period `Active licences` ·
+  footer `5 categories`. Rows `Primary Care Facility 96 · 45%`, `Birthing Home 58 · 27%`,
+  `Clinical Laboratory 34 · 16%`, `Infirmary 15 · 7%`, `Level 1 Hospital 8 · 4%` (= 211). The top
+  row is the emphasised one.
+- **Donut** — `Licence status` · figure `84%` · delta `In good standing` · period `211 licences`.
+  Centre reads `178` over `active`. Legend `Active 178`, `Expiring 21 · 10%`, `Overdue 8 · 4%`,
+  `Closed 4 · 2%` (= 211). **`Overdue 8` of 211 is 3.8%** — the exact slice the *Donut caps* row
+  says a round cap would paint as 6.9%. Build it with butt caps and this data will show the bug if
+  anyone changes them.
+- **Sparklines** — four stat cards: `Issued this month 88 ▲ 15.8%`, `Awaiting inspection 24 ▲ 4`,
+  `Overdue renewals 8 ▼ 3`, `Median days to issue 11 ▼ 1.5`. The last two are the *Direction, not
+  sign* row made visible: both fell, and both pills are GOOD (green with a ▼), because fewer
+  overdue renewals and a shorter median are improvements.
+- **Hover readout** — header `DECEMBER 2026`, then `On track 22`, `No renewal 7`, `Overdue 3`, and
+  a `Total 32` row above the rule. The 32 is December's column in the stacked-bar demo.
+- **No data** — `No licences issued in this range` (13px/700) over
+  `The first LTO in Caraga was issued in March 2019.` (12px) and a 34px
+  `Reset to last 12 months` button. Never an empty gridded frame, never a zero line.
+
+**Rule cards:**
+
+- **Figure first, plot second** — Every panel opens with a 26px mono figure, its delta as a tinted pill, and the period on the right. A user who reads only the header still leaves correct — the plot adds shape, not the answer.
+- **Status tones outrank the ramp** — If a chart is about licence state, it uses green, amber, red, grey exactly as the tables do. The categorical ramp is only for neutral splits — facility type, region, inspector.
+- **One emphasised element** — The peak bar, the top category, and the latest point are the only things at full weight; everything else steps back a shade. A chart where all six bars shout has no finding.
+- **Hairlines, not boxes** — Three gridlines max, the middle one #F3F5F9, no axis line, no ticks, no plot border. Structure comes from the panel edge and the type, never from a frame around the data.
 
 
 #### Tokens for handoff
