@@ -101,3 +101,56 @@ test('the shell fills the viewport rather than stopping under the rail', async (
   const rail = await page.locator('[data-sidebar-rail]').boundingBox()
   expect(rail.height).toBeGreaterThanOrEqual(page.viewportSize().height)
 })
+
+test('lands the account block at the foot of the rail', async ({ page }) => {
+  // Redline "Rail surface · sticky top 0 · h 100vh" and "Rail footer · pad
+  // 12px 14px · --surface-card-muted". Without the height the footer sat
+  // directly under the last nav item with bare canvas below it — the rail
+  // looked truncated, and .rail__body's flex-1 had nothing to expand into.
+  await page.goto('/login')
+  await signIn(page)
+  await page.locator('[data-app-shell]').waitFor()
+
+  const rail = await page.locator('[data-app-sidebar]').boundingBox()
+  const footer = await page.locator('[data-account]').boundingBox()
+  expect(rail.height).toBeGreaterThanOrEqual(page.viewportSize().height - 1)
+  expect(footer.y + footer.height).toBeCloseTo(rail.y + rail.height, 0)
+})
+
+test('never nests a card inside a card', async ({ page }) => {
+  // Redline "Section · cards never nest — divide (1px --divider) or sink
+  // (--surface-sunken) instead". The dashboard wrapped six cards in a Section,
+  // which is a seventh card around the other six. Checked on every app page,
+  // because the rule is about the page and not about one component.
+  // Signed in ONCE: a second visit to /login redirects to the dashboard, so
+  // signing in per iteration waits forever for a field that is not there.
+  await page.goto('/login')
+  await signIn(page)
+  for (const path of ['/dashboard', '/second-page']) {
+    await page.goto(path)
+    await page.locator('[data-page]').waitFor()
+    const nested = await page.evaluate(() => {
+      const CARD = '[data-ds-section], [data-chart-panel], [data-chart-stat], [data-card]'
+      return [...document.querySelectorAll(CARD)]
+        .filter((el) => el.parentElement?.closest(CARD))
+        .map((el) => el.tagName + '.' + String(el.className).slice(0, 30))
+    })
+    expect(nested, `on ${path}`).toEqual([])
+  }
+})
+
+test('gives every app page a title', async ({ page }) => {
+  // Also a guard against a silent failure mode: an unresolved component renders
+  // as NOTHING in a production build, with no console error. PageHeader went
+  // missing exactly that way when its import did not survive an edit, and the
+  // page still looked plausible.
+  await page.goto('/login')
+  await signIn(page)
+  for (const [path, title] of [
+    ['/dashboard', 'Dashboard'],
+    ['/second-page', 'Second page'],
+  ]) {
+    await page.goto(path)
+    await expect(page.locator('[data-page-title]')).toHaveText(title)
+  }
+})

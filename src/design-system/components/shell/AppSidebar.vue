@@ -64,6 +64,8 @@ const MARK_SHAPE = {
       </button>
     </div>
 
+    <!-- Scrolls on its own: the rail is a fixed height now, and a nav longer
+         than the viewport would otherwise push the account footer out of it. -->
     <div class="rail__body flex-1">
       <template v-for="group in groups" :key="group.label">
         <div v-if="!collapsed" data-group class="rail__group text-text-header">
@@ -126,7 +128,17 @@ const MARK_SHAPE = {
 <style scoped>
 /* Redline "Rail width · 244px expanded · 62px collapsed (transition 160ms)"
    and "Rail surface · 1px right --border-card · sticky top 0 · h 100vh". */
+/* Redline "Rail surface · sticky top 0 · h 100vh". Written as 100% rather than
+   100vh: in an app shell the parent IS the viewport, so they are the same, but
+   100vh would also force full height inside the design-system section's own
+   fixed-height previews and anywhere else a rail is embedded in something
+   smaller. The height is what pushes .rail__body's flex-1 down and lands the
+   account footer at the FOOT of the rail — without it the footer sat directly
+   under the last nav item with bare canvas below. */
 .rail {
+  position: sticky;
+  top: 0;
+  height: 100%;
   width: var(--rail-w);
   border-right: 1px solid var(--border-card);
   transition: width var(--t-rail);
@@ -134,6 +146,10 @@ const MARK_SHAPE = {
 
 .rail--collapsed {
   width: var(--rail-w-collapsed);
+}
+
+.rail__body {
+  overflow-y: auto;
 }
 
 .rail__brand {

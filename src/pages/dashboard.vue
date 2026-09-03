@@ -3,14 +3,8 @@
 </route>
 
 <script setup>
-import {
-  ChartPanel,
-  ChartStatCard,
-  HorizontalBars,
-  LineChart,
-  Page,
-  Section,
-} from '@/design-system'
+import { ChartPanel, ChartStatCard, HorizontalBars, LineChart, Page } from '@/design-system'
+import PageHeader from '@/components/PageHeader.vue'
 
 // Placeholder figures. They are internally consistent — the twelve months sum
 // to 744, the five types to 211 — so the page reads as real while it is not.
@@ -77,43 +71,47 @@ const TYPES = [
 
 <template>
   <Page>
-    <Section title="Dashboard">
-      <div class="dashboard__stats">
-        <ChartStatCard
-          v-for="stat in STATS"
-          :key="stat.label"
-          :label="stat.label"
-          :figure="stat.figure"
-          :delta="stat.delta"
-          :delta-direction="stat.direction"
-          :delta-tone="stat.tone"
-          :values="stat.values"
-          :tone="stat.chartTone ?? 'var(--chart-ok)'"
-        />
-      </div>
+    <!-- No Section around these. Redline "Section · cards never nest — divide
+         or sink instead": every stat card and chart panel below is already a
+         card, and a Section would be a seventh one wrapped around the other
+         six. The canvas IS the page's background. -->
+    <PageHeader title="Dashboard" subtitle="Licensing activity across the region." />
 
-      <div class="dashboard__panels">
-        <ChartPanel
-          label="Licences issued"
-          :figure="88"
-          delta="15.8%"
-          delta-direction="up"
-          period="This month"
-          note="744 in 12 months"
-        >
-          <LineChart :values="MONTHS" :labels="MONTH_LABELS" />
-        </ChartPanel>
+    <div class="dashboard__stats">
+      <ChartStatCard
+        v-for="stat in STATS"
+        :key="stat.label"
+        :label="stat.label"
+        :figure="stat.figure"
+        :delta="stat.delta"
+        :delta-direction="stat.direction"
+        :delta-tone="stat.tone"
+        :values="stat.values"
+        :tone="stat.chartTone ?? 'var(--chart-ok)'"
+      />
+    </div>
 
-        <ChartPanel
-          label="Facilities by type"
-          :figure="211"
-          period="Active licences"
-          note="5 categories"
-        >
-          <HorizontalBars :rows="TYPES" :total="211" />
-        </ChartPanel>
-      </div>
-    </Section>
+    <div class="dashboard__panels">
+      <ChartPanel
+        label="Licences issued"
+        :figure="88"
+        delta="15.8%"
+        delta-direction="up"
+        period="This month"
+        note="744 in 12 months"
+      >
+        <LineChart :values="MONTHS" :labels="MONTH_LABELS" />
+      </ChartPanel>
+
+      <ChartPanel
+        label="Facilities by type"
+        :figure="211"
+        period="Active licences"
+        note="5 categories"
+      >
+        <HorizontalBars :rows="TYPES" :total="211" />
+      </ChartPanel>
+    </div>
   </Page>
 </template>
 
