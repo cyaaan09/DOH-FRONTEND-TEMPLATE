@@ -41,10 +41,10 @@ test('inserts each separator as its group fills', async ({ page }) => {
 })
 
 test('advances a group as soon as its digit can only mean one thing', async ({ page }) => {
-  // No month begins with 2-9, so typing 4 can only mean April: the field fills
-  // the leading zero and moves to the day rather than waiting for a second
-  // digit that cannot come. Only 0-3 can begin a two-digit day, so the day has
-  // its own threshold — which is why 15 still takes both keystrokes.
+  // No DAY begins with 4-9 — 31 is the most there is — so in the day-first
+  // default, typing 4 can only be the 4th: the field fills the leading zero and
+  // moves on rather than waiting for a second digit that cannot come. The month
+  // has its own threshold, because 10, 11 and 12 exist.
   const field = fieldAt(page, 0)
   await field.click()
 
@@ -55,15 +55,50 @@ test('advances a group as soon as its digit can only mean one thing', async ({ p
   }
   expect(seen).toEqual(['04/', '04/09/', '04/09/2', '04/09/20', '04/09/202', '04/09/2026'])
 
-  // 3 advances the month, then 1 must wait because 15 and 31 both exist
+  // 3 must WAIT — the field is day-first by default and 30 and 31 exist — so
+  // 31 completes the day, and only then does 5 advance the month.
   await field.fill('')
   await field.type('3152026', { delay: 10 })
-  expect(await field.inputValue()).toBe('03/15/2026')
+  expect(await field.inputValue()).toBe('31/05/2026')
 
   // and the caret sits after the padded group, not inside it
   await field.fill('')
   await field.type('4', { delay: 10 })
   expect(await field.evaluate((el) => el.selectionStart)).toBe(3)
+})
+
+test('accepts all three redlined formats and normalises on blur', async ({ page }) => {
+  // Appendix C: "Input parsing · accepts 04/09/2026, 4 Sep 26, 2026-09-04 ·
+  // normalised on blur". None of it worked: Zag's input preventDefault()s any
+  // character that is not a digit in onBeforeInput, and strips the rest in
+  // onInput, so `4 Sep 26` became `426` and stayed. Both handlers are
+  // bubble-phase and neither is configurable, which is why the component
+  // intercepts in capture — and why this can only be tested in a browser.
+  for (const [typed, expected] of [
+    ['04/09/2026', '04 Sep 2026'],
+    ['4 Sep 26', '04 Sep 2026'],
+    ['2026-09-04', '04 Sep 2026'],
+    ['4/9/26', '04 Sep 2026'],
+    ['04 September 2026', '04 Sep 2026'],
+  ]) {
+    await page.goto('/design-system')
+    const field = fieldAt(page, 0)
+    await field.click()
+    await field.type(typed, { delay: 10 })
+    await field.press('Tab')
+    expect(await field.inputValue(), `typed ${typed}`).toBe(expected)
+  }
+})
+
+test('never commits a date that does not exist', async ({ page }) => {
+  // 31 February would roll over to 3 March through Date's constructor. The
+  // parser returns null instead, and Zag falls back rather than storing a
+  // record in the wrong month.
+  const field = fieldAt(page, 0)
+  await field.click()
+  await field.type('31/02/2026', { delay: 10 })
+  await field.press('Tab')
+  expect(await field.inputValue()).not.toContain('Mar')
 })
 
 test('cannot be typed past a whole date', async ({ page }) => {
@@ -74,8 +109,9 @@ test('cannot be typed past a whole date', async ({ page }) => {
   await field.type('12122026' + '12121', { delay: 10 })
   expect(await field.inputValue()).toBe('12/12/2026')
 
+  // and blur normalises it, rather than leaving the slash form standing
   await page.keyboard.press('Tab')
-  expect(await field.inputValue()).toBe('12/12/2026')
+  expect(await field.inputValue()).toBe('12 Dec 2026')
 })
 
 test('backspace walks back out of the value', async ({ page }) => {

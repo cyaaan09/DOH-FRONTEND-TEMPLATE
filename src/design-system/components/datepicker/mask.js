@@ -25,22 +25,29 @@ export const isMaskable = (value) => /^[\d/]*$/.test(value)
  * Day: same from 4 up, since only 0-3 can begin a two-digit day.
  * Year: four digits, nothing to infer.
  *
- * These thresholds assume MM/DD/YYYY. They swap if the field ever moves to the
- * day-first order Appendix C's parse examples imply — the order lives here, so
- * that is a one-line change rather than a hunt.
+ * The thresholds belong to the FIELD, not the position: day-first swaps which
+ * group leads, and with it which digit can still take a second one. Getting
+ * that wrong is silent — the mask would commit `4` as April in a field whose
+ * first group is the day.
  */
-const GROUPS = [{ size: 2, padAbove: '1' }, { size: 2, padAbove: '3' }, { size: 4 }]
+const MONTH = { size: 2, padAbove: '1' }
+const DAY = { size: 2, padAbove: '3' }
+const YEAR = { size: 4 }
+
+/** The three groups in the order this field accepts them. */
+const groupsFor = (order) => (order === 'mdy' ? [MONTH, DAY, YEAR] : [DAY, MONTH, YEAR])
 
 /**
  * @param {string} raw       the field's current value
  * @param {boolean} deleting true when the edit was a backspace or delete
  * @returns {string} the value re-punctuated as MM/DD/YYYY
  */
-export function maskDate(raw, deleting = false) {
+export function maskDate(raw, deleting = false, order = 'dmy') {
   const digits = raw.replace(/\D/g, '')
   const groups = []
   let read = 0
 
+  const GROUPS = groupsFor(order)
   for (const group of GROUPS) {
     if (read >= digits.length) break
     let chunk = digits.slice(read, read + group.size)
@@ -99,12 +106,12 @@ export function caretAfterDigits(masked, n, skipSeparator = false) {
  * through a ref is deliberate: this input belongs to Zag's state machine, and
  * the value it reads on blur is whatever is on the element at that moment.
  */
-export function applyMask(el, inputType = '') {
+export function applyMask(el, inputType = '', order = 'dmy') {
   const raw = el.value
   if (!isMaskable(raw)) return false
 
   const deleting = String(inputType).startsWith('delete')
-  const masked = maskDate(raw, deleting)
+  const masked = maskDate(raw, deleting, order)
   if (masked === raw) return false
 
   const at = el.selectionStart ?? raw.length

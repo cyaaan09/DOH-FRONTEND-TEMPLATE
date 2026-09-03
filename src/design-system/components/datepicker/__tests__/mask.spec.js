@@ -6,33 +6,40 @@ describe('date input mask', () => {
     // The behaviour that was asked for: typing digits never requires a slash.
     expect(maskDate('1')).toBe('1')
     expect(maskDate('12')).toBe('12/')
-    expect(maskDate('122')).toBe('12/2')
     expect(maskDate('1212')).toBe('12/12/')
     expect(maskDate('12122')).toBe('12/12/2')
     expect(maskDate('12122026')).toBe('12/12/2026')
   })
 
-  it('advances as soon as a digit can only be a one-digit month', () => {
-    // No month begins with 2-9, so typing 4 can only mean April. Waiting for a
-    // second digit that cannot come is what made the field feel wrong.
-    expect(maskDate('2')).toBe('02/')
+  it('advances as soon as a digit can only mean one thing', () => {
+    // A day cannot begin with 4-9 (31 is the most there is), so in the
+    // day-first default, typing 4 can only be the 4th. Waiting for a second
+    // digit that cannot come is what made the field feel wrong.
     expect(maskDate('4')).toBe('04/')
     expect(maskDate('9')).toBe('09/')
-  })
-
-  it('waits where a second digit is still possible', () => {
-    // 0 could still become 01-09, and 1 could become 10, 11 or 12.
+    // 3 waits, because 30 and 31 exist — and 0-2 obviously do.
     expect(maskDate('0')).toBe('0')
-    expect(maskDate('1')).toBe('1')
+    expect(maskDate('2')).toBe('2')
+    expect(maskDate('3')).toBe('3')
   })
 
-  it('applies the same rule to the day, at its own threshold', () => {
-    // Only 0-3 can begin a two-digit day, so 4 upward advances — but 3 waits,
-    // because 30 and 31 exist. This is why the threshold is per group and not
-    // one shared rule.
+  it('moves the thresholds with the field order, not the position', () => {
+    // The rule belongs to the FIELD: a month cannot begin with 2-9 either, but
+    // it CAN begin with 1 (10, 11, 12), where a day can also be 15 or 19. Get
+    // this backwards and the mask silently commits `4` as April in a field
+    // whose first group is the day.
+    expect(maskDate('2', false, 'mdy')).toBe('02/')
+    expect(maskDate('2', false, 'dmy')).toBe('2')
+    // second group, same swap in reverse
+    expect(maskDate('123', false, 'mdy')).toBe('12/3')
+    expect(maskDate('123', false, 'dmy')).toBe('12/03/')
+  })
+
+  it('applies the rule to the second group at its own threshold', () => {
+    // day-first: the second group is the MONTH, so 2-9 advance and 0-1 wait.
     expect(maskDate('124')).toBe('12/04/')
     expect(maskDate('129')).toBe('12/09/')
-    expect(maskDate('123')).toBe('12/3')
+    expect(maskDate('121')).toBe('12/1')
     expect(maskDate('120')).toBe('12/0')
   })
 

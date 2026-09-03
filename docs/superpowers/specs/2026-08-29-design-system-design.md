@@ -2552,20 +2552,30 @@ specific redline.
   600ms. Now `--t-spin: 700ms`, the only duration in the system that had bypassed the motion
   tokens.
 
-- **2026-09-01 — the date field accepts only digits and slashes; `4 Sep 26` and `2026-09-26` never worked, and nothing normalises on blur.**
-  Appendix C's *Date picker* row says `Input parsing | accepts 04/09/2026, 4 Sep 26, 2026-09-04 ·
-  normalised on blur`. Measured against the built page with no mask in place, Zag's date-picker
-  input strips letters and dashes as they are typed and does no blur normalisation at all:
-  `4 Sep 26` becomes `426`, `2026-09-26` becomes `20260926`, and both stay that way on blur. Only
-  the slash form survives. This is a PRE-EXISTING gap — it predates the input mask added the same
-  day, which was verified against this baseline before being restored.
-  Two consequences a future reader needs: the demo section's own body copy advertises all three
-  formats, so the page currently promises behaviour the component does not have; and the mask's
-  `isMaskable` branch, which exists to step aside for letters and dashes, is unreachable in
-  practice until this is fixed. Closing it means supplying Zag's `parse` prop (and `format` for
-  the return trip) — deliberately not done here, because it is a change to what the field accepts
-  rather than to how it is punctuated.
-
+- **2026-09-03 — the date field's three input formats now work; the fix is two capture-phase
+  listeners.** Appendix C's `Input parsing | accepts 04/09/2026, 4 Sep 26, 2026-09-04 · normalised
+  on blur` was entirely unimplemented, and could not be implemented through Zag's `parse` prop
+  alone: `getInputProps().onBeforeInput` calls `preventDefault()` on any character that is not a
+  digit or the locale separator, and `onInput` rewrites what survives through
+  `ensureValidCharacters()`. Neither is configurable. But `onBlur` and the Enter handler read
+  `event.currentTarget.value` RAW, so the component intercepts both handlers in the CAPTURE phase
+  on the control — Zag never sees the keystroke, the text stays in the DOM, and blur hands it to
+  `parse`. `fix-on-blur` is also required: without it `INPUT.BLUR` only FOCUSES the parsed date, so
+  the calendar moved to the right month while the field kept its raw text.
+  **The display is now `04 Sep 2026`**, per `format` — which is what the artifact's own field
+  renders, and is not a slash form at all. That is the detail that defuses the order question
+  below: whichever way the field reads `04/09/2026`, the user sees which date was understood
+  before they leave the row.
+- **2026-09-03 — the numeric order is `dmy` by default, and it is a prop.**
+  Appendix C's three examples all denote 4 September 2026, which makes `04/09/2026` DAY-first. The
+  same page draws a Sunday-first calendar, which is the US convention and points the other way, so
+  the artifact is not self-consistent and no reading of it settles this. `DatePicker` takes
+  `dateOrder`, defaulting to the artifact's `dmy`; the mask's auto-advance thresholds and the
+  placeholder both follow it, because the rule belongs to the FIELD and not to the position — a
+  day cannot begin with 4-9, a month cannot begin with 2-9, and getting that backwards silently
+  commits `4` as April in a field whose first group is the day.
+  **This is a live decision for the DOH team, not a closed one**: if clerks type month-first out of
+  habit, `date-order="mdy"` is the whole change.
 - **2026-09-01 — the calendar drills up to month and year views, which Appendix C does not specify.**
   The *Month header* row reads `13px / 700 #1E2532 centred · 28px ‹ › buttons #667085, hover
   #F4F6FA` and stops there — a centred label and two arrows. That makes December 2029 thirty-nine

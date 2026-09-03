@@ -212,6 +212,7 @@ Redline "Input parsing · accepts 04/09/2026, 4 Sep 26, 2026-09-04 · normalised
 | `max` | String | `''` |  |
 | `todayLabel` | String | `'Today'` |  |
 | `openLabel` | String | `'Open calendar'` |  |
+| `dateOrder` | String | `'dmy'` | How a purely numeric date is read. Appendix C's three examples — `04/09/2026`, `4 Sep 26`, `2026-09-04` — all denote 4 September 2026, which makes the slash form DAY-first, and that is the default. But the same page draws a Sunday-first calendar, so the artifact is not self-consistent, and the reading that matters is the one the people entering records actually use. One prop, and the mask's auto-advance thresholds follow it: pass `mdy` and the field becomes month-first everywhere, including the placeholder. Whichever way it is set, `format` normalises to `04 Sep 2026` on blur, so a misread date is visible immediately rather than silently stored. |
 
 **Emits:** `valueChange`
 

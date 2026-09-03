@@ -22,8 +22,9 @@ import {
   DatePickerTableCellTrigger,
   parseDate,
 } from '@ark-ui/vue/date-picker'
-import { computed } from 'vue'
-import { applyMask } from './mask.js'
+import { computed, ref } from 'vue'
+import { applyMask, isMaskable } from './mask.js'
+import { formatDate, parseDateInput, toIso } from './parse.js'
 
 // Four columns for both the month and the year grid: twelve months divide
 // evenly into it, and a decade's ten years fill three rows the same width, so
@@ -54,6 +55,24 @@ const props = defineProps({
   max: { type: String, default: '' },
   todayLabel: { type: String, default: 'Today' },
   openLabel: { type: String, default: 'Open calendar' },
+  /**
+   * How a purely numeric date is read. Appendix C's three examples —
+   * `04/09/2026`, `4 Sep 26`, `2026-09-04` — all denote 4 September 2026,
+   * which makes the slash form DAY-first, and that is the default. But the
+   * same page draws a Sunday-first calendar, so the artifact is not
+   * self-consistent, and the reading that matters is the one the people
+   * entering records actually use. One prop, and the mask's auto-advance
+   * thresholds follow it: pass `mdy` and the field becomes month-first
+   * everywhere, including the placeholder.
+   *
+   * Whichever way it is set, `format` normalises to `04 Sep 2026` on blur, so
+   * a misread date is visible immediately rather than silently stored.
+   */
+  dateOrder: {
+    type: String,
+    default: 'dmy',
+    validator: (v) => ['dmy', 'mdy'].includes(v),
+  },
 })
 
 defineEmits(['valueChange'])
@@ -62,6 +81,105 @@ defineEmits(['valueChange'])
 // leaves the machine's setup throwing, and Vue then reports the ROOT as
 // "missing template or render function" — which points nowhere near the
 // actual cause. parseDate is re-exported by Ark for exactly this.
+/**
+ * Redline "Input parsing · normalised on blur". Zag calls `format` whenever it
+ * renders a committed value and `parse` whenever it reads the field, so these
+ * two props are the whole feature — the field accepted only digits and slashes
+ * and never normalised at all before they existed.
+ */
+const formatValue = (date) => formatDate({ year: date.year, month: date.month, day: date.day })
+
+// undefined, not a guess: returning a date for unparseable text would commit
+// whatever the user half-typed. Zag keeps the previous value on undefined.
+const parseValue = (value) => {
+  const parts = parseDateInput(value, { order: props.dateOrder })
+  return parts ? parseDate(toIso(parts)) : undefined
+}
+
+// The placeholder is the order, spelled out. Left unset, Zag falls back to its
+// en-US default of mm/dd/yyyy — which is how this field came to LOOK
+// month-first while parsing nothing at all.
+const placeholderText = computed(() => (props.dateOrder === 'mdy' ? 'mm/dd/yyyy' : 'dd/mm/yyyy'))
+
+/**
+ * Lets the redlined textual formats survive being typed.
+ *
+ * Zag blocks them in TWO places, both on the input and both in the bubble
+ * phase, which is why these listeners sit on the control and capture:
+ *
+ *   getInputProps().onBeforeInput  preventDefault()s any character that is not
+ *                                  a digit or the locale separator — this is
+ *                                  what silently ate the letters in `4 Sep 26`.
+ *   getInputProps().onInput        rewrites the value through
+ *                                  ensureValidCharacters(), so anything that
+ *                                  did get in is stripped on the next keystroke.
+ *
+ * Neither is configurable. But `onBlur` and the Enter handler read
+ * `event.currentTarget.value` RAW and hand it to the machine, which runs our
+ * `parse` — so the only thing standing between the field and its own redline
+ * was those two handlers seeing the event at all.
+ */
+/**
+ * What the user has literally pressed, before the mask touched it.
+ *
+ * The mask has to guess: typing `2` `0` `2` `6` in a day-first field becomes
+ * `20/26/`, and typing `2` `0` `2` gets a padded month — `20/02/`. Both guesses
+ * are right until a `-` proves the value was an ISO date all along, and by then
+ * the inserted zero cannot be told from a typed one. Removing separators is not
+ * enough; only the original keystrokes are.
+ */
+const typed = ref('')
+
+const allowTextInput = (event) => {
+  const { inputType, data } = event
+  if (inputType === 'insertText' && data) {
+    if (typed.value !== null) typed.value += data
+  } else if (inputType.startsWith('delete')) {
+    if (typed.value !== null) typed.value = typed.value.slice(0, -1)
+  } else {
+    // A paste or a composition: the record can no longer be reconstructed from
+    // keystrokes, so it is marked broken rather than left subtly wrong.
+    typed.value = null
+  }
+
+  // Zag's onBeforeInput only ever cancels; stopping it cannot break anything
+  // else, and letting it run is what makes `Sep` untypable.
+  event.stopPropagation()
+}
+
+const onControlInput = (event) => {
+  const el = event.target
+  if (isMaskable(el.value)) {
+    applyMask(el, event.inputType, props.dateOrder)
+    return
+  }
+  // A textual or ISO form from here on.
+  //
+  // The mask has already committed its guess by now, so put back exactly what
+  // was pressed. Only when the record still corresponds to what is on screen:
+  // a paste or a mid-string edit desyncs it, and there the older, cruder repair
+  // — drop the separators the mask added — is still better than nothing.
+  // The record IS the repair whenever it is intact — including, especially,
+  // when its digits differ from what is on screen, because a padded zero is
+  // exactly the difference it exists to undo. Only a paste falls back.
+  const undone =
+    typed.value !== null && typed.value !== ''
+      ? typed.value
+      : el.value.replace(/\//g, '').replace(/\s+/g, ' ')
+  if (undone !== el.value) {
+    const caret = Math.max(
+      0,
+      (el.selectionStart ?? undone.length) - (el.value.length - undone.length),
+    )
+    el.value = undone
+    el.setSelectionRange(caret, caret)
+  }
+
+  // Hand it to nobody: Zag's onInput would strip it back to digits, and its
+  // onBlur reads the element directly regardless.
+  event.stopPropagation()
+}
+
 const minValue = computed(() => (props.min ? parseDate(props.min) : undefined))
 const maxValue = computed(() => (props.max ? parseDate(props.max) : undefined))
 </script>
@@ -74,6 +192,8 @@ const maxValue = computed(() => (props.max ? parseDate(props.max) : undefined))
     :min="minValue"
     :max="maxValue"
     :positioning="{ gutter: 6 }"
+    :format="formatValue"
+    :parse="parseValue"
     @value-change="(details) => $emit('valueChange', details)"
   >
     <!-- The mask listens in the CAPTURE phase on the control, not on the input.
@@ -87,20 +207,29 @@ const maxValue = computed(() => (props.max ? parseDate(props.max) : undefined))
     <DatePickerControl
       data-dp-control
       class="dp__control flex items-center rounded-field border border-field bg-surface"
-      @input.capture="(event) => applyMask(event.target, event.inputType)"
+      @focus="typed = ''"
+      @beforeinput.capture="allowTextInput"
+      @input.capture="onControlInput"
     >
       <!-- The mask runs on the element, not through a ref: this input belongs
            to Zag's machine, which reads whatever value is on the element when
-           it parses. maxlength 10 fits every format the redline names —
-           04/09/2026 and 2026-09-26 are both 10, 4 Sep 26 is 8 — and is what
-           stops a non-numeric value running past the mask's own 8-digit cap.
+           it parses. maxlength 18 fits the longest form the field now accepts
+           (`04 September 2026` is 17) while still stopping a value from running
+           away; the mask's own 8-digit cap governs the numeric form.
            No inputmode="numeric": it would give a numeric keypad on touch and
            make `Sep` untypable, deleting a redlined format on phones only. -->
+      <!-- fix-on-blur: without it Zag's INPUT.BLUR only FOCUSES the parsed date
+           — the calendar moves to the right month and the field keeps the raw
+           text, because context.value never changes and the sync that runs
+           `format` is watched on value. Enter always worked; tabbing away did
+           not, which is the redline's "normalised on blur" exactly. -->
       <DatePickerInput
         data-dp-input
         class="dp__input min-w-0 flex-1 font-mono"
         :aria-label="label"
-        maxlength="10"
+        maxlength="18"
+        :fix-on-blur="true"
+        :placeholder="placeholderText"
       />
       <!-- Redline "Field · 13px glyph --text-meta right". The glyph OPENS the
            calendar; it is a control, so it is named. -->
