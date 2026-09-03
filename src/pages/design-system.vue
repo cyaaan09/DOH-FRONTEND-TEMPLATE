@@ -1,3 +1,7 @@
+<route lang="json">
+{ "meta": { "public": true } }
+</route>
+
 <script setup>
 import { SECTIONS } from '@/design-system/demo/chrome/sections'
 import FoundationsSection from '@/design-system/demo/sections/FoundationsSection.vue'

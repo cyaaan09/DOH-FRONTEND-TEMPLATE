@@ -38,6 +38,36 @@ src/
 
 ## Conventions
 
+### Signing in
+
+The app sits behind a login. `src/router/index.js` guards **every** route by
+default; a page opts out in its own route block:
+
+```vue
+<route lang="json">
+{ "meta": { "public": true } }
+</route>
+```
+
+Closed by default on purpose — a guard written the other way round leaks every
+page somebody forgets to add to the list, and forgetting is silent.
+
+`src/stores/auth.js` holds the session. Sign-in is **mocked in exactly one
+function**, `requestSignIn` — any credentials work and the session persists in
+`localStorage`. Point that one function at your backend and nothing else
+changes:
+
+```js
+const { user, token } = await api.post('/auth/login', { email, password })
+return { name: user.name, email: user.email, role: user.role, token }
+```
+
+### Navigation
+
+`src/lib/navigation.js` is the single source: the sidebar renders it, the
+breadcrumb is derived from it, and the router pushes its `to`. Add a page there
+once rather than in three files that can disagree.
+
 ### Routing
 
 Drop a `.vue` file into `src/pages/` and it becomes a route automatically:
