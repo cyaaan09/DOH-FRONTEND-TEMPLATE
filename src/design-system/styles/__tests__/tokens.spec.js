@@ -143,12 +143,6 @@ describe('spec Appendix A parity', () => {
    * colour on a dark surface.
    */
   const KEEPS_LIGHT_VALUE = {
-    'chart-ok-strong':
-      "The artifact's own dark block overrides every other chart token and skips " +
-      'this one, so it stays #177236 on both canvases. Matched rather than ' +
-      'inferred, and flagged in spec §17.3: on dark it is DARKER than the ' +
-      '--chart-ok it is meant to emphasise, which reads as inverted emphasis. ' +
-      'A guess here is what got --item-mark and --avatar-bg wrong before.',
     'green-600': 'legacy value the redline keeps for reference; no consumer',
     'amber-400': 'status DOT fill — a saturated dot reads on both surfaces',
     'red-500': 'status DOT fill — same',

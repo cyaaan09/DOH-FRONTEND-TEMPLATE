@@ -44,8 +44,9 @@ describe('main.css layering', () => {
   it('imports tokens and theme before base, so bridged vars resolve', () => {
     // Only the @import statements themselves, not prose mentions of these
     // filenames elsewhere in the file (e.g. this file's own header comment).
-    const imported = [...css.matchAll(/@import\s+['"][^'"]*\/design-system\/styles\/([\w.]+)['"]/g)]
-      .map((match) => match[1])
+    const imported = [
+      ...css.matchAll(/@import\s+['"][^'"]*\/design-system\/styles\/([\w.]+)['"]/g),
+    ].map((match) => match[1])
     const order = ['tokens.css', 'tokens.dark.css', 'theme.css', 'base.css'].map((name) =>
       imported.indexOf(name),
     )

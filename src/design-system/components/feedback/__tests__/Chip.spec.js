@@ -35,7 +35,11 @@ describe('Chip', () => {
   })
 
   it('renders a decorative dot only when asked', () => {
-    expect(mount(Chip, { props: { dot: true } }).find('[data-dot]').exists()).toBe(true)
+    expect(
+      mount(Chip, { props: { dot: true } })
+        .find('[data-dot]')
+        .exists(),
+    ).toBe(true)
     expect(mount(Chip).find('[data-dot]').exists()).toBe(false)
   })
 
@@ -161,9 +165,7 @@ describe('FilterChip', () => {
   })
 
   it('reports its selected state to assistive tech', () => {
-    expect(mount(FilterChip, { props: { selected: true } }).attributes('aria-pressed')).toBe(
-      'true',
-    )
+    expect(mount(FilterChip, { props: { selected: true } }).attributes('aria-pressed')).toBe('true')
     expect(mount(FilterChip).attributes('aria-pressed')).toBe('false')
   })
 

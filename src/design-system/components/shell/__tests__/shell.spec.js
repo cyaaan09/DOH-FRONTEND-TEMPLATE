@@ -76,7 +76,11 @@ describe('AppSidebar', () => {
   })
 
   it('drops group headers when collapsed, since they have no room to read', () => {
-    expect(mountRail().findAll('[data-group]').map((g) => g.text())).toEqual(['LICENSING'])
+    expect(
+      mountRail()
+        .findAll('[data-group]')
+        .map((g) => g.text()),
+    ).toEqual(['LICENSING'])
     expect(mountRail({ collapsed: true }).findAll('[data-group]')).toHaveLength(0)
   })
 

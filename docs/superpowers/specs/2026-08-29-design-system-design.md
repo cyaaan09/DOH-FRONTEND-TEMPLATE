@@ -665,6 +665,7 @@ reads them yet, so they do not belong in `tokens.dark.css` until then — do not
   --series-4: #A895FF;
   --series-5: #F0C070;
   --chart-ok: #2FB25F;
+  --chart-ok-strong: #3FC26E;
   --chart-warn: #E0B060;
   --chart-bad: #FF7B74;
   --chart-idle: #55606F;
@@ -1480,6 +1481,16 @@ _DM Sans 400/500/700 · JetBrains Mono for copyable values_
   the labels are D.1 content and stay verbatim. Tied to the open `DataTable` / `Pagination`
   decision — those two, plus `PasswordField`, `AppShell`, `AppSidebar` and `AppHeader`, are
   redlined or planned in §7 with **no section on the page rendering them**.
+  **Superseded 2026-09-03.** `DataTable`, `Pagination`, `AppSidebar` and `AppHeader` all have
+  sections now. The remaining two are not gaps:
+  `PasswordField` was never built and should not be — the artifact's Text fields section renders a
+  password field as `TextField` with a trailing `action`, and says so in its own note ("Trailing
+  text action instead of an eye icon"). §7's inventory line naming an Ark `password-input` predates
+  that section and is the stale half.
+  `AppShell` has no demo because the artifact's App shell section shows three separate previews —
+  an expanded rail, a collapsed rail, a header — not a composed shell. Rendering one would be
+  inventing content. It is exported public API and unit-tested instead (`AppShell.spec.js`), which
+  is what "untested" actually needed fixing.
 - **2026-08-31 — the Tokens block is a generated module, not Vite's `?raw`.** `?raw` on a `.css`
   file returns an **empty string** under Vitest, whose CSS stubbing beats the raw query: the block
   would have rendered correctly in the browser while every test saw nothing, and would have kept

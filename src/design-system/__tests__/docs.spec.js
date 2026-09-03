@@ -39,7 +39,11 @@ describe('design system documentation', () => {
     // A reference entry with no prose tells a reader the prop names they could
     // have read off the source anyway. The description is the part that says
     // which component to reach for.
-    expect(collect().filter((c) => !c.description).map((c) => c.name)).toEqual([])
+    expect(
+      collect()
+        .filter((c) => !c.description)
+        .map((c) => c.name),
+    ).toEqual([])
   })
 
   it('never names a component the design system does not export', () => {

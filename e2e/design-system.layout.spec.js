@@ -82,10 +82,9 @@ test.describe('layout regressions caught by eye, not by jsdom', () => {
     // land a frame later. Poll the measurement instead of taking it once, same
     // 2px tolerance as before.
     await expect
-      .poll(
-        async () => Math.abs((await panel.boundingBox()).width - triggerBox.width),
-        { message: 'panel is not trigger width' },
-      )
+      .poll(async () => Math.abs((await panel.boundingBox()).width - triggerBox.width), {
+        message: 'panel is not trigger width',
+      })
       .toBeLessThanOrEqual(2)
   })
 })

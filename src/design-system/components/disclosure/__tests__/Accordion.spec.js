@@ -5,8 +5,18 @@ import Accordion from '../Accordion.vue'
 
 const ITEMS = [
   { value: 'profile', title: 'Facility profile', summary: 'Type, address, contact' },
-  { value: 'services', title: 'Services offered', summary: 'Pharmacy', badge: { label: '2', tone: 'neutral' } },
-  { value: 'documents', title: 'Documents', summary: '2 rejected', badge: { label: '2', tone: 'action' } },
+  {
+    value: 'services',
+    title: 'Services offered',
+    summary: 'Pharmacy',
+    badge: { label: '2', tone: 'neutral' },
+  },
+  {
+    value: 'documents',
+    title: 'Documents',
+    summary: '2 rejected',
+    badge: { label: '2', tone: 'action' },
+  },
 ]
 
 const mountAcc = (props = {}) =>
@@ -34,7 +44,9 @@ describe('Accordion', () => {
 
   it('opens the first section and leaves the rest collapsed', () => {
     // Redline "Default state · first section open, rest collapsed".
-    const states = mountAcc().findAll('[data-accordion-header]').map((h) => h.attributes('aria-expanded'))
+    const states = mountAcc()
+      .findAll('[data-accordion-header]')
+      .map((h) => h.attributes('aria-expanded'))
     expect(states).toEqual(['true', 'false', 'false'])
   })
 
@@ -42,7 +54,9 @@ describe('Accordion', () => {
     // Redline "Header text · summary that answers without opening", and the
     // rule card: "If a header needs opening to know whether it matters,
     // rewrite the sub-line."
-    const summaries = mountAcc().findAll('[data-accordion-summary]').map((s) => s.text())
+    const summaries = mountAcc()
+      .findAll('[data-accordion-summary]')
+      .map((s) => s.text())
     expect(summaries).toEqual(['Type, address, contact', 'Pharmacy', '2 rejected'])
   })
 
@@ -60,7 +74,10 @@ describe('Accordion', () => {
     await wrapper.get('[data-expand-all]').trigger('click')
     expect(wrapper.emitted('update:modelValue')[0][0]).toEqual(['profile', 'services', 'documents'])
 
-    const allOpen = mountAcc({ title: 'Carmen RHU', modelValue: ['profile', 'services', 'documents'] })
+    const allOpen = mountAcc({
+      title: 'Carmen RHU',
+      modelValue: ['profile', 'services', 'documents'],
+    })
     await allOpen.get('[data-expand-all]').trigger('click')
     expect(allOpen.emitted('update:modelValue')[0][0]).toEqual([])
   })

@@ -39,16 +39,18 @@ src/
 ## Conventions
 
 ### Routing
+
 Drop a `.vue` file into `src/pages/` and it becomes a route automatically:
 
-| File | Route |
-|------|-------|
-| `pages/index.vue` | `/` |
-| `pages/about.vue` | `/about` |
-| `pages/users/[id].vue` | `/users/:id` |
-| `pages/[...path].vue` | 404 catch-all |
+| File                   | Route         |
+| ---------------------- | ------------- |
+| `pages/index.vue`      | `/`           |
+| `pages/about.vue`      | `/about`      |
+| `pages/users/[id].vue` | `/users/:id`  |
+| `pages/[...path].vue`  | 404 catch-all |
 
 ### Layouts
+
 Every page uses `src/layouts/default.vue` by default. To use a different layout,
 create it (e.g. `src/layouts/blank.vue`) and set it in the page via a route block:
 
@@ -59,6 +61,7 @@ create it (e.g. `src/layouts/blank.vue`) and set it in the page via a route bloc
 ```
 
 ### API calls
+
 Set `VITE_API_BASE_URL` in `.env` (copy from `.env.example`), then:
 
 ```js
@@ -69,6 +72,7 @@ await api.post('/users', { name: 'Ada' })
 ```
 
 ### Dark mode
+
 `useDark()` (VueUse) toggles the `.dark` class on `<html>`. Style with `dark:` variants.
 
 ## Commands

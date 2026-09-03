@@ -31,7 +31,9 @@ describe('BulkActionBar', () => {
     // data-label hook from Task 1.
     expect(mountBar().get('[data-bulk-box] [data-label]').text()).toBe('Select all')
     expect(
-      mountBar({ modelValue: ['r1', 'r2'] }).get('[data-bulk-box] [data-label]').text(),
+      mountBar({ modelValue: ['r1', 'r2'] })
+        .get('[data-bulk-box] [data-label]')
+        .text(),
     ).toBe('2 selected')
   })
 

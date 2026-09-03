@@ -180,7 +180,9 @@ test('picking a year then a month lands back on that month of days', async ({ pa
   await visible(panel, '[data-dp-view]').click()
   await visible(panel, '[data-dp-view]').click()
 
-  await visible(panel, '[data-dp-cell]').filter({ hasText: /^2028$/ }).click()
+  await visible(panel, '[data-dp-cell]')
+    .filter({ hasText: /^2028$/ })
+    .click()
   await expect(panel.locator('[data-dp-month-grid]')).toBeVisible()
   await expect(visible(panel, '[data-dp-header]')).toContainText('2028')
 

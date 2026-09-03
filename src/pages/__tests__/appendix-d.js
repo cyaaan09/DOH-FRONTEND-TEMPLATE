@@ -102,11 +102,13 @@ export function parseAppendixD(markdown, sections) {
   const chipToneChunk = chunks.get('Chips → the five tone sub-blocks')
   const foundationsGroupChunk = chunks.get('Foundations → the six scale groups')
   if (chipToneChunk === undefined) throw new Error('D.1 Chips tone table not found in spec')
-  if (foundationsGroupChunk === undefined) throw new Error('D.1 Foundations scale-group table not found in spec')
+  if (foundationsGroupChunk === undefined)
+    throw new Error('D.1 Foundations scale-group table not found in spec')
   const chipTones = parseNoteTable(chipToneChunk)
   const foundationsGroups = parseNoteTable(foundationsGroupChunk)
   if (chipTones.length === 0) throw new Error('D.1 Chips tone table parsed to zero rows')
-  if (foundationsGroups.length === 0) throw new Error('D.1 Foundations scale-group table parsed to zero rows')
+  if (foundationsGroups.length === 0)
+    throw new Error('D.1 Foundations scale-group table parsed to zero rows')
 
   return sections.map(({ id, title }) => {
     const chunk = chunks.get(title)
@@ -120,7 +122,8 @@ export function parseAppendixD(markdown, sections) {
     let rules = parsed.rules
     if (rules.length === 1 && rules[0].title === '{{ rule.title }}') {
       const arrayName = RULE_ARRAY_BY_TITLE[title]
-      if (!arrayName) throw new Error(`"${title}" has a placeholder Rule cards block but no array mapping`)
+      if (!arrayName)
+        throw new Error(`"${title}" has a placeholder Rule cards block but no array mapping`)
       rules = ruleArrays[arrayName]
     }
 

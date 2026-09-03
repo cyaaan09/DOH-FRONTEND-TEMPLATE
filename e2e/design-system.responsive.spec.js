@@ -29,9 +29,10 @@ for (const bp of BREAKPOINTS) {
         doc: document.documentElement.scrollWidth,
         view: document.documentElement.clientWidth,
       }))
-      expect(overflow.doc, `page is ${overflow.doc - overflow.view}px wider than the viewport`).toBeLessThanOrEqual(
-        overflow.view + 1,
-      )
+      expect(
+        overflow.doc,
+        `page is ${overflow.doc - overflow.view}px wider than the viewport`,
+      ).toBeLessThanOrEqual(overflow.view + 1)
     })
 
     test('no section card is overflowed by its own content', async ({ page }) => {
@@ -58,7 +59,9 @@ for (const bp of BREAKPOINTS) {
             }
             if (scrolls) continue
             if (rect.right - limit > 2) {
-              out.push(`${section.dataset.section}: ${child.tagName.toLowerCase()}.${child.getAttribute('class')}`)
+              out.push(
+                `${section.dataset.section}: ${child.tagName.toLowerCase()}.${child.getAttribute('class')}`,
+              )
               break
             }
           }

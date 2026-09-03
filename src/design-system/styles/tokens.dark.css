@@ -142,7 +142,14 @@
   --series-3: #6FA8FF;
   --series-4: #A895FF;
   --series-5: #F0C070;
-  --chart-ok: #2FB25F;
+  --chart-ok: #2FB25F; /* 6.23:1 on --surface */
+  /* The artifact overrides every other chart token and skips this one, leaving
+     #177236 — which on a dark surface is 2.85:1, DARKER than the --chart-ok it
+     exists to emphasise and under the 3:1 floor for a non-text mark. Emphasis
+     that recedes is not emphasis. #3FC26E is the dark theme's own next step up
+     (--green-fill-hover) at 7.45:1, so the emphasised series still reads as
+     one shade stronger, the way #177236 does over #1F8B43 on white. */
+  --chart-ok-strong: #3FC26E;
   --chart-warn: #E0B060;
   --chart-bad: #FF7B74;
   --chart-idle: #55606F;

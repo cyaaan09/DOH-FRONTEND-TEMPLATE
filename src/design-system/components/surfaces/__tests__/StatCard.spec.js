@@ -32,9 +32,11 @@ describe('StatCard', () => {
   })
 
   it('omits the hint element entirely when there is no hint', () => {
-    expect(mount(StatCard, { props: { label: 'A', value: '1' } }).find('[data-hint]').exists()).toBe(
-      false,
-    )
+    expect(
+      mount(StatCard, { props: { label: 'A', value: '1' } })
+        .find('[data-hint]')
+        .exists(),
+    ).toBe(false)
   })
 })
 
@@ -53,8 +55,16 @@ describe('Meter', () => {
   })
 
   it('clamps out-of-range values instead of overflowing', () => {
-    expect(mount(Meter, { props: { value: 150, max: 100, label: 'A' } }).get('[data-fill]').attributes('style')).toContain('width: 100%')
-    expect(mount(Meter, { props: { value: -5, max: 100, label: 'A' } }).get('[data-fill]').attributes('style')).toContain('width: 0%')
+    expect(
+      mount(Meter, { props: { value: 150, max: 100, label: 'A' } })
+        .get('[data-fill]')
+        .attributes('style'),
+    ).toContain('width: 100%')
+    expect(
+      mount(Meter, { props: { value: -5, max: 100, label: 'A' } })
+        .get('[data-fill]')
+        .attributes('style'),
+    ).toContain('width: 0%')
   })
 
   it('clamps the announced aria-valuenow instead of reporting an out-of-range value', () => {
@@ -90,7 +100,9 @@ describe('StatCard — Appendix C conformance', () => {
 
   it('renders the hint at 11.5px', () => {
     // Redline "Hint" — 11.5px/400, urgent variant 700 weight.
-    const hint = mount(StatCard, { props: { label: 'A', value: '1', hint: 'h' } }).get('[data-hint]')
+    const hint = mount(StatCard, { props: { label: 'A', value: '1', hint: 'h' } }).get(
+      '[data-hint]',
+    )
     expect(hint.classes()).toContain('text-stat-hint')
   })
 
@@ -117,9 +129,11 @@ describe('StatCard — Appendix C conformance', () => {
         .find('[data-dot]')
         .exists(),
     ).toBe(true)
-    expect(mount(StatCard, { props: { label: 'A', value: '1' } }).find('[data-dot]').exists()).toBe(
-      false,
-    )
+    expect(
+      mount(StatCard, { props: { label: 'A', value: '1' } })
+        .find('[data-dot]')
+        .exists(),
+    ).toBe(false)
   })
 })
 
@@ -175,7 +189,9 @@ describe('Meter — Appendix C conformance', () => {
 
   it('omits the caption element when there is none', () => {
     expect(
-      mount(Meter, { props: { value: 50, label: 'A' } }).find('[data-caption]').exists(),
+      mount(Meter, { props: { value: 50, label: 'A' } })
+        .find('[data-caption]')
+        .exists(),
     ).toBe(false)
   })
 })

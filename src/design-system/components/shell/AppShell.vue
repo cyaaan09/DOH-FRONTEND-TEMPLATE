@@ -18,12 +18,23 @@ defineProps({
 
 <template>
   <Sidebar data-app-shell :collapsed="collapsed" :open="open" class="app-shell">
-    <template #rail><slot name="rail" /></template>
-    <!-- Redline "Skip link · first tab stop jumps past the rail to <main>".
-         A rail is 15+ tab stops; without this every keyboard user walks the
-         whole navigation before reaching the page they opened. Visible only
-         on focus, which is why it must not be `display: none`. -->
-    <a data-skip-link class="app-shell__skip rounded-field" :href="`#${mainId}`">{{ skipLabel }}</a>
+    <!-- The link lives at the top of the RAIL slot, not the default one:
+         Sidebar renders #rail before its default slot, so a link placed
+         beside <main> came AFTER the whole navigation in the DOM — and DOM
+         order is tab order, so the one thing this link exists to skip was
+         the thing standing in front of it. It is absolutely positioned, so
+         moving it changes nothing on screen. -->
+    <template #rail>
+      <!-- Redline "Skip link · first tab stop jumps past the rail to <main>".
+           A rail is 15+ tab stops; without this every keyboard user walks the
+           whole navigation before reaching the page they opened. Visible only
+           on focus, which is why it must not be `display: none`. -->
+      <a data-skip-link class="app-shell__skip rounded-field" :href="`#${mainId}`">{{
+        skipLabel
+      }}</a>
+      <slot name="rail" />
+    </template>
+
     <slot name="header" />
     <main :id="mainId" data-app-main class="app-shell__main" tabindex="-1"><slot /></main>
   </Sidebar>

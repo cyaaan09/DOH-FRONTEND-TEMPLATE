@@ -236,7 +236,7 @@ describe('RadioCard', () => {
     expect(cls).not.toContain('text-ink-700')
   })
 
-  it('widens the box-to-label gap to the card\'s own 11px', () => {
+  it("widens the box-to-label gap to the card's own 11px", () => {
     // Appendix D.1 — the card's flex gap is 11px and governs the distance
     // from the box to the label too. CheckboxCard composes Checkbox rather
     // than re-rendering Ark's parts, so it hands the value down through a

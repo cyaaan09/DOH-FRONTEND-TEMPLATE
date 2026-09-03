@@ -32,7 +32,7 @@ describe('generated spec data', () => {
     expect(SPEC_GROUPS.find((g) => g.name === 'Charts').rows).toHaveLength(30)
   })
 
-  it('keeps the groups in the artifact\'s own order', () => {
+  it("keeps the groups in the artifact's own order", () => {
     // Order is not cosmetic: the Component specs accordion renders this array
     // as-is, so a group appended in the wrong place silently reorders the
     // page. Charts arrived at index 20, between Print and Forms — appending it

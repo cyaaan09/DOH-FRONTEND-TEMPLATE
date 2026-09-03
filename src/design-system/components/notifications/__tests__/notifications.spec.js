@@ -5,9 +5,31 @@ import NotificationCentre from '../NotificationCentre.vue'
 import ActivityFeed from '../ActivityFeed.vue'
 
 const ITEMS = [
-  { id: '1', tone: 'error', glyph: '!', subject: 'Hipol', body: 'expires soon.', time: '12 min ago', action: 'Open record', unread: true },
-  { id: '2', tone: 'done', glyph: '✓', body: 'Inspection recorded.', time: '3 hours ago', unread: true },
-  { id: '3', tone: 'system', glyph: '◔', body: 'Certificate expires in 60 days.', time: 'Yesterday' },
+  {
+    id: '1',
+    tone: 'error',
+    glyph: '!',
+    subject: 'Hipol',
+    body: 'expires soon.',
+    time: '12 min ago',
+    action: 'Open record',
+    unread: true,
+  },
+  {
+    id: '2',
+    tone: 'done',
+    glyph: '✓',
+    body: 'Inspection recorded.',
+    time: '3 hours ago',
+    unread: true,
+  },
+  {
+    id: '3',
+    tone: 'system',
+    glyph: '◔',
+    body: 'Certificate expires in 60 days.',
+    time: 'Yesterday',
+  },
 ]
 
 describe('NotificationCentre', () => {
@@ -26,7 +48,10 @@ describe('NotificationCentre', () => {
     expect(items[2].classes()).not.toContain('notif__item--unread')
     expect(mountC().findAll('[data-unread-dot]')).toHaveLength(2)
 
-    const source = readFileSync('src/design-system/components/notifications/NotificationCentre.vue', 'utf8')
+    const source = readFileSync(
+      'src/design-system/components/notifications/NotificationCentre.vue',
+      'utf8',
+    )
     const unread = source.match(/\.notif__item--unread\s*\{[^}]*\}/)[0]
     expect(unread).not.toMatch(/font-weight/)
   })
@@ -55,7 +80,14 @@ describe('NotificationCentre', () => {
 
 describe('ActivityFeed', () => {
   const EVENTS = [
-    { id: '1', initials: 'RV', actor: 'R. Villaflor', body: 'signed the licence.', time: 'Today', detail: 'LTO.pdf' },
+    {
+      id: '1',
+      initials: 'RV',
+      actor: 'R. Villaflor',
+      body: 'signed the licence.',
+      time: 'Today',
+      detail: 'LTO.pdf',
+    },
     { id: '2', tone: 'error', glyph: '!', body: 'Returned — illegible.', time: '02 Jun' },
   ]
   const mountF = () => mount(ActivityFeed, { props: { events: EVENTS, label: 'Licence history' } })
@@ -81,7 +113,10 @@ describe('ActivityFeed', () => {
   })
 
   it('drops the spine after the last event', () => {
-    const source = readFileSync('src/design-system/components/notifications/ActivityFeed.vue', 'utf8')
+    const source = readFileSync(
+      'src/design-system/components/notifications/ActivityFeed.vue',
+      'utf8',
+    )
     expect(source).toMatch(/:last-child \.feed__spine\s*\{\s*display:\s*none/)
   })
 })

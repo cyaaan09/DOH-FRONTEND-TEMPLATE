@@ -7,3 +7,18 @@
 # format-on-save, unlike narrowing the `format` script's own glob.
 src/design-system/styles/tokens.css
 src/design-system/styles/tokens.dark.css
+
+# Superpowers' own scratch workspace — git-ignored, and not ours to format.
+.superpowers/
+
+# The spec and its plans are hand-authored prose, wrapped by hand at 100 and
+# quoted verbatim in places (Appendix A.1's CSS blocks are parsed by
+# tokens.spec.js). Reflowing them would churn every line of a 2500-line
+# document to no benefit and put a formatter between us and the authority.
+docs/
+
+# Generated, and their shape is the generator's contract: a test asserts each
+# file equals exactly what scripts/build-demo-data.mjs emits, so formatting
+# them by hand-tooling makes that test fail rather than making them tidier.
+src/design-system/demo/data/specs.js
+src/design-system/demo/data/tokens-css.js

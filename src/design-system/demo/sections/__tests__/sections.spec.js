@@ -79,7 +79,6 @@ describe('NoticesSection', () => {
       expect(text, `missing notice: ${label}`).toContain(label)
     }
   })
-
 })
 
 describe('sections with complete components render no gaps', () => {
@@ -118,7 +117,6 @@ describe('ContainersSection', () => {
     }
   })
 
-
   it('renders the INNER SURFACES captions and closing line verbatim (Appendix D.1)', () => {
     const text = mount(ContainersSection).text()
     for (const caption of [
@@ -134,9 +132,6 @@ describe('ContainersSection', () => {
 })
 
 describe('skeleton sections show their headings and mark their gaps', () => {
-
-
-
   it('DarkModeSection renders all six sub-blocks and four rule cards', () => {
     const wrapper = mount(DarkModeSection)
     const text = wrapper.text()
@@ -205,7 +200,6 @@ describe('SpecsSection hosts the components the artifact only redlines', () => {
     expect(wrapper.find('[role="progressbar"]').exists()).toBe(true)
     expect(wrapper.text()).toContain('Uploaded')
   })
-
 
   it('insets the stat block by the card padding, like every sibling block', () => {
     // Regression: this block first shipped as a bare child of DemoCard's slot,
@@ -331,7 +325,7 @@ describe('DropdownsSection renders real components, not gaps', () => {
     expect(nameSpan.element.nextElementSibling.textContent).toBe('Active')
   })
 
-  it("names the row menu trigger from its own label prop", () => {
+  it('names the row menu trigger from its own label prop', () => {
     // RowMenu closed renders only its decorative `⋯` glyph (aria-hidden), so
     // there is no visible text this test could bind to; its trigger's
     // aria-label is the one output the `label` prop itself produces. All
@@ -424,7 +418,7 @@ describe('SelectionSection follows the artifact arrangement', () => {
     ])
     const first = wrapper.findAll('[data-footnote]')[0].element
     const label = wrapper.findAll('[data-label]')[0].element
-     
+
     expect(Boolean(label.compareDocumentPosition(first) & Node.DOCUMENT_POSITION_FOLLOWING)).toBe(
       true,
     )
@@ -455,7 +449,7 @@ describe('SelectionSection follows the artifact arrangement', () => {
   })
 })
 
-describe('FieldsSection carries the artifact\'s seven demos', () => {
+describe("FieldsSection carries the artifact's seven demos", () => {
   // Appendix D.1 — the section shipped six demos in a different order with
   // the hints rewritten to fragments and the password demo absent. Asserting
   // the full ordered list, not just presence: a reordered or re-worded set
@@ -476,7 +470,7 @@ describe('FieldsSection carries the artifact\'s seven demos', () => {
     ])
   })
 
-  it('carries each demo\'s hint verbatim', () => {
+  it("carries each demo's hint verbatim", () => {
     const text = mount(FieldsSection).text()
     for (const hint of [
       'Default · rests on a hairline border.',
@@ -509,7 +503,7 @@ describe('FieldsSection carries the artifact\'s seven demos', () => {
 })
 
 describe('carry-forward audit: arrangement the earlier sections were built without', () => {
-  it('DropdownsSection draws the inline filter\'s field name', () => {
+  it("DropdownsSection draws the inline filter's field name", () => {
     // Appendix D.1 — the InlineFilter trigger reads "Status: All". The name
     // comes from the component, not the section, which is why a text scan of
     // the section file alone reports it missing.
@@ -580,11 +574,12 @@ describe('carry-forward audit: arrangement the earlier sections were built witho
     // with no header, no spec column, the order shuffled and two samples cut
     // to fragments.
     const wrapper = mount(TypeScaleSection)
-    expect(wrapper.get('[data-type-head]').findAll('div').map((d) => d.text())).toEqual([
-      'TOKEN',
-      'SAMPLE',
-      'SPEC',
-    ])
+    expect(
+      wrapper
+        .get('[data-type-head]')
+        .findAll('div')
+        .map((d) => d.text()),
+    ).toEqual(['TOKEN', 'SAMPLE', 'SPEC'])
     const rows = wrapper.findAll('[data-type-row]')
     expect(rows).toHaveLength(9)
     expect(rows.map((r) => r.findAll('div')[0].text())).toEqual([
@@ -600,11 +595,13 @@ describe('carry-forward audit: arrangement the earlier sections were built witho
     ])
     expect(rows[0].findAll('div')[2].text()).toBe('26px / 700 / -0.015em')
     expect(wrapper.text()).toContain('Buenavista Primary Health Care Center')
-    expect(wrapper.text()).toContain('Your PNPKI certificate and its password are stored encrypted.')
+    expect(wrapper.text()).toContain(
+      'Your PNPKI certificate and its password are stored encrypted.',
+    )
   })
 })
 
-describe('FilesSection carries the artifact\'s three demos', () => {
+describe("FilesSection carries the artifact's three demos", () => {
   it('renders both inputs and the spanning file list, with no gaps left', () => {
     const wrapper = mount(FilesSection)
     expect(wrapper.findAll('[data-gap]')).toHaveLength(0)
@@ -795,7 +792,11 @@ describe('ContainersSection is complete', () => {
   })
 
   it('closes each of the three grid blocks with its note', () => {
-    expect(mount(ContainersSection).findAll('[data-footnote]').map((n) => n.text())).toEqual([
+    expect(
+      mount(ContainersSection)
+        .findAll('[data-footnote]')
+        .map((n) => n.text()),
+    ).toEqual([
       'Radius 14px · 1px #E4E8EF · shadow 0 1px 2px rgba(16,24,40,.04).',
       'Facts split by 1px #EEF1F6 rules — never by inner cards.',
       'Four tints, each with one job. No new greys.',
@@ -847,9 +848,9 @@ describe('SpecsSection renders Appendix C as an accordion', () => {
     const wrapper = mount(SpecsSection)
     expect(wrapper.findAll('[data-gap]')).toHaveLength(0)
     expect(wrapper.findAll('[data-spec-group]')).toHaveLength(31)
-    const open = wrapper.findAll('[data-spec-toggle]').filter(
-      (t) => t.attributes('aria-expanded') === 'true',
-    )
+    const open = wrapper
+      .findAll('[data-spec-toggle]')
+      .filter((t) => t.attributes('aria-expanded') === 'true')
     expect(open).toHaveLength(1)
     expect(open[0].get('[data-spec-name]').text()).toBe('Chips')
   })
@@ -911,7 +912,9 @@ describe('LayoutSection documents the eight primitives', () => {
   it('renders one card per primitive, with its real signature', () => {
     const wrapper = mount(LayoutSection)
     expect(wrapper.findAll('[data-gap]')).toHaveLength(0)
-    expect(wrapper.findAll('[data-primitive]').map((c) => c.get('[data-signature]').text())).toEqual([
+    expect(
+      wrapper.findAll('[data-primitive]').map((c) => c.get('[data-signature]').text()),
+    ).toEqual([
       '<Row gap align justify wrap>',
       '<Column gap align>',
       '<Grid cols=12 gap="16 24">',

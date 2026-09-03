@@ -16,7 +16,8 @@ const GROUPS = [
   },
 ]
 
-const mountS = (props = {}) => mount(SearchResults, { props: { groups: GROUPS, active: 'a', ...props } })
+const mountS = (props = {}) =>
+  mount(SearchResults, { props: { groups: GROUPS, active: 'a', ...props } })
 
 describe('SearchResults', () => {
   it('wires the combobox pattern, with the selection announced by id', () => {
@@ -35,7 +36,9 @@ describe('SearchResults', () => {
   it('marks exactly one row selected, and does not navigate on its own', () => {
     // Redline "Active row · preselected but never auto-navigated".
     const wrapper = mountS()
-    const selected = wrapper.findAll('[data-search-row]').filter((r) => r.attributes('aria-selected') === 'true')
+    const selected = wrapper
+      .findAll('[data-search-row]')
+      .filter((r) => r.attributes('aria-selected') === 'true')
     expect(selected).toHaveLength(1)
     expect(wrapper.emitted('select')).toBeUndefined()
   })
@@ -49,7 +52,9 @@ describe('SearchResults', () => {
   it('states a missing identifier in words rather than leaving a blank line', () => {
     // Redline "Missing meta · states the absence in words (no LTO on file) —
     // never an empty second line". A blank line reads as a rendering bug.
-    const metas = mountS().findAll('[data-row-meta]').map((m) => m.text())
+    const metas = mountS()
+      .findAll('[data-row-meta]')
+      .map((m) => m.text())
     expect(metas).toContain('no LTO on file')
     expect(metas.every((m) => m.length > 0)).toBe(true)
   })

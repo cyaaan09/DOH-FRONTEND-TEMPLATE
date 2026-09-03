@@ -187,10 +187,7 @@ describe('MultiSelect', () => {
     filter.dispatchEvent(new Event('input', { bubbles: true }))
     await wrapper.vm.$nextTick()
     const labels = [...document.querySelectorAll('[data-option-label]')].map((n) => n.textContent)
-    expect(labels).toEqual([
-      'Clinical Laboratory — Limited',
-      'Clinical Laboratory — Secondary',
-    ])
+    expect(labels).toEqual(['Clinical Laboratory — Limited', 'Clinical Laboratory — Secondary'])
     wrapper.unmount()
   })
 

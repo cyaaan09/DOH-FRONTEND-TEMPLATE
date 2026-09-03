@@ -97,7 +97,12 @@ function cleanComment(raw) {
   return raw
     .replace(/\/\*\*?|\*\//g, '')
     .split('\n')
-    .map((line) => line.replace(/^\s*\*?\s?/, '').replace(/^\s*\/\/\s?/, '').trim())
+    .map((line) =>
+      line
+        .replace(/^\s*\*?\s?/, '')
+        .replace(/^\s*\/\/\s?/, '')
+        .trim(),
+    )
     .filter(Boolean)
     .join(' ')
     .replace(/\s+/g, ' ')
@@ -338,7 +343,12 @@ export function render(components) {
       }
     }
   }
-  return out.join('\n').replace(/\n{3,}/g, '\n\n').trimEnd() + '\n'
+  return (
+    out
+      .join('\n')
+      .replace(/\n{3,}/g, '\n\n')
+      .trimEnd() + '\n'
+  )
 }
 
 const isMain = process.argv[1] && import.meta.url.endsWith(process.argv[1].split('/').pop())

@@ -9,12 +9,22 @@ const COLUMNS = [
   { key: 'status', label: 'STATUS', width: '132px' },
 ]
 const ROWS = [
-  { id: 'a', stripe: 'green', cells: { facility: 'Carmen RHU', lto: '16-015-2527', status: 'Active' } },
+  {
+    id: 'a',
+    stripe: 'green',
+    cells: { facility: 'Carmen RHU', lto: '16-015-2527', status: 'Active' },
+  },
   { id: 'b', stripe: 'red', cells: { facility: 'Hipol', lto: null, status: 'Expiring' } },
-  { id: 'c', stripe: 'green', expand: true, cells: { facility: 'Prosperidad', lto: '16-015-2501', status: 'Active' } },
+  {
+    id: 'c',
+    stripe: 'green',
+    expand: true,
+    cells: { facility: 'Prosperidad', lto: '16-015-2501', status: 'Active' },
+  },
 ]
 
-const mountTable = (props = {}) => mount(DataTable, { props: { columns: COLUMNS, rows: ROWS, ...props } })
+const mountTable = (props = {}) =>
+  mount(DataTable, { props: { columns: COLUMNS, rows: ROWS, ...props } })
 
 describe('DataTable', () => {
   it('builds one grid template for the header and every row', () => {

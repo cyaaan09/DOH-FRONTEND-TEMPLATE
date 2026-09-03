@@ -21,7 +21,10 @@ describe('FormField', () => {
     expect(source).toMatch(/min-height:\s*32px/)
 
     const withHint = mountField({ hint: 'As written on the registration.' })
-    const withError = mountField({ hint: 'As written on the registration.', error: 'Needs all four segments.' })
+    const withError = mountField({
+      hint: 'As written on the registration.',
+      error: 'Needs all four segments.',
+    })
     // one element in both states, never two
     expect(withHint.findAll('[data-message]')).toHaveLength(1)
     expect(withError.findAll('[data-message]')).toHaveLength(1)
@@ -81,7 +84,10 @@ describe('Fieldset', () => {
   it('is a label and a rule, never a card', () => {
     // Redline — nesting cards inside cards doubles the borders. The section's
     // own rule card says "Sections are rules, not cards".
-    const wrapper = mount(Fieldset, { props: { label: 'IDENTIFICATION' }, slots: { default: '<i/>' } })
+    const wrapper = mount(Fieldset, {
+      props: { label: 'IDENTIFICATION' },
+      slots: { default: '<i/>' },
+    })
     expect(wrapper.get('[data-fieldset-label]').text()).toBe('IDENTIFICATION')
     // The 1px hairline IS a background, so check the fieldset's own block:
     // it must carry no card dress of its own.
@@ -92,7 +98,9 @@ describe('Fieldset', () => {
   })
 
   it('drops the 24px lead-in for the first fieldset only', () => {
-    expect(mount(Fieldset, { props: { label: 'A', first: true } }).classes()).not.toContain('fieldset--spaced')
+    expect(mount(Fieldset, { props: { label: 'A', first: true } }).classes()).not.toContain(
+      'fieldset--spaced',
+    )
     expect(mount(Fieldset, { props: { label: 'A' } }).classes()).toContain('fieldset--spaced')
   })
 })
@@ -100,7 +108,12 @@ describe('Fieldset', () => {
 describe('FormShell', () => {
   it('renders header, body and one footer that owns the actions', () => {
     const wrapper = mount(FormShell, {
-      props: { title: 'Register a facility', subtitle: 'Step 2 of 4', progress: 50, autosave: 'Draft saved' },
+      props: {
+        title: 'Register a facility',
+        subtitle: 'Step 2 of 4',
+        progress: 50,
+        autosave: 'Draft saved',
+      },
       slots: { default: '<i/>', actions: '<button>Continue</button>' },
     })
     expect(wrapper.get('[data-form-title]').text()).toBe('Register a facility')
@@ -115,7 +128,9 @@ describe('FormShell', () => {
   })
 
   it('is a <form> that does not navigate on submit', () => {
-    expect(mount(FormShell, { props: { title: 'X' }, slots: { default: '<i/>' } }).element.tagName).toBe('FORM')
+    expect(
+      mount(FormShell, { props: { title: 'X' }, slots: { default: '<i/>' } }).element.tagName,
+    ).toBe('FORM')
   })
 })
 
@@ -123,7 +138,9 @@ describe('TokenField', () => {
   it('names each remove button after its own token', () => {
     const wrapper = mount(TokenField, { props: { modelValue: ['Pharmacy', 'Birthing Home'] } })
     expect(wrapper.findAll('[data-token]')).toHaveLength(2)
-    expect(wrapper.findAll('[data-token-remove]')[0].attributes('aria-label')).toBe('Remove Pharmacy')
+    expect(wrapper.findAll('[data-token-remove]')[0].attributes('aria-label')).toBe(
+      'Remove Pharmacy',
+    )
   })
 
   it('emits the token it was asked to remove', async () => {

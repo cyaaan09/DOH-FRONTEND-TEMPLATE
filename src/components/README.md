@@ -7,11 +7,11 @@ holds components that could ship in **any** project built from this template.
 
 The test is whether the component knows anything about a business domain.
 
-| Here (`src/components/`) | `src/design-system/components/` |
-|---|---|
-| `LicenceStatusChip` — maps `expiring` → amber | `Chip` — takes a `tone` prop |
-| `FacilitySearchBar` — wired to facility filters | `SearchField`, `InlineFilter` |
-| `FacilityTable` — your columns and API shape | `DataTable` — takes columns and rows |
+| Here (`src/components/`)                        | `src/design-system/components/`      |
+| ----------------------------------------------- | ------------------------------------ |
+| `LicenceStatusChip` — maps `expiring` → amber   | `Chip` — takes a `tone` prop         |
+| `FacilitySearchBar` — wired to facility filters | `SearchField`, `InlineFilter`        |
+| `FacilityTable` — your columns and API shape    | `DataTable` — takes columns and rows |
 
 A component here is usually a thin wrapper that encodes a policy decision
 ("expiring licences are amber"), which has no place in a reusable template:

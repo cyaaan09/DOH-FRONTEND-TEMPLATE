@@ -100,7 +100,11 @@ describe('DemoBlock', () => {
   it('renders a note only when given one', () => {
     const withNote = mount(DemoBlock, { props: { label: 'STATUS', note: 'A dot plus a word.' } })
     expect(withNote.get('[data-note]').classes()).toContain('text-caption')
-    expect(mount(DemoBlock, { props: { label: 'STATUS' } }).find('[data-note]').exists()).toBe(false)
+    expect(
+      mount(DemoBlock, { props: { label: 'STATUS' } })
+        .find('[data-note]')
+        .exists(),
+    ).toBe(false)
   })
 
   it('renders its default slot', () => {
@@ -146,7 +150,9 @@ describe('DemoStrip', () => {
     expect(bare.get('[data-label]').classes()).toContain('mb-2.5')
     expect(bare.find('[data-note]').exists()).toBe(false)
 
-    const noted = mount(DemoStrip, { props: { label: 'X', note: 'Use at the top of a table card.' } })
+    const noted = mount(DemoStrip, {
+      props: { label: 'X', note: 'Use at the top of a table card.' },
+    })
     expect(noted.get('[data-label]').classes()).toContain('mb-0.5')
     expect(noted.get('[data-note]').classes()).toContain('text-caption')
     expect(noted.get('[data-note]').classes()).toContain('mb-2')
@@ -161,17 +167,17 @@ describe('DemoStrip', () => {
     expect(wrapper.find('.strip-probe').exists()).toBe(true)
   })
 
-describe('DemoBlock label gap', () => {
-  it('tightens to 4px only when a note follows it', () => {
-    // §17.1 recorded 4px, which is right for a block WITH a note (Chips,
-    // Foundations) and 6px too tight for every block without one (Dialog,
-    // Containers, File inputs). The page shipped 4px everywhere.
-    const noted = mount(DemoBlock, { props: { label: 'X', note: 'why' } })
-    expect(noted.get('[data-label]').classes()).toContain('mb-1')
+  describe('DemoBlock label gap', () => {
+    it('tightens to 4px only when a note follows it', () => {
+      // §17.1 recorded 4px, which is right for a block WITH a note (Chips,
+      // Foundations) and 6px too tight for every block without one (Dialog,
+      // Containers, File inputs). The page shipped 4px everywhere.
+      const noted = mount(DemoBlock, { props: { label: 'X', note: 'why' } })
+      expect(noted.get('[data-label]').classes()).toContain('mb-1')
 
-    const bare = mount(DemoBlock, { props: { label: 'X' } })
-    expect(bare.get('[data-label]').classes()).toContain('mb-2.5')
-    expect(bare.get('[data-label]').classes()).not.toContain('mb-1')
+      const bare = mount(DemoBlock, { props: { label: 'X' } })
+      expect(bare.get('[data-label]').classes()).toContain('mb-2.5')
+      expect(bare.get('[data-label]').classes()).not.toContain('mb-1')
+    })
   })
-})
 })

@@ -74,7 +74,11 @@ describe('Textarea', () => {
   })
 
   it('defaults to three rows', () => {
-    expect(mount(Textarea, { props: { label: 'A' } }).get('textarea').attributes('rows')).toBe('3')
+    expect(
+      mount(Textarea, { props: { label: 'A' } })
+        .get('textarea')
+        .attributes('rows'),
+    ).toBe('3')
   })
 
   it('shows a hint when there is no error', () => {
@@ -184,7 +188,11 @@ describe('TextField — Appendix C conformance', () => {
     const err = mount(TextField, { props: { label: 'A', error: 'Must be at least 1.' } })
     expect(err.find('[data-error-glyph]').exists()).toBe(true)
     expect(err.get('[data-error-glyph]').attributes('aria-hidden')).toBe('true')
-    expect(mount(TextField, { props: { label: 'A', hint: 'h' } }).find('[data-error-glyph]').exists()).toBe(false)
+    expect(
+      mount(TextField, { props: { label: 'A', hint: 'h' } })
+        .find('[data-error-glyph]')
+        .exists(),
+    ).toBe(false)
   })
 
   it('appends a muted qualifier inside the label', () => {
@@ -205,7 +213,9 @@ describe('TextField — border precedence', () => {
   // border class must ever apply — never two competing for the same
   // property, which is a regression compile order could silently hide.
   it('applies only border-field by default', () => {
-    const classes = mount(TextField, { props: { label: 'A' } }).get('input').classes()
+    const classes = mount(TextField, { props: { label: 'A' } })
+      .get('input')
+      .classes()
     expect(classes).toContain('border-field')
     expect(classes).not.toContain('border-hairline')
     expect(classes).not.toContain('border-red-700')
@@ -253,7 +263,9 @@ describe('TextField — border precedence', () => {
 describe('Textarea — Appendix C conformance', () => {
   it('uses the taller textarea padding', () => {
     // Redline "Textarea" — 11px/12px padding, resize vertical.
-    const classes = mount(Textarea, { props: { label: 'A' } }).get('textarea').classes()
+    const classes = mount(Textarea, { props: { label: 'A' } })
+      .get('textarea')
+      .classes()
     expect(classes).toContain('py-2.75')
     expect(classes).toContain('px-3')
     expect(classes).toContain('resize-y')
@@ -274,7 +286,9 @@ describe('Textarea — border precedence', () => {
   // border class must ever apply — never two competing for the same
   // property, which is a regression compile order could silently hide.
   it('applies only border-field by default', () => {
-    const classes = mount(Textarea, { props: { label: 'A' } }).get('textarea').classes()
+    const classes = mount(Textarea, { props: { label: 'A' } })
+      .get('textarea')
+      .classes()
     expect(classes).toContain('border-field')
     expect(classes).not.toContain('border-hairline')
     expect(classes).not.toContain('border-red-700')
@@ -321,8 +335,16 @@ describe('Textarea — border precedence', () => {
 
 describe('SearchField', () => {
   it('shows the clear button only once there is a value', () => {
-    expect(mount(SearchField, { props: { modelValue: '' } }).find('[data-clear]').exists()).toBe(false)
-    expect(mount(SearchField, { props: { modelValue: 'rhu' } }).find('[data-clear]').exists()).toBe(true)
+    expect(
+      mount(SearchField, { props: { modelValue: '' } })
+        .find('[data-clear]')
+        .exists(),
+    ).toBe(false)
+    expect(
+      mount(SearchField, { props: { modelValue: 'rhu' } })
+        .find('[data-clear]')
+        .exists(),
+    ).toBe(true)
   })
 
   it('emits an empty string when cleared', async () => {

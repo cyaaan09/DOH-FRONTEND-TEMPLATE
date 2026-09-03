@@ -36,7 +36,11 @@ export function buildSpecGroups(markdown) {
     const [, name, summary, body] = match
     const rows = []
     for (const line of body.trim().split('\n')) {
-      const cells = line.trim().replace(/^\||\|$/g, '').split('|').map((c) => c.trim())
+      const cells = line
+        .trim()
+        .replace(/^\||\|$/g, '')
+        .split('|')
+        .map((c) => c.trim())
       if (cells.length < 2) continue
       const k = cells[0].replace(/`/g, '')
       const v = cells[1].replace(/`/g, '')
@@ -81,7 +85,9 @@ if (isMain) {
   if (process.argv.includes('--check')) {
     for (const [path, expected, source] of targets) {
       if (readFileSync(path, 'utf8') !== expected) {
-        console.error(`${path} is out of sync with ${source}. Run: node scripts/build-demo-data.mjs`)
+        console.error(
+          `${path} is out of sync with ${source}. Run: node scripts/build-demo-data.mjs`,
+        )
         process.exit(1)
       }
       console.log(`${path} is in sync with ${source}.`)

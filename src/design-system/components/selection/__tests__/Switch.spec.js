@@ -16,7 +16,9 @@ describe('Switch', () => {
   it('greens the track when on and greys it when off', () => {
     // Redline "Track on / off" — the off colour is the field border token,
     // which the bridge exposes as `bg-field`; `bg-border-field` emits nothing.
-    expect(mountSwitch({ modelValue: true }).get('[data-track]').classes()).toContain('bg-green-fill')
+    expect(mountSwitch({ modelValue: true }).get('[data-track]').classes()).toContain(
+      'bg-green-fill',
+    )
     const off = mountSwitch().get('[data-track]')
     expect(off.classes()).toContain('bg-field')
     expect(off.classes()).not.toContain('bg-green-fill')
@@ -132,7 +134,7 @@ describe('Switch', () => {
     const wrapper = mountSwitch({ hint: 'Digest at 6 PM, weekdays only' })
     const label = wrapper.get('[data-label]').element
     const track = wrapper.get('[data-track]').element
-     
+
     const labelPrecedesTrack = Boolean(
       label.compareDocumentPosition(track) & Node.DOCUMENT_POSITION_FOLLOWING,
     )

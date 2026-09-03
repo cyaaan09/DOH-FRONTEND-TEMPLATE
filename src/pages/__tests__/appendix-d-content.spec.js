@@ -22,9 +22,9 @@ describe('Appendix D content, section by section', () => {
     // Guards the guard: if a heading-text drift ever made every chunk parse
     // empty, every assertion below would trivially pass on nothing.
     expect(expectations).toHaveLength(SECTIONS.length)
-    expect(expectations.every((s) => typeof s.description === 'string' || s.title === 'Dark mode')).toBe(
-      true,
-    )
+    expect(
+      expectations.every((s) => typeof s.description === 'string' || s.title === 'Dark mode'),
+    ).toBe(true)
     expect(expectations.some((s) => s.subBlocks.some((b) => b.note))).toBe(true)
     expect(expectations.some((s) => s.rules.length > 0)).toBe(true)
   })

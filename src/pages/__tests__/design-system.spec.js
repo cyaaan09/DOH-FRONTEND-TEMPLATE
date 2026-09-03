@@ -37,9 +37,10 @@ describe('design system page', () => {
     for (const section of SECTIONS.filter((s) => s.complete)) {
       const el = wrapper.find(`[data-section="${section.id}"]`)
       expect(el.exists(), `no element for section: ${section.id}`).toBe(true)
-      expect(el.findAll('[data-gap]'), `${section.id} is marked complete but has gaps`).toHaveLength(
-        0,
-      )
+      expect(
+        el.findAll('[data-gap]'),
+        `${section.id} is marked complete but has gaps`,
+      ).toHaveLength(0)
     }
   })
 
