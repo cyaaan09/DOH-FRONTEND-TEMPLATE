@@ -70,7 +70,12 @@ const TYPES = [
 </script>
 
 <template>
-  <Page>
+  <Page width="table">
+    <!-- width="table" is Appendix C's WIDE bucket — "Content max-w · 1320px
+         detail · 1560px tables". The name comes from the redline's own wording;
+         the distinction it draws is between a reading column and a wide
+         overview, and a dashboard of side-by-side panels is the latter. At
+         1320 the panels left a canvas margin wider than a nav rail. -->
     <!-- No Section around these. Redline "Section · cards never nest — divide
          or sink instead": every stat card and chart panel below is already a
          card, and a Section would be a seventh one wrapped around the other

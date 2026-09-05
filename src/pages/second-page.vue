@@ -8,7 +8,9 @@ import PageHeader from '@/components/PageHeader.vue'
 </script>
 
 <template>
-  <Page>
+  <Page width="table">
+    <!-- Same wide bucket as the dashboard, so pages do not jump width
+         as you move between them. -->
     <PageHeader
       title="Second page"
       subtitle="A placeholder, so the navigation has somewhere to go."

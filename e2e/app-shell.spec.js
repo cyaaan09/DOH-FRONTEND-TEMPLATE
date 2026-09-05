@@ -154,3 +154,22 @@ test('gives every app page a title', async ({ page }) => {
     await expect(page.locator('[data-page-title]')).toHaveText(title)
   }
 })
+
+test('uses the redline’s wide bucket, not the reading column', async ({ page }) => {
+  // Appendix C "Content max-w · 1320px detail · 1560px tables". The narrower
+  // value is for a reading column; a dashboard of side-by-side panels is a wide
+  // overview, and at 1320 it left a canvas margin wider than the nav rail on
+  // any large monitor.
+  await page.setViewportSize({ width: 2000, height: 1000 })
+  await page.goto('/login')
+  await signIn(page)
+  await page.locator('[data-app-shell]').waitFor()
+
+  const inner = await page.locator('[data-page] > div').boundingBox()
+  expect(Math.round(inner.width)).toBe(1560)
+
+  // and the gutter each side stays smaller than the rail, which is the thing
+  // that made it read as wasted space rather than as breathing room
+  const main = await page.locator('[data-app-main]').boundingBox()
+  expect((main.width - inner.width) / 2).toBeLessThan(244)
+})
