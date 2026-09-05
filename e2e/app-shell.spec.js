@@ -173,3 +173,25 @@ test('uses the redline’s wide bucket, not the reading column', async ({ page }
   const main = await page.locator('[data-app-main]').boundingBox()
   expect((main.width - inner.width) / 2).toBeLessThan(244)
 })
+
+test('the chart panels bottom out together', async ({ page }) => {
+  // The panels sit in a stretch grid, so the shorter one is pulled to the
+  // height of the taller. The artifact's own line panel flexes its plot BOX
+  // while pinning the chart inside it to 108px, which left ~90px of dead space
+  // under the line whenever the ranked-bars panel beside it was taller.
+  // LineChart's `fill` stretches the plot itself; the viewBox is unchanged
+  // because preserveAspectRatio="none" does the work.
+  await page.setViewportSize({ width: 2040, height: 1100 })
+  await page.goto('/login')
+  await signIn(page)
+  await page.locator('[data-app-shell]').waitFor()
+
+  const panel = await page.locator('[data-chart-panel]').first().boundingBox()
+  const chart = await page.locator('[data-line-chart]').boundingBox()
+  // only the panel's own 16px bottom padding may remain
+  expect(panel.y + panel.height - (chart.y + chart.height)).toBeLessThan(24)
+
+  // and stretching must not cost the chart its parts
+  await expect(page.locator('[data-x-axis]')).toBeVisible()
+  expect(await page.locator('[data-gridlines] span').count()).toBe(3)
+})

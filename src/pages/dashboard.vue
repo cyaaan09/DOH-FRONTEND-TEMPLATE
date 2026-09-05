@@ -105,7 +105,9 @@ const TYPES = [
         period="This month"
         note="744 in 12 months"
       >
-        <LineChart :values="MONTHS" :labels="MONTH_LABELS" />
+        <!-- fill: the ranked-bars panel beside this one is taller, and a
+               pinned 108px plot left ~90px of dead space under the line. -->
+        <LineChart fill :values="MONTHS" :labels="MONTH_LABELS" />
       </ChartPanel>
 
       <ChartPanel

@@ -21,6 +21,17 @@ const props = defineProps({
   /** Any chart token: --chart-ok-strong for the emphasised single series. */
   tone: { type: String, default: 'var(--chart-ok-strong)' },
   height: { type: Number, default: 108 },
+  /**
+   * Stretch the plot to whatever height the panel gives it, instead of pinning
+   * it to `height`.
+   *
+   * Opt-in, because the artifact's own line panel does NOT do this — its plot
+   * box flexes while the chart inside stays 108px, which is where the ~90px of
+   * dead space under the line comes from when a taller panel sits beside it.
+   * Faithful in the design-system section, better on a real dashboard, and the
+   * difference is recorded rather than silently applied to both.
+   */
+  fill: { type: Boolean, default: false },
 })
 
 // The plot box is inset 3px on every side so the 2.25px stroke and the 9px
@@ -54,19 +65,19 @@ const gradientId = `chart-area-${useId()}`
 </script>
 
 <template>
-  <div data-line-chart class="line" :style="{ '--tone': tone }">
+  <div data-line-chart class="line" :class="{ 'line--fill': fill }" :style="{ '--tone': tone }">
     <!-- Redline "Axis geometry · the y-label box is the SAME height as the plot
          box, each label absolutely positioned at 0 / 50% / 100% with
          translateY(-50%) so it centres on its gridline". Equal heights are the
          whole trick: any padding here and every label drifts off its line. -->
-    <div class="line__axis font-mono" :style="{ height: `${height}px` }">
+    <div class="line__axis font-mono" :style="fill ? undefined : { height: `${height}px` }">
       <span style="top: 0">{{ max }}</span>
       <span style="top: 50%">{{ max / 2 }}</span>
       <span style="top: 100%">0</span>
     </div>
 
     <div class="min-w-0 flex-1">
-      <div class="line__plot" :style="{ height: `${height}px` }">
+      <div class="line__plot" :style="fill ? undefined : { height: `${height}px` }">
         <!-- Redline "Gridlines · three max, horizontal only, outer two
              --chart-grid, middle --chart-grid-mid, no axis line, no ticks,
              no plot border". -->
@@ -78,7 +89,7 @@ const gradientId = `chart-area-${useId()}`
           :viewBox="`0 0 ${VIEW_W} ${height}`"
           preserveAspectRatio="none"
           class="line__svg"
-          :style="{ height: `${height}px` }"
+          :style="fill ? undefined : { height: `${height}px` }"
           aria-hidden="true"
         >
           <defs>
@@ -131,6 +142,32 @@ const gradientId = `chart-area-${useId()}`
   display: flex;
   align-items: flex-start;
   gap: 10px;
+}
+
+/* The viewBox keeps its own coordinates and preserveAspectRatio="none" does the
+   stretching, so only the boxes need to change: the axis, the plot and the SVG
+   all take their height from the panel. The gridlines are inset:0 and the axis
+   labels and latest-point dot are positioned in PERCENTAGES, so every one of
+   them follows without further work. */
+.line--fill {
+  height: 100%;
+  align-items: stretch;
+}
+
+.line--fill .line__axis,
+.line--fill .line__plot,
+.line--fill .line__svg {
+  height: 100%;
+}
+
+/* the label column must still be a positioning context for its absolute spans */
+.line--fill > .min-w-0 {
+  display: flex;
+  flex-direction: column;
+}
+
+.line--fill .line__plot {
+  flex: 1;
 }
 
 /* Redline "Axis labels · 10.5px --chart-axis · y mono". Never --ink-300: the

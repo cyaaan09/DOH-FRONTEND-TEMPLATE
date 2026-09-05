@@ -137,6 +137,7 @@ Redline "Line · 2.25px, smooth cubic through midpoints, round joins, vector-eff
 | `labels` | Array | `() => []` | Labels for the x axis — one per value; only every third is drawn. |
 | `tone` | String | `'var(--chart-ok-strong)'` | Any chart token: --chart-ok-strong for the emphasised single series. |
 | `height` | Number | `108` |  |
+| `fill` | Boolean | `false` | Stretch the plot to whatever height the panel gives it, instead of pinning it to `height`. Opt-in, because the artifact's own line panel does NOT do this — its plot box flexes while the chart inside stays 108px, which is where the ~90px of dead space under the line comes from when a taller panel sits beside it. Faithful in the design-system section, better on a real dashboard, and the difference is recorded rather than silently applied to both. |
 
 ### Sparkline
 

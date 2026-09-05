@@ -6,13 +6,18 @@
  * files that can disagree.
  *
  * `key` is what AppSidebar marks active; `to` is the route it pushes.
+ *
+ * `mark` is the rail's decorative glyph. The redline assigns them by meaning —
+ * "square PTC, circle LTO, diamond config" — so a page outside those three
+ * picks the one that reads least like something else: a 13px rounded square
+ * beside a label is easily mistaken for a checkbox.
  */
 export const NAV_GROUPS = [
   {
     label: 'OVERVIEW',
     items: [
       { key: 'dashboard', label: 'Dashboard', to: '/dashboard', mark: 'circle' },
-      { key: 'second', label: 'Second page', to: '/second-page', mark: 'square' },
+      { key: 'second', label: 'Second page', to: '/second-page', mark: 'diamond' },
     ],
   },
 ]
